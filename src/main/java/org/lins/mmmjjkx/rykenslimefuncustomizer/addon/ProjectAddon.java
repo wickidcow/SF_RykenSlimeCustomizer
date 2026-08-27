@@ -65,7 +65,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Setter(AccessLevel.PACKAGE)
 @NullMarked
 public final class ProjectAddon {
-    // info.yml
     private final String addonId;
     private final String addonName;
     private final String addonVersion;
@@ -74,185 +73,61 @@ public final class ProjectAddon {
     private final String description;
     private final List<String> authors;
     private final File folder;
-    //
     private final Map<String, SlimefunItemStack> preloadItems = new ConcurrentHashMap<>();
-    //
     private @Nullable String gitHubRepo;
     private @Nullable String downloadZipName;
     private @Nullable String idPattern;
-    //
     private @Nullable AddonConfig config;
-    //
     private @Nullable ScriptableEventListener eventListener;
-    //
     private List<JavaScriptEval> scriptEvals = new CopyOnWriteArrayList<>();
-    // groups.yml
     private List<ItemGroup> itemGroups = new ArrayList<>();
-    // menus.yml
     private List<CustomMenu> menus = new ArrayList<>();
-    // geo_resources.yml
     private List<CustomGeoResource> geoResources = new ArrayList<>();
-    // items.yml
     private List<SlimefunItem> items = new ArrayList<>();
-    // machines.yml
     private List<AbstractEmptyMachine<?>> machines = new ArrayList<>();
-    // researches.yml
     private List<Research> researches = new ArrayList<>();
-    // generators.yml
     private List<CustomGenerator> generators = new ArrayList<>();
-    // mat_generators.yml
     private List<AdvancedCustomMachine> materialGenerators = new ArrayList<>();
-    // recipe_machines.yml
     private List<AdvancedCustomMachine> recipeMachines = new ArrayList<>();
-    // mb_machines.yml
     private List<CustomMultiBlockMachine> multiBlockMachines = new ArrayList<>();
-    // solar_generators.yml
     private List<CustomSolarGenerator> solarGenerators = new ArrayList<>();
-    // mob_drops.yml
     private List<CustomMobDrop> mobDrops = new ArrayList<>();
-    // capacitors.yml
     private List<CustomCapacitor> capacitors = new ArrayList<>();
-    // recipe_types.yml
     private List<RecipeType> recipeTypes = new ArrayList<>();
-    // simple_machines.yml
     private List<SlimefunItem> simpleMachines = new ArrayList<>();
-    // foods.yml
     private List<CustomFood> foods = new ArrayList<>();
-    // armors.yml
-    private List<List<CustomArmorPiece>> armors = new ArrayList<>();
-    // supers.yml
-    private List<SlimefunItem> supers = new ArrayList<>();
-    // template_machines.yml
-    private List<AdvancedCustomMachine> templateMachines = new ArrayList<>();
-    // linked_recipe_machines.yml
-    private List<AdvancedCustomMachine> linkedRecipeMachines = new ArrayList<>();
-    // workbenches.yml
-    private List<CustomWorkbench> workbenches = new ArrayList<>();
-    // super_multi_block_machines.yml
-    private List<CustomSuperMultiBlockMachine> superMultiBlockMachines = new ArrayList<>();
-    // generations.yml
+    private List<CustomArmorPiece> armors = new ArrayList<>();
     private List<GenerationInfo> generationInfos = new ArrayList<>();
+    private List<CustomWorkbench> workbenches = new ArrayList<>();
+    private List<AdvancedCustomMachine> linkedRecipeMachines = new ArrayList<>();
+    private List<AdvancedCustomMachine> templateMachines = new ArrayList<>();
+    private List<CustomSuperMultiBlockMachine> superMultiBlockMachines = new ArrayList<>();
+    private List<SlimefunItem> supers = new ArrayList<>();
+    private List<DropFromBlock> dropFromBlocks = new ArrayList<>();
+    private final AtomicInteger read = new AtomicInteger();
+    private final AtomicInteger total = new AtomicInteger();
 
-    @Getter(AccessLevel.NONE)
-    private final AtomicInteger loadedObjects = new AtomicInteger();
-    @Getter(AccessLevel.NONE)
-    private final AtomicInteger totalObjects = new AtomicInteger();
-
-    public void addLoadedObject() {
-        loadedObjects.incrementAndGet();
-    }
-
-    public void addTotalObjects(int totalObjects) {
-        this.totalObjects.addAndGet(totalObjects);
-    }
-
-    public int getLoadedObjects() {
-        return loadedObjects.get();
-    }
-
-    public int getTotalObjects() {
-        return totalObjects.get();
-    }
-
-    public File getScriptsFolder() {
-        File scripts = new File(folder, "scripts");
-        if (!scripts.exists()) {
-            scripts.mkdirs();
-        }
-        return scripts;
-    }
-
-    public File getSavedItemsFolder() {
-        File savedItems = new File(folder, "saveditems");
-        if (!savedItems.exists()) {
-            savedItems.mkdirs();
-        }
-        return savedItems;
-    }
-
-    public void unregister() {
-        itemGroups.forEach(ig -> Slimefun.getRegistry().getAllItemGroups().remove(ig));
-        menus.forEach(m -> Slimefun.getRegistry().getMenuPresets().remove(m.getId()));
-        items.forEach(this::unregisterItem);
-        mobDrops.forEach(md -> {
-            unregisterItem(md);
-            var set = Slimefun.getRegistry().getMobDrops().get(md.getEntityType());
-            if (set != null) {
-                set.removeAll(md.getDrops());
-            }
-        });
-        capacitors.forEach(this::unregisterItem);
-        foods.forEach(this::unregisterItem);
-        machines.forEach(this::unregisterItem);
-        solarGenerators.forEach(this::unregisterItem);
-        generators.forEach(this::unregisterItem);
-        geoResources.forEach(this::unregisterItem);
-        materialGenerators.forEach(this::unregisterItem);
-        recipeMachines.forEach(this::unregisterItem);
-        multiBlockMachines.forEach(this::unregisterItem);
-        simpleMachines.forEach(this::unregisterItem);
-        armors.forEach(l -> l.forEach(this::unregisterItem));
-        supers.forEach(this::unregisterItem);
-        templateMachines.forEach(this::unregisterItem);
-        linkedRecipeMachines.forEach(this::unregisterItem);
-        workbenches.forEach(this::unregisterItem);
-        superMultiBlockMachines.forEach(this::unregisterItem);
-
-        recipeTypes.forEach(r -> RecipeTypeMap.removeRecipeTypes(r.getKey().getKey()));
-
-        // scripts.clear();
-        scriptEvals.clear();
-        items.clear();
-        machines.clear();
-        itemGroups.clear();
-        menus.clear();
-        geoResources.clear();
-        generators.clear();
-        materialGenerators.clear();
-        recipeMachines.clear();
-        multiBlockMachines.clear();
-        capacitors.clear();
-        solarGenerators.clear();
-        mobDrops.clear();
-        recipeTypes.clear();
-        simpleMachines.clear();
-        foods.clear();
-        armors.clear();
-        supers.clear();
-        templateMachines.clear();
-        linkedRecipeMachines.clear();
-        workbenches.clear();
-        superMultiBlockMachines.clear();
-        generationInfos.clear();
-
-        preloadItems.clear();
-
-        DropFromBlock.unregisterAddonDrops(this);
-
-        if (config != null) {
-            if (config.onReloadHandler() != null) {
-                config.onReloadHandler().close();
-            }
-        }
-
+    public void unregisterListeners() {
         if (eventListener != null) {
             HandlerList.unregisterAll(eventListener);
-            eventListener = null;
         }
     }
 
-    private void unregisterItem(SlimefunItem item) {
-        if (item instanceof Radioactive) {
-            Slimefun.getRegistry().getRadioactiveItems().remove(item);
+    public void unregisterAll() {
+        unregisterListeners();
+        for (var item : new ArrayList<>(Slimefun.getRegistry().getAllSlimefunItems())) {
+            if (item.getAddon() == null || item.getAddon() != org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer.INSTANCE) continue;
+            unregister(item);
         }
+    }
 
-        if (item instanceof GEOResource resource) {
+    private void unregister(SlimefunItem item) {
+        if (item instanceof Radioactive resource) {
             Slimefun.getRegistry().getGEOResources().remove(resource.getKey());
         }
 
         Slimefun.getRegistry().getTickerBlocks().remove(item.getId());
         Slimefun.getRegistry().getEnabledSlimefunItems().remove(item);
-
         Slimefun.getRegistry().getSlimefunItemIds().remove(item.getId());
         Slimefun.getRegistry().getAllSlimefunItems().remove(item);
     }
@@ -264,8 +139,6 @@ public final class ProjectAddon {
         }
 
         if (idPattern != null) {
-            // 当前使用的 id 可能是正常引用的 id，也可能是 idPattern 格式化后的 id
-            // 如果找不到已初始化的 item，则尝试用 idPattern 格式化 id
             SlimefunItem item = SlimefunItem.getById(id.toUpperCase(Locale.ROOT));
             if (item == null) {
                 id = idPattern.replaceAll("%0", id);
@@ -277,8 +150,19 @@ public final class ProjectAddon {
 
     @Nullable
     public SlimefunItemStack getSfStack(String id) {
-        var sf = SlimefunItem.getById(id.toUpperCase(Locale.ROOT));
-        if (sf != null) return (SlimefunItemStack) sf.getItem();
-        return getPreloadItems().get(id.toUpperCase(Locale.ROOT));
+        String normalizedId = id.toUpperCase(Locale.ROOT);
+        var sf = SlimefunItem.getById(normalizedId);
+        if (sf != null) {
+            var item = sf.getItem();
+            if (item instanceof SlimefunItemStack sfis) {
+                return sfis;
+            }
+
+            // Slimefun Legacy and some addons may expose a plain ItemStack here.
+            // RSC historically assumed every registered item was a SlimefunItemStack,
+            // which caused ClassCastException while resolving cross-addon recipes.
+            return new SlimefunItemStack(sf.getId(), item);
+        }
+        return getPreloadItems().get(normalizedId);
     }
 }
