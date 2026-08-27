@@ -277,8 +277,17 @@ public final class ProjectAddon {
 
     @Nullable
     public SlimefunItemStack getSfStack(String id) {
-        var sf = SlimefunItem.getById(id.toUpperCase(Locale.ROOT));
-        if (sf != null) return (SlimefunItemStack) sf.getItem();
-        return getPreloadItems().get(id.toUpperCase(Locale.ROOT));
+        String normalizedId = id.toUpperCase(Locale.ROOT);
+        var sf = SlimefunItem.getById(normalizedId);
+        if (sf != null) {
+            var item = sf.getItem();
+            if (item instanceof SlimefunItemStack sfis) {
+                return sfis;
+            }
+            // Slimefun Legacy and some addons can expose a plain ItemStack here.
+            // Wrap it instead of assuming the runtime type and throwing ClassCastException.
+            return new SlimefunItemStack(sf.getId(), item);
+        }
+        return getPreloadItems().get(normalizedId);
     }
 }
