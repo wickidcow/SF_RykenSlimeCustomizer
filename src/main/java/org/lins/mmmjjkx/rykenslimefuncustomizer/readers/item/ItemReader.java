@@ -98,20 +98,15 @@ public class ItemReader extends YamlReader<SlimefunItem> {
 
         CustomItem instance = new CustomItem(base);
 
+        // Handlers must be attached only after all dynamic subclasses have been created.
+        // Attribute resolution below may replace the current CustomItem instance with a
+        // new ByteBuddy-generated subclass. Attaching handlers before that point silently
+        // drops them on the replacement instance (notably script handlers + energy_capacity).
         JavaScriptEval eval = getScriptOrNull(section, section.getString("script"));
         if (eval != null) {
             eval.doInit();
-
-            instance.addItemHandler((ItemUseHandler) e -> {
-                eval.evalFunction("onUse", e, this);
-                e.cancel();
-            });
-
-            instance.addItemHandler((WeaponUseHandler) (e, p, it) -> {
-                eval.evalFunction("onWeaponHit", e, p, it);
-            });
-            instance.addItemHandler((ToolUseHandler) (e, it, i, drops) -> eval.evalFunction("onToolUse", e, it, i, drops));
         }
+        RainbowTickHandler rainbowHandler = null;
 
         Object[] constructorArgs = instance.constructorArgs();
 
@@ -136,7 +131,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                             colorMaterials.add(material.get());
                         }
 
-                        instance.addItemHandler(new RainbowTickHandler(colorMaterials));
+                        rainbowHandler = new RainbowTickHandler(colorMaterials);
                     }
                 } else {
                     Optional<ColoredMaterial> cm = CommonUtils.getEnum(ColoredMaterial.class, materialType);
@@ -145,7 +140,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                         return null;
                     }
 
-                    instance.addItemHandler(new RainbowTickHandler(cm.get()));
+                    rainbowHandler = new RainbowTickHandler(cm.get());
                 }
             }
         }
@@ -210,6 +205,24 @@ public class ItemReader extends YamlReader<SlimefunItem> {
 
         if (section.contains("radiation")) {
             instance = resolveRadiation(instance, base, section, constructorArgs);
+        }
+
+        // Attach deferred handlers to the final instance so generated attributes cannot
+        // discard them. This also preserves rainbow ticking when combined with attributes.
+        if (eval != null) {
+            instance.addItemHandler((ItemUseHandler) e -> {
+                eval.evalFunction("onUse", e, this);
+                e.cancel();
+            });
+
+            instance.addItemHandler((WeaponUseHandler) (e, p, it) -> {
+                eval.evalFunction("onWeaponHit", e, p, it);
+            });
+            instance.addItemHandler((ToolUseHandler) (e, it, i, drops) -> eval.evalFunction("onToolUse", e, it, i, drops));
+        }
+
+        if (rainbowHandler != null) {
+            instance.addItemHandler(rainbowHandler);
         }
 
         boolean hidden = section.getBoolean("hidden", false);
