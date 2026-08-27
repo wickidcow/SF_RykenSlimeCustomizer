@@ -1,4 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.gradle.api.attributes.java.TargetJvmVersion
 import org.gradle.language.jvm.tasks.ProcessResources
 
 plugins {
@@ -99,7 +100,13 @@ dependencies {
     compileOnly(libs.guizhan.lib.plugin)
     compileOnly(libs.placeholderapi)
     compileOnly(libs.byte.buddy)
-    compileOnly(libs.paper.api)
+    compileOnly(libs.paper.api) {
+        // Match Slimefun Legacy's build setup: Paper 26.2 is Java 25 even
+        // though this addon deliberately emits Java 21 class files.
+        attributes {
+            attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 25)
+        }
+    }
     compileOnly(libs.slimefun.legacy)
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)
