@@ -19,7 +19,12 @@ public class ItemWrapper implements Cloneable {
     }
 
     public ItemWrapper(ItemStack stack, int amount) {
-        this.stack = stack.asOne(); // clone
+        // Do not use ItemStack#asOne here. That calls clone() polymorphically,
+        // and SlimefunItemStack#clone recreates the Slimefun stack and requires
+        // non-null ItemMeta. AIR/placeholder-style inputs can legitimately have
+        // no ItemMeta, which made malformed or optional recipes crash loading.
+        this.stack = new ItemStack(stack);
+        this.stack.setAmount(1);
         this.amount = amount;
     }
 
@@ -54,21 +59,27 @@ public class ItemWrapper implements Cloneable {
     public List<ItemStack> toStacks(int amt) {
         List<ItemStack> list = new ArrayList<>();
         for (int i = 0; i < countStack(amt) - 1; i++) {
-            list.add(stack.asQuantity(stack.getMaxStackSize()));
+            ItemStack copy = new ItemStack(stack);
+            copy.setAmount(stack.getMaxStackSize());
+            list.add(copy);
         }
         int left = amt - (stack.getMaxStackSize() * Math.max(0, countStack(amt) - 1));
         if (left > 0) {
-            list.add(stack.asQuantity(left));
+            ItemStack copy = new ItemStack(stack);
+            copy.setAmount(left);
+            list.add(copy);
         }
         return list;
     }
 
     public ItemStack asOneStack() {
-        return stack.asQuantity(Math.min(stack.getMaxStackSize(), getAmount()));
+        ItemStack copy = new ItemStack(stack);
+        copy.setAmount(Math.min(stack.getMaxStackSize(), getAmount()));
+        return copy;
     }
 
     @Override
     public ItemWrapper clone() {
-        return new ItemWrapper(stack.clone(), amount);
+        return new ItemWrapper(new ItemStack(stack), amount);
     }
 }
