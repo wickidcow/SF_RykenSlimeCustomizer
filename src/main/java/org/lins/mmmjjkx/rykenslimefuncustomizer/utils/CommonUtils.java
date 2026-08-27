@@ -119,7 +119,14 @@ public class CommonUtils {
         @Nullable ItemStack[] itemStacks = new ItemStack[size];
         for (int i = 0; i < size; i++) {
             ConfigurationSection item = section.getConfigurationSection(String.valueOf(i + 1));
-            itemStacks[i] = readItem(file, item, addon);
+            if (item == null) continue;
+
+            ItemStack stack = readItem(file, item, addon);
+            if (stack == null) {
+                Debug.warn(file, item, "Skipping recipe because an ingredient could not be resolved.");
+                return null;
+            }
+            itemStacks[i] = stack;
         }
         return itemStacks;
     }
@@ -131,7 +138,10 @@ public class CommonUtils {
             ConfigurationSection item = section.getConfigurationSection(k);
             if (item == null) continue;
             var stack = readItem(file, item, addon);
-            if (stack == null) continue;
+            if (stack == null) {
+                Debug.warn(file, item, "Skipping machine recipe because an input item could not be resolved.");
+                return Collections.emptyList();
+            }
             descs.add(new InputDesc(stack, item.getInt("slot", -1), allNoConsume || item.getBoolean("noConsume", false)));
         }
 
@@ -338,7 +348,7 @@ public class CommonUtils {
 
     @SneakyThrows
     @SuppressWarnings("deprecation")
-    public static ItemStack readItem(
+    public static @Nullable ItemStack readItem(
             File file,
             ConfigurationSection section,
             ProjectAddon addon,
@@ -364,12 +374,12 @@ public class CommonUtils {
         try {
             itemStack = CommonUtils.readPipe(material, s -> getBaseItemStack(file, section, finalType, s, addon));
             if (itemStack == null) {
-                Debug.warn("无法识别 " + material + " ，已转为石头.");
-                itemStack = createDefaultItem();
+                Debug.warn(file, section, "Unable to resolve item: " + material + ". The containing item or recipe will be skipped.");
+                return null;
             }
         } catch (Exception e) {
-            itemStack = createDefaultItem();
-            Debug.warn(file, section, "加载物品失败! 已转为石头!", e);
+            Debug.warn(file, section, "Failed to load item: " + material + ". The containing item or recipe will be skipped.", e);
+            return null;
         }
 
         ItemMeta meta = itemStack.getItemMeta();

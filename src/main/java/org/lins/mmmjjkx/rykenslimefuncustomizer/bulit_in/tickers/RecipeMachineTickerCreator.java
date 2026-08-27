@@ -55,9 +55,13 @@ public class RecipeMachineTickerCreator implements TickerCreator {
                 Debug.error(file, recipe, "缺少或配置错误 '配方耗时' (seconds)");
                 continue;
             }
-            List<InputWrapper> input = CommonUtils.readInputs(file, recipe.getConfigurationSection("input"), addon, recipe.getBoolean("noConsume", false));
-            if (!canInputEmpty && input.isEmpty()) {
-                Debug.error(file, recipe, "缺少 '输入物品' (input)");
+            ConfigurationSection inputs = recipe.getConfigurationSection("input");
+            List<InputWrapper> input = CommonUtils.readInputs(file, inputs, addon, recipe.getBoolean("noConsume", false));
+            boolean configuredInputs = inputs != null && !inputs.getKeys(false).isEmpty();
+            if ((configuredInputs && input.isEmpty()) || (!canInputEmpty && input.isEmpty())) {
+                Debug.error(file, recipe, configuredInputs
+                    ? "Skipping recipe because one or more configured inputs could not be resolved."
+                    : "Missing recipe input (input).");
                 continue;
             }
             ConfigurationSection outputs = recipe.getConfigurationSection("output");
@@ -68,13 +72,18 @@ public class RecipeMachineTickerCreator implements TickerCreator {
 
             List<ItemStack> output = new ArrayList<>();
             IntList chances = new IntArrayList();
+            boolean invalidOutput = false;
             for (String k : outputs.getKeys(false)) {
                 ConfigurationSection outputCfg = outputs.getConfigurationSection(k);
-                if (outputCfg == null) break;
+                if (outputCfg == null) {
+                    invalidOutput = true;
+                    break;
+                }
                 var item = CommonUtils.readItem(file, outputCfg, addon);
                 if (item == null) {
-                    Debug.error(file, outputCfg, "物品配置错误 (output)");
-                    continue;
+                    Debug.error(file, outputCfg, "Skipping recipe because an output item could not be resolved.");
+                    invalidOutput = true;
+                    break;
                 }
 
                 int chance = CommonUtils.clamp(outputCfg.getInt("chance", 100), 1, 100,
@@ -82,6 +91,10 @@ public class RecipeMachineTickerCreator implements TickerCreator {
 
                 output.add(item);
                 chances.add(chance);
+            }
+
+            if (invalidOutput || output.isEmpty()) {
+                continue;
             }
 
             RecipeReader.addToList(list, recipe, seconds, input, chances, output.toArray(new ItemStack[0]));

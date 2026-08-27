@@ -429,6 +429,10 @@ public abstract class YamlReader<T> {
         Pair<RecipeType, ItemStack[]> recipePair = getRecipe(section, addon);
         RecipeType rt = recipePair.getFirstValue();
         ItemStack[] recipe = recipePair.getSecondValue();
+        if (recipe == null) {
+            Debug.warn(file, section, "Skipping " + id + " because its recipe contains an unresolved item.");
+            return null;
+        }
 
         ItemStack output = null;
         if (section.contains("recipeOutput")) {
