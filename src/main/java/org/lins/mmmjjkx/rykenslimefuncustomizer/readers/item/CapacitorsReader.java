@@ -48,7 +48,7 @@ public class CapacitorsReader extends YamlReader<CustomCapacitor> {
 
         int capacity = section.getInt("capacity", -1);
         if (capacity <= 0) {
-            Debug.error(file, section, "缺少或配置错误 '电容容量' (capacity)", 1, Integer.MAX_VALUE);
+            Debug.error(file, section, "MissingConfiguration error '' (capacity)", 1, Integer.MAX_VALUE);
             return null;
         }
 

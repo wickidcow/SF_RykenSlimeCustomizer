@@ -4,7 +4,6 @@ main: org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer
 api-version: '1.20'
 depend:
   - Slimefun
-  - GuizhanLibPlugin
 softdepend:
   - SlimeGlue
   - ColoredEnderChests

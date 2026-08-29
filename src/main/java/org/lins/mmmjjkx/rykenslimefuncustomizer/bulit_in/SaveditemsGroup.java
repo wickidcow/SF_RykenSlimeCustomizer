@@ -29,7 +29,6 @@ import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideImplementation;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
-import net.guizhanss.minecraft.guizhanlib.gugu.minecraft.helpers.inventory.ItemStackHelper;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -63,7 +62,7 @@ public class SaveditemsGroup extends MixedGroup<@NonNull SaveditemsGroup> {
             @NonNull Player player,
             @NonNull PlayerProfile playerProfile,
             @NonNull SlimefunGuideMode slimefunGuideMode) {
-        ChestMenu chestMenu = new ChestMenu(ItemStackHelper.getDisplayName(this.getItem(player)));
+        ChestMenu chestMenu = new ChestMenu(CommonUtils.getItemName(this.getItem(player)));
 
         Format format = Formats.sub;
         int pages = (this.objects.size() - 1) / format.getChars(Formats.Char.CONTENT).size() + 1;
@@ -90,7 +89,7 @@ public class SaveditemsGroup extends MixedGroup<@NonNull SaveditemsGroup> {
                         ItemStack clone = itemStack.clone();
                         String source =
                             clone.getItemMeta().getPersistentDataContainer().get(SOURCE_KEY, PersistentDataType.STRING);
-                        CommonUtils.addLore(clone, true, "&e源: " + source);
+                        CommonUtils.addLore(clone, true, "&eSource: " + source);
                         OnDisplay.Item.display(player, clone, OnDisplay.Item.Normal, impl)
                             .at(chestMenu, contentSlots.get(i), this.page);
 

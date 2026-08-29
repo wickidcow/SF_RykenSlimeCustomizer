@@ -32,7 +32,7 @@ public class RecipeMachineTickerCreator implements TickerCreator {
         if (importFrom != null) {
             var sf = SlimefunItem.getById(importFrom);
             if (sf == null) {
-                Debug.warn(file, section, "无效的配方复制源 (recipes_import_from): " + importFrom);
+                Debug.warn(file, section, "InvalidrecipeSource (recipes_import_from): " + importFrom);
             } else {
                 result.addAll(readRecipes(sf));
             }
@@ -52,7 +52,7 @@ public class RecipeMachineTickerCreator implements TickerCreator {
             if (recipe == null) continue;
             int seconds = recipe.getInt("seconds", -1);
             if (seconds < 0) {
-                Debug.error(file, recipe, "缺少或配置错误 '配方耗时' (seconds)");
+                Debug.error(file, recipe, "MissingConfiguration error 'recipe' (seconds)");
                 continue;
             }
             ConfigurationSection inputs = recipe.getConfigurationSection("input");
@@ -66,7 +66,7 @@ public class RecipeMachineTickerCreator implements TickerCreator {
             }
             ConfigurationSection outputs = recipe.getConfigurationSection("output");
             if (outputs == null) {
-                Debug.error(file, recipe, "缺少 '输出物品' (output)");
+                Debug.error(file, recipe, "Missing 'item' (output)");
                 continue;
             }
 
@@ -87,7 +87,7 @@ public class RecipeMachineTickerCreator implements TickerCreator {
                 }
 
                 int chance = CommonUtils.clamp(outputCfg.getInt("chance", 100), 1, 100,
-                    file, outputCfg, "'概率 (chance) 非法'");
+                    file, outputCfg, "' (chance) '");
 
                 output.add(item);
                 chances.add(chance);
@@ -107,7 +107,7 @@ public class RecipeMachineTickerCreator implements TickerCreator {
         var recipes = read(file, section, addon);
         if (recipes == null) return null;
         if (recipes.isEmpty()) {
-            Debug.warn("机器 " + sf.getId() + " 不含任何工作配方!");
+            Debug.warn("machine " + sf.getId() + " recipe!");
         }
         return new RecipeMachineTicker() {
             @Override

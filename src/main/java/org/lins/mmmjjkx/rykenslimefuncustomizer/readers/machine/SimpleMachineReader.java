@@ -54,14 +54,14 @@ public class SimpleMachineReader extends YamlReader<SlimefunItem> {
 
         Optional<SimpleMachineType> machineType = CommonUtils.getEnum(SimpleMachineType.class, machineTypeStr);
         if (machineType.isEmpty()) {
-            Debug.error(file, section, "错误的简单机器类型 (type): " + machineTypeStr);
+            Debug.error(file, section, "machine (type): " + machineTypeStr);
             return null;
         }
 
         ConfigurationSection settings = section.getConfigurationSection("settings");
 
         if (settings == null) {
-            Debug.error(file, section, "缺少简单机器类型配置 (settings)");
+            Debug.error(file, section, "Missingmachine (settings)");
             return null;
         }
 
@@ -74,33 +74,33 @@ public class SimpleMachineReader extends YamlReader<SlimefunItem> {
         if (machineType.get().isEnergy()) {
             capacity = settings.getInt("capacity");
             if (capacity <= 0) {
-                Debug.error(file, settings, "缺少或配置错误 '能源容量' (capacity)", 1, Integer.MAX_VALUE);
+                Debug.error(file, settings, "MissingConfiguration error 'Source' (capacity)", 1, Integer.MAX_VALUE);
                 return null;
             }
 
             consumption = settings.getInt("consumption");
             if (consumption <= 0) {
-                Debug.error(file, settings, "缺少或配置错误 '能源容量' (consumption)", 1, Integer.MAX_VALUE);
+                Debug.error(file, settings, "MissingConfiguration error 'Source' (consumption)", 1, Integer.MAX_VALUE);
                 return null;
             }
 
             if (!isAccelerator(machineType.get())) {
                 speed = settings.getInt("speed", 1);
                 if (speed <= 0) {
-                    Debug.error(file, settings, "配置错误 '合成速度' (speed)", 1, Integer.MAX_VALUE);
+                    Debug.error(file, settings, "Configuration error 'Speed' (speed)", 1, Integer.MAX_VALUE);
                     return null;
                 }
             } else {
                 radius = settings.getInt("radius", 1);
                 if (radius < 1) {
-                    Debug.error(file, settings, "配置错误 '范围' (radius)", 1, Integer.MAX_VALUE);
+                    Debug.error(file, settings, "Configuration error '' (radius)", 1, Integer.MAX_VALUE);
                     return null;
                 }
 
                 if (machineType.get() == SimpleMachineType.CROP_GROWTH_ACCELERATOR) {
                     speed = settings.getInt("speed", 1);
                     if (speed <= 0) {
-                        Debug.error(file, settings, "配置错误 '合成速度' (speed)", 1, Integer.MAX_VALUE);
+                        Debug.error(file, settings, "Configuration error 'Speed' (speed)", 1, Integer.MAX_VALUE);
                         return null;
                     }
                 }
@@ -109,7 +109,7 @@ public class SimpleMachineReader extends YamlReader<SlimefunItem> {
             if (machineType.get() == SimpleMachineType.AUTO_ANVIL) {
                 repairFactor = settings.getInt("repair_factor", 10);
                 if (repairFactor <= 0) {
-                    Debug.error(file, settings, "配置错误 '修理因子' (repair_factor)", 1, Integer.MAX_VALUE);
+                    Debug.error(file, settings, "Configuration error '' (repair_factor)", 1, Integer.MAX_VALUE);
                     return null;
                 }
             }

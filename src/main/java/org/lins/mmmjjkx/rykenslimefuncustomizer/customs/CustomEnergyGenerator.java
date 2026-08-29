@@ -65,7 +65,7 @@ public class CustomEnergyGenerator extends ScriptMachine implements EnergyNetPro
                     return result.asInt();
                 } else {
                     Debug.warn(
-                            "getGeneratedOutput() 返回了一个非整数值: " + result + " 导致自定义发电机的默认输出值将被使用， 请找附属对应作者修复此问题！");
+                            "getGeneratedOutput() : " + result + " , addon!");
                     return defaultOutput;
                 }
             } catch (Exception e) {

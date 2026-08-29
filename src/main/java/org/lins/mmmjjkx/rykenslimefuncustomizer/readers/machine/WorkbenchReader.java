@@ -94,19 +94,19 @@ public class WorkbenchReader extends YamlReader<CustomWorkbench> {
 
         CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getId().equalsIgnoreCase(id));
         if (menu == null) {
-            Debug.warn(file, section, "未找到菜单 " + id + " (menu), 使用默认菜单");
+            Debug.warn(file, section, "Not foundmenu " + id + " (menu), menu");
         }
 
         List<Integer> input = section.getIntegerList("input");
         List<Integer> output = section.getIntegerList("output");
 
         if (input.isEmpty()) {
-            Debug.error(file, section, "缺少或配置错误 '输入槽' (input)");
+            Debug.error(file, section, "MissingConfiguration error '' (input)");
             return null;
         }
 
         if (output.isEmpty()) {
-            Debug.error(file, section, "缺少或配置错误 '输出槽' (output)");
+            Debug.error(file, section, "MissingConfiguration error '' (output)");
             return null;
         }
 
@@ -117,13 +117,13 @@ public class WorkbenchReader extends YamlReader<CustomWorkbench> {
 
         int capacity = section.getInt("capacity", 0);
         if (capacity < 0) {
-            Debug.error(file, section, "配置错误 '能源容量' (capacity)", 0, Integer.MAX_VALUE);
+            Debug.error(file, section, "Configuration error 'Source' (capacity)", 0, Integer.MAX_VALUE);
             return null;
         }
 
         int energy = section.getInt("energyPerCraft", 0);
         if (energy < 0) {
-            Debug.error(file, section, "配置错误 '能量消耗' (energyPerCraft)", 0, Integer.MAX_VALUE);
+            Debug.error(file, section, "Configuration error '' (energyPerCraft)", 0, Integer.MAX_VALUE);
             return null;
         }
 
@@ -131,7 +131,7 @@ public class WorkbenchReader extends YamlReader<CustomWorkbench> {
 
         int click = section.getInt("click", -1);
         if (click < 0 || click > 53) {
-            Debug.error(file, section, "缺少或配置错误 '点击槽位' (click)", 0, 53);
+            Debug.error(file, section, "MissingConfiguration error 'slot' (click)", 0, 53);
             return null;
         }
 

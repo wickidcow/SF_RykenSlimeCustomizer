@@ -69,7 +69,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         boolean addRadiationLore = section.getBoolean("add_radiation_lore", true);
         Optional<Radioactivity> radioactivity = CommonUtils.getEnum(Radioactivity.class, radio);
         if (radioactivity.isEmpty()) {
-            Debug.warn(file, section, "错误的辐射等级级别: " + radio + " 已跳过");
+            Debug.warn(file, section, "RSC: " + radio + " skipped");
             return instance;
         }
 
@@ -113,19 +113,19 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         if (section.contains("rainbow")) {
             String materialType = section.getString("rainbow", "");
             if (!base.sfis().getType().isBlock()) {
-                Debug.warn(file, section, "非方块无法设置彩虹属性 (rainbow) 已跳过");
+                Debug.warn(file, section, "blockUnable to (rainbow) skipped");
             } else {
                 if (materialType.equalsIgnoreCase("CUSTOM")) {
                     List<String> materials = section.getStringList("rainbow_materials");
                     if (materials.isEmpty()) {
-                        Debug.warn(file, section, "未设置彩虹属性材料 (rainbow_materials) 已跳过");
+                        Debug.warn(file, section, " (rainbow_materials) skipped");
                     } else {
                         List<Material> colorMaterials = new ArrayList<>();
 
                         for (String materialS : materials) {
                             Optional<Material> material = CommonUtils.getMaterial(materialS);
                             if (material.isEmpty()) {
-                                Debug.warn(file, section, "错误的彩虹属性材料 (rainbow_materials): " + materialS + " 已跳过");
+                                Debug.warn(file, section, " (rainbow_materials): " + materialS + " skipped");
                                 continue;
                             }
                             colorMaterials.add(material.get());
@@ -136,7 +136,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                 } else {
                     Optional<ColoredMaterial> cm = CommonUtils.getEnum(ColoredMaterial.class, materialType);
                     if (cm.isEmpty()) {
-                        Debug.error(file, section, "无法识别可染色材料类型 (rainbow): " + materialType);
+                        Debug.error(file, section, "Unable to (rainbow): " + materialType);
                         return null;
                     }
 
@@ -159,7 +159,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
 
         if (section.getBoolean("anti_wither", false)) {
             if (!base.sfis().getType().isBlock()) {
-                Debug.warn(file, section, "非方块无法设置防凋零属性 已跳过");
+                Debug.warn(file, section, "blockUnable to skipped");
             } else {
                 Class<? extends CustomItem> clazz = ClassUtils.generateClass(
                     instance.getClass(),
@@ -186,7 +186,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         }
 
         if (section.contains("piglin_trade_chance")) {
-            int chance = CommonUtils.clamp(section.getInt("chance", 100), 1, 100, file, section, "'猪灵交易概率 (piglin_trade_chance) 非法'");
+            int chance = CommonUtils.clamp(section.getInt("chance", 100), 1, 100, file, section, "' (piglin_trade_chance) '");
 
             Class<? extends CustomItem> clazz = ClassUtils.generateClass(
                 instance.getClass(),
@@ -242,7 +242,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
     private CustomItem resolveEnergyCapacity(ConfigurationSection section, CustomItem instance, BaseResult base, Object[] constructorArgs) throws InvocationTargetException, InstantiationException, IllegalAccessException {
         double energyCapacity = section.getDouble("energy_capacity");
         if (energyCapacity < 1) {
-            Debug.warn(file, section, "能源容量 (energy_capacity) 超出范围 已跳过", 1.0d, Float.MAX_VALUE);
+            Debug.warn(file, section, "Source (energy_capacity) skipped", 1.0d, Float.MAX_VALUE);
             return instance;
         }
 

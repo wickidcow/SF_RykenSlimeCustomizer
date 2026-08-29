@@ -83,7 +83,7 @@ public class JavaScriptEval extends ScriptEval {
         try {
             return new JavaScriptEval(js, addon);
         } catch (Throwable e) {
-            Debug.error("无法加载脚本 " + js.getAbsolutePath(), e);
+            Debug.error("Unable toscript " + js.getAbsolutePath(), e);
             return null;
         }
     }
@@ -123,8 +123,8 @@ public class JavaScriptEval extends ScriptEval {
 
         if (RykenSlimefunCustomizer.addonManager.isLockingMainThread()) {
             Debug.warn("=================================================");
-            Debug.warn("附属正在加载中，由于附属加载机制，此时调用脚本可能会导致死锁!");
-            Debug.warn("若发生死锁，会导致服务器无法继续加载，此时请联系附属作者!");
+            Debug.warn("addonLoading, addon, script!");
+            Debug.warn(", Unable to, addon!");
             Debug.warn("=================================================");
         }
 
@@ -134,14 +134,14 @@ public class JavaScriptEval extends ScriptEval {
             Value bindings = jsEngine.getBindings("js");
 
             if (!bindings.hasMember(funName)) {
-                Debug.debug(() -> "在附属" + addon.getAddonId() + "中加载脚本" + getFile().getName() + "时遇到了问题: " + "不存在函数 " + funName);
+                Debug.debug(() -> "addon" + addon.getAddonId() + "script" + getFile().getName() + "RSC: " + "RSC: " + funName);
                 failedFunctions.add(funName);
                 return null;
             }
 
             Value member = bindings.getMember(funName);
             if (!member.canExecute()) {
-                Debug.debug(() -> "在附属" + addon.getAddonId() + "中加载脚本" + getFile().getName() + "时遇到了问题: " + "函数 " + funName + " 不可执行");
+                Debug.debug(() -> "addon" + addon.getAddonId() + "script" + getFile().getName() + "RSC: " + "RSC: " + funName + "RSC: ");
                 failedFunctions.add(funName);
                 return null;
             }
@@ -153,7 +153,7 @@ public class JavaScriptEval extends ScriptEval {
         try {
             Value result = function.execute(args);
             Debug.debug(
-                    "运行了 " + getAddon().getAddonName() + "的脚本" + getFile().getName() + "中的函数 " + funName);
+                    "RSC: " + getAddon().getAddonName() + "script" + getFile().getName() + "RSC: " + funName);
             return result;
         } catch (IllegalStateException e) {
             if (!e.getMessage().contains("Multi threaded access")) {
@@ -173,13 +173,13 @@ public class JavaScriptEval extends ScriptEval {
     private void handleExecutionError(Throwable e, String funName) {
         functionCache.remove(funName);
 
-        Debug.debug("由于开启了 debug 模式，此次脚本运行不会被记录为失败");
+        Debug.debug(" debug , scriptfailed");
         if (!RykenSlimefunCustomizer.INSTANCE.getConfig().getBoolean("debug")) {
             failedFunctions.add(funName);
         }
 
         Debug.error(
-                "在运行" + getAddon().getAddonName() + "的脚本" + getFile().getName() + "时发生错误", e);
+                "RSC: " + getAddon().getAddonName() + "script" + getFile().getName() + "RSC: ", e);
     }
 
     protected final synchronized void contextInit() {
@@ -192,7 +192,7 @@ public class JavaScriptEval extends ScriptEval {
                         Source.newBuilder("js", getFileContext(), "JavaScript").build());
             } catch (IOException e) {
                 Debug.error(
-                        "在加载" + getAddon().getAddonName() + "的脚本" + getFile().getName() + "时发生错误", e);
+                        "RSC: " + getAddon().getAddonName() + "script" + getFile().getName() + "RSC: ", e);
             }
         }
     }

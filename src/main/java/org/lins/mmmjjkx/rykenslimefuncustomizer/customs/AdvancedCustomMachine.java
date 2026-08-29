@@ -206,11 +206,11 @@ public class AdvancedCustomMachine extends AContainer implements RecipeDisplayIt
                 ).get(10, TimeUnit.SECONDS);
             }
         } catch (ExecutionException e) {
-            Debug.error("脚本 " + eval.getFile().getName() + "#" + methodName + " 运行错误!", e);
+            Debug.error("script " + eval.getFile().getName() + "#" + methodName + "RSC: ", e);
         } catch (InterruptedException e) {
-            Debug.error("脚本 " + eval.getFile().getName() + "#" + methodName + " 运行终止!", e);
+            Debug.error("script " + eval.getFile().getName() + "#" + methodName + "RSC: ", e);
         } catch (TimeoutException e) {
-            Debug.error("脚本 " + eval.getFile().getName() + "#" + methodName + " 运行超时! (10s)", e);
+            Debug.error("script " + eval.getFile().getName() + "#" + methodName + " ! (10s)", e);
         }
         return null;
     }

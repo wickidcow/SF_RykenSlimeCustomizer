@@ -75,19 +75,19 @@ public class SuperMultiBlockMachineReader extends YamlReader<CustomSuperMultiBlo
 
         CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getId().equalsIgnoreCase(id));
         if (menu == null) {
-            Debug.warn("未找到菜单 " + id + " 使用默认菜单");
+            Debug.warn("Not foundmenu " + id + " menu");
         }
 
         List<Integer> input = section.getIntegerList("input");
         List<Integer> output = section.getIntegerList("output");
 
         if (input.isEmpty()) {
-            Debug.error(file, section, "缺少或配置错误 '输入槽' (input)");
+            Debug.error(file, section, "MissingConfiguration error '' (input)");
             return null;
         }
 
         if (output.isEmpty()) {
-            Debug.error(file, section, "缺少或配置错误 '输出槽' (output)");
+            Debug.error(file, section, "MissingConfiguration error '' (output)");
             return null;
         }
 
@@ -98,19 +98,19 @@ public class SuperMultiBlockMachineReader extends YamlReader<CustomSuperMultiBlo
 
         int capacity = section.getInt("capacity", 0);
         if (capacity < 0) {
-            Debug.error(file, section, "配置错误 '能源容量' (capacity)", 0, Integer.MAX_VALUE);
+            Debug.error(file, section, "Configuration error 'Source' (capacity)", 0, Integer.MAX_VALUE);
             return null;
         }
 
         int energy = section.getInt("energyPerCraft", 0);
         if (energy < 0) {
-            Debug.error(file, section, "配置错误 '能量消耗' (energyPerCraft)", 0, Integer.MAX_VALUE);
+            Debug.error(file, section, "Configuration error '' (energyPerCraft)", 0, Integer.MAX_VALUE);
             return null;
         }
 
         int speed = section.getInt("speed", 1);
         if (speed <= 0) {
-            Debug.error(file, section, "配置错误 '合成速度' (speed)", 1, Integer.MAX_VALUE);
+            Debug.error(file, section, "Configuration error 'Speed' (speed)", 1, Integer.MAX_VALUE);
             return null;
         }
 
@@ -131,12 +131,12 @@ public class SuperMultiBlockMachineReader extends YamlReader<CustomSuperMultiBlo
 
         if (redirectMenu != null) {
             if (definition.getMapping().get(redirectMenu) == null) {
-                Debug.error(file, section, "不存在指定的重定向映射 " + redirectMenu);
+                Debug.error(file, section, "RSC: " + redirectMenu);
                 return null;
             }
 
             if (definition.count(redirectMenu) != 1) {
-                Debug.error(file, section, "重定向菜单映射 " + redirectMenu + " 至多有 1 个!");
+                Debug.error(file, section, "menu " + redirectMenu + " Has 1 !");
                 return null;
             }
         }
@@ -175,7 +175,7 @@ public class SuperMultiBlockMachineReader extends YamlReader<CustomSuperMultiBlo
     private SuperMultiBlockDefinition readMultiBlockDefinition(ConfigurationSection section, String s, @Nullable JavaScriptEval eval) {
         if (section == null) return null;
         if (!section.contains("structure")) {
-            Debug.error(file, section, "缺失结构定义 (structure)");
+            Debug.error(file, section, " (structure)");
             return null;
         }
 
@@ -203,7 +203,7 @@ public class SuperMultiBlockMachineReader extends YamlReader<CustomSuperMultiBlo
 
         var mps = section.getConfigurationSection("mapping");
         if (mps == null) {
-            Debug.error(file, section, "缺失方块映射 (mapping) 定义");
+            Debug.error(file, section, "block (mapping) ");
             return null;
         }
         Pair<Map<String, MultiBlockPart>, String> mappingAndCore = readMapping(mps, s, eval);
@@ -213,23 +213,23 @@ public class SuperMultiBlockMachineReader extends YamlReader<CustomSuperMultiBlo
 
         List<?> structure0 = section.getList("structure");
         if (structure0 == null) {
-            Debug.error(file, section, "缺失结构定义 (structure)");
+            Debug.error(file, section, " (structure)");
             return null;
         }
         List<List<String>> structure = new ArrayList<>();
         for (Object o : structure0) {
             if (!(o instanceof List<?> st)) {
-                Debug.error(file, section, "结构定义 (structure) 格式错误");
+                Debug.error(file, section, " (structure) ");
                 return null;
             }
             if (!(st.getFirst() instanceof String)) {
-                Debug.error(file, section, "结构定义 (structure) 格式错误");
+                Debug.error(file, section, " (structure) ");
                 return null;
             }
             structure.add((List<String>) st);
         }
         if (structure.isEmpty()) {
-            Debug.error(file, section, "结构定义 (structure) 不能为空");
+            Debug.error(file, section, " (structure) ");
             return null;
         }
 
@@ -246,7 +246,7 @@ public class SuperMultiBlockMachineReader extends YamlReader<CustomSuperMultiBlo
                         blockPositions.put(new Vector3i(j, -i, k), block);
                         if (block.equals(core)) {
                             if (corePos != null) {
-                                Debug.error(file, section, "结构定义 (structure) 中同时存在多个核心 (core)，无法判断核心 (core)");
+                                Debug.error(file, section, " (structure) (core), Unable to (core)");
                                 return null;
                             }
 
@@ -258,20 +258,20 @@ public class SuperMultiBlockMachineReader extends YamlReader<CustomSuperMultiBlo
         }
         
         if (corePos == null) {
-            Debug.error(file, section, "在结构定义 (structure) 中不存在核心 (core)");
+            Debug.error(file, section, " (structure) (core)");
             return null;
         }
 
         MultiBlockPart corePart = mapping.get(core);
         if (corePart == null) {
-            Debug.error(file, section, "在方块映射 (mapping) 中不存在核心 (core)");
+            Debug.error(file, section, "block (mapping) (core)");
             return null;
         }
         Map<Vector3i, MultiBlockPart> blockParts = new HashMap<>();
         for (Vector3i pos : blockPositions.keySet()) {
             String blockDesc = blockPositions.get(pos);
             if (!mapping.containsKey(blockDesc)) {
-                Debug.error(file, section, "在方块映射 (mapping) 中不存在映射: " + blockDesc);
+                Debug.error(file, section, "block (mapping) : " + blockDesc);
                 return null;
             }
             blockParts.put(pos.subtract(corePos), mapping.get(blockDesc));
@@ -280,7 +280,7 @@ public class SuperMultiBlockMachineReader extends YamlReader<CustomSuperMultiBlo
         blockParts.remove(corePos.subtract(corePos)); // 移除 core，避免影响多方块嵌套的情况
         var baseDirection = CommonUtils.getEnum(HorizonDirection.class, section.getString("baseDirection", "north"));
         if (baseDirection.isEmpty()) {
-            Debug.error(file, section, "存在无效的初方向 (baseDirection): " + baseDirection);
+            Debug.error(file, section, "Invalid (baseDirection): " + baseDirection);
             return null;
         }
 
@@ -301,12 +301,12 @@ public class SuperMultiBlockMachineReader extends YamlReader<CustomSuperMultiBlo
         for (String key : section.getKeys(false)) {
             var partSection = section.getConfigurationSection(key);
             if (partSection == null) {
-                Debug.error(file, section, "方块映射 (mapping) 中存在无效的方块定义: " + key);
+                Debug.error(file, section, "block (mapping) Invalidblock: " + key);
                 return null;
             }
             if (partSection.contains("core")) {
                 if (core != null) {
-                    Debug.error(file, section, "方块映射 (mapping) 中同时存在多个核心 (core)，无法判断核心 (core)");
+                    Debug.error(file, section, "block (mapping) (core), Unable to (core)");
                     return null;
                 }
                 core = key;
@@ -317,7 +317,7 @@ public class SuperMultiBlockMachineReader extends YamlReader<CustomSuperMultiBlo
         }
 
         if (core == null) {
-            Debug.error(file, section, "在方块映射 (mapping) 中不存在核心 (core)");
+            Debug.error(file, section, "block (mapping) (core)");
             return null;
         }
 
@@ -332,7 +332,7 @@ public class SuperMultiBlockMachineReader extends YamlReader<CustomSuperMultiBlo
         // 对于 custom，由脚本代理检查
         String type = section.getString("material_type");
         if (type == null) {
-            Debug.error(file, section, mappingLocation + " / 缺失方块定义类型 (material_type)");
+            Debug.error(file, section, mappingLocation + " / block (material_type)");
             return null;
         }
 
@@ -340,7 +340,7 @@ public class SuperMultiBlockMachineReader extends YamlReader<CustomSuperMultiBlo
             case "mc" -> {
                 String material = section.getString("material");
                 if (material == null) {
-                    Debug.error(file, section, mappingLocation + " / 缺失方块定义原版材料/原版方块数据 (material)");
+                    Debug.error(file, section, mappingLocation + " / block/block (material)");
                     return null;
                 }
 
@@ -350,14 +350,14 @@ public class SuperMultiBlockMachineReader extends YamlReader<CustomSuperMultiBlo
                             BlockData blockData = Bukkit.createBlockData(part);
                             return new VanillaMultiBlockPart(blockData, readDisplayDescriptor(s, section, part, mappingLocation));
                         } catch (IllegalArgumentException e) {
-                            Debug.error(file, section, mappingLocation + " / 原版方块数据 (material) 无效:" + part);
+                            Debug.error(file, section, mappingLocation + " / block (material) Invalid:" + part);
                             return null;
                         }
                     }
 
                     Optional<Material> m = CommonUtils.getMaterial(part);
                     if (m.isEmpty() || !m.get().isBlock() || m.get().isLegacy()) {
-                        Debug.error(file, section, mappingLocation + " / 原版材料 (material) 无效:" + part);
+                        Debug.error(file, section, mappingLocation + " / (material) Invalid:" + part);
                         return null;
                     }
 
@@ -366,7 +366,7 @@ public class SuperMultiBlockMachineReader extends YamlReader<CustomSuperMultiBlo
                 });
 
                 if (r == null) {
-                    Debug.error(file, section, mappingLocation + " / 原版材料 (material) 无效:" + material);
+                    Debug.error(file, section, mappingLocation + " / (material) Invalid:" + material);
                     return null;
                 }
 
@@ -375,17 +375,17 @@ public class SuperMultiBlockMachineReader extends YamlReader<CustomSuperMultiBlo
             case "slimefun" -> {
                 String material = section.getString("material");
                 if (material == null) {
-                    Debug.error(file, section, mappingLocation + " / 缺失方块定义粘液材料 (material)");
+                    Debug.error(file, section, mappingLocation + " / block (material)");
                     return null;
                 }
                 SlimefunMultiBlockPart r = CommonUtils.readPipe(material, part -> {
                     SlimefunItemStack item = addon.getSfStack(part);
                     if (item == null) {
-                        Debug.error(file, section, mappingLocation + " / 未找到粘液材料 (material): " + part);
+                        Debug.error(file, section, mappingLocation + " / Not found (material): " + part);
                         return null;
                     }
                     if (!item.getType().isBlock()) {
-                        Debug.error(file, section, mappingLocation + " / 粘液材料 (material) 不是方块: " + part);
+                        Debug.error(file, section, mappingLocation + " / (material) block: " + part);
                         return null;
                     }
                     if (getPreloadedItems(s).contains(item)) {
@@ -395,20 +395,20 @@ public class SuperMultiBlockMachineReader extends YamlReader<CustomSuperMultiBlo
                     }
                 });
                 if (r == null) {
-                    Debug.error(file, section, mappingLocation + " / 粘液材料 (material) 无效: " + material);
+                    Debug.error(file, section, mappingLocation + " / (material) Invalid: " + material);
                     return null;
                 }
                 return r;
             }
             case "custom" -> {
                 if (eval == null) {
-                    Debug.error(file, section, mappingLocation + " / 缺少脚本，无法生成多方块结构定义");
+                    Debug.error(file, section, mappingLocation + " / Missingscript, Unable tomultiblock");
                     return null;
                 }
                 return new CustomMultiBlockPart(eval, readDisplayDescriptor(s, section, mappingLocation));
             }
             default -> {
-                Debug.error(file, section, mappingLocation + " / 无效的方块定义类型 (material_type): " + type);
+                Debug.error(file, section, mappingLocation + " / Invalidblock (material_type): " + type);
                 return null;
             }
         }
@@ -423,14 +423,14 @@ public class SuperMultiBlockMachineReader extends YamlReader<CustomSuperMultiBlo
                     BlockData blockData = Bukkit.createBlockData(part);
                     return new BlockDisplayDescriptor(blockData);
                 } catch (IllegalArgumentException e) {
-                    Debug.error(file, section, mappingLocation + "/ 原版方块数据 (material) 无效:" + part);
+                    Debug.error(file, section, mappingLocation + "/ block (material) Invalid:" + part);
                     return null;
                 }
             }
 
             Material mt = Material.matchMaterial(part);
             if (mt == null || mt.isLegacy()) {
-                Debug.error(file, section, mappingLocation + "/ 原版材料 (material) 无效:" + part);
+                Debug.error(file, section, mappingLocation + "/ (material) Invalid:" + part);
                 return null;
             }
 
@@ -441,7 +441,7 @@ public class SuperMultiBlockMachineReader extends YamlReader<CustomSuperMultiBlo
 
             if (mt.isBlock()) return new BlockDisplayDescriptor(mt.createBlockData());
 
-            Debug.error(file, section, mappingLocation + "/ 指定的原版材料 (material) 不受支持:" + part);
+            Debug.error(file, section, mappingLocation + "/ (material) :" + part);
             return null;
         });
     }

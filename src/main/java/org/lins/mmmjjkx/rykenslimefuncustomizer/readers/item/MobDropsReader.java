@@ -65,21 +65,21 @@ public class MobDropsReader extends YamlReader<CustomMobDrop> {
         String type = section.getString("entity");
         Optional<EntityType> entity = CommonUtils.getEnum(EntityType.class, type);
         if (entity.isEmpty()) {
-            Debug.error(file, section, "错误的生物类型 (entity): " + type);
+            Debug.error(file, section, " (entity): " + type);
             return null;
         }
 
         EntityType entityType = entity.get();
 
         Material eggMaterial = CommonUtils.getEnum(Material.class, entityType + "_SPAWN_EGG").orElse(Material.EGG);
-        int chance = CommonUtils.clamp(section.getInt("chance", 100), 1, 100, file, section, "'掉落概率 (chance) 非法'");
+        int chance = CommonUtils.clamp(section.getInt("chance", 100), 1, 100, file, section, "' (chance) '");
 
-        Component lore = t("&a击杀 ")
+        Component lore = t("RSC: ")
                 .append(t("&b"))
                 .append(Component.translatable(entityType.translationKey()))
-                .append(t(" &a时会有"))
+                .append(t(" &aHas"))
                 .append(t(" &b " + chance + "%"))
-                .append(t(" &a的概率掉落"));
+                .append(t("RSC: "));
 
         ItemStack itemStack = new CustomItemStack(eggMaterial, meta -> {
             meta.lore(List.of(lore));

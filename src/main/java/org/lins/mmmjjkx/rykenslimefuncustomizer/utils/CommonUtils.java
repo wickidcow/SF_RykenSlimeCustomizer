@@ -28,8 +28,6 @@ import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerHead;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerSkin;
 import lombok.SneakyThrows;
-import net.guizhanss.guizhanlib.minecraft.utils.compatibility.EnchantmentX;
-import net.guizhanss.guizhanlib.minecraft.utils.compatibility.ItemFlagX;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -193,7 +191,7 @@ public class CommonUtils {
 
         String type = section.getString("material_type", "mc");
         if (!type.equalsIgnoreCase("none") && (!section.contains("material") || section.getString("material") == null)) {
-            Debug.error(file, section, "你设置了材料类型，但没有设置对应的材料! (material)");
+            Debug.error(file, section, ", Has! (material)");
             return null;
         }
 
@@ -214,7 +212,7 @@ public class CommonUtils {
 
         String[] parts = color.split(",");
         if (parts.length != 3) {
-            Debug.warn(file, section, "物品颜色 (color) 非法: " + Arrays.toString(parts) + " 已跳过");
+            Debug.warn(file, section, "item (color) : " + Arrays.toString(parts) + " skipped");
             return;
         }
 
@@ -227,20 +225,20 @@ public class CommonUtils {
                 }
                 case PotionMeta pm -> {
                     pm.setColor(bkcolor);
-                    pm.addItemFlags(ItemFlagX.HIDE_ADDITIONAL_TOOLTIP);
+                    pm.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
                 }
                 case FireworkEffectMeta fem -> {
                     fem.setEffect(FireworkEffect.builder()
                         .withColor(bkcolor)
                         .build());
-                    fem.addItemFlags(ItemFlagX.HIDE_ADDITIONAL_TOOLTIP);
+                    fem.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
                 }
                 default -> {
-                    Debug.warn(file, section, "物品不支持使用物品颜色 (color): " + meta.getClass().getSimpleName() + " 已跳过");
+                    Debug.warn(file, section, "itemitem (color): " + meta.getClass().getSimpleName() + " skipped");
                 }
             }
         } catch (NumberFormatException e) {
-            Debug.warn("物品颜色 (color) 非法: " + color + " 已跳过");
+            Debug.warn("item (color) : " + color + " skipped");
             return;
         }
     }
@@ -270,7 +268,7 @@ public class CommonUtils {
                 SlimefunItemStack sfis = addon.getSfStack(material);
                 if (sfis != null) return sfis.clone();
 
-                Debug.warn(file, section, "无法找到粘液物品: " + material);
+                Debug.warn(file, section, "Unable toitem: " + material);
                 return null;
             }
             case "uniitem" -> {
@@ -279,7 +277,7 @@ public class CommonUtils {
                     String[] split = material.split("::");
                     ItemStack item = provider.item(new ItemKey(split[0], split[1]));
                     if (item == null) {
-                        Debug.warn(file, section, "无法读取 UniItem 物品!");
+                        Debug.warn(file, section, "Unable to UniItem item!");
                         return null;
                     }
 
@@ -287,14 +285,14 @@ public class CommonUtils {
 
                     return item;
                 } catch (NoClassDefFoundError e) {
-                    Debug.warn(file, section, "无法加载 UniItem 依赖! 无法识别物品.", e);
+                    Debug.warn(file, section, "Unable to UniItem Dependencies! Unable toitem.", e);
                     return null;
                 }
             }
             case "saveditem" -> {
                 File saveditemFile = new File(addon.getSavedItemsFolder(), material + ".yml");
                 if (!saveditemFile.exists()) {
-                    Debug.warn(file, section, "保存物品对应的文件不存在: " + material);
+                    Debug.warn(file, section, "item: " + material);
                     return null;
                 }
 
@@ -306,7 +304,7 @@ public class CommonUtils {
                 if (itemStack != null) {
                     return itemStack;
                 } else {
-                    Debug.warn(file, section, "无法识别对应的保存物品: " + material);
+                    Debug.warn(file, section, "Unable toitem: " + material);
                     return null;
                 }
             }
@@ -314,7 +312,7 @@ public class CommonUtils {
                 if (material.startsWith("minecraft:")) material = material.substring(10);
                 Optional<Material> mat = getMaterial(material);
                 if (mat.isEmpty()) {
-                    Debug.warn(file, section, "无法识别原版物品: " + material);
+                    Debug.warn(file, section, "Unable toitem: " + material);
                     return null;
                 }
 
@@ -328,19 +326,19 @@ public class CommonUtils {
             case "built_in" -> {
                 var stack = BuiltInItems.createStack(material);
                 if (stack == null) {
-                    Debug.warn(file, section, "无法识别内置物品: " + material);
+                    Debug.warn(file, section, "Unable toitem: " + material);
                     return null;
                 }
                 return stack;
             }
             default -> {
-                Debug.warn(file, section, "无法识别的类型: " + type + " 尝试以原版物品重新加载...");
+                Debug.warn(file, section, "Unable to: " + type + " item...");
                 var mc = getBaseItemStack(file, section, "mc", material, addon);
                 if (mc != null) return mc;
-                Debug.warn(file, section, "无法识别的类型: " + type + " 尝试以粘液物品重新加载...");
+                Debug.warn(file, section, "Unable to: " + type + " item...");
                 var sf = getBaseItemStack(file, section, "slimefun", material, addon);
                 if (sf != null) return sf;
-                Debug.warn(file, section, "无法识别的类型: " + type + " 无法加载!");
+                Debug.warn(file, section, "Unable to: " + type + " Unable to!");
                 return null;
             }
         }
@@ -390,7 +388,7 @@ public class CommonUtils {
         itemStack.setItemMeta(meta);
 
         if (amount > 100 || amount < -1) {
-            Debug.warn(file, section, "物品数量 (amount) 超出范围: " + amount, -1, 100);
+            Debug.warn(file, section, "item (amount) : " + amount, -1, 100);
         } else {
             itemStack.setAmount(amount);
         }
@@ -400,7 +398,7 @@ public class CommonUtils {
             for (String enchant : enchants) {
                 String[] s2 = enchant.split(" ");
                 if (s2.length != 2) {
-                    Debug.warn(file, section, "附魔格式非法 (enchantments): " + enchant + " 已跳过");
+                    Debug.warn(file, section, " (enchantments): " + enchant + " skipped");
                     continue;
                 }
 
@@ -408,7 +406,7 @@ public class CommonUtils {
 
                 Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(enchantName.toLowerCase(Locale.ROOT)));
                 if (enchantment == null) {
-                    Debug.warn(file, section, "未知的附魔 (enchantments): " + enchantName + " 已跳过");
+                    Debug.warn(file, section, " (enchantments): " + enchantName + " skipped");
                     continue;
                 }
 
@@ -416,18 +414,40 @@ public class CommonUtils {
                     int lvl = Integer.parseInt(s2[1]);
                     itemStack.addUnsafeEnchantment(enchantment, lvl);
                 } catch (NumberFormatException e) {
-                    Debug.warn(file, section, "附魔格式非法 (enchantments): " + enchant + " 已跳过");
+                    Debug.warn(file, section, " (enchantments): " + enchant + " skipped");
                     continue;
                 }
             }
         }
 
         if (glow) {
-            itemStack.addUnsafeEnchantment(EnchantmentX.LUCK_OF_THE_SEA, 1);
+            Enchantment glowEnchantment = Enchantment.getByKey(NamespacedKey.minecraft("luck_of_the_sea"));
+            if (glowEnchantment != null) {
+                itemStack.addUnsafeEnchantment(glowEnchantment, 1);
+            }
             itemStack.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         }
 
         return itemStack;
+    }
+
+    public static String getItemName(ItemStack stack) {
+        if (stack == null || stack.getType().isAir()) return "Air";
+        ItemMeta meta = stack.getItemMeta();
+        if (meta != null && meta.hasDisplayName()) return meta.getDisplayName();
+        String key = stack.getType().getKey().getKey().replace('_', ' ');
+        StringBuilder name = new StringBuilder(key.length());
+        boolean upper = true;
+        for (char c : key.toCharArray()) {
+            if (upper && Character.isLetter(c)) {
+                name.append(Character.toUpperCase(c));
+                upper = false;
+            } else {
+                name.append(c);
+                if (c == ' ') upper = true;
+            }
+        }
+        return name.toString();
     }
 
     public static CustomItemStack createDefaultItem() {
@@ -488,7 +508,7 @@ public class CommonUtils {
             return;
         }
         if (stream == null) {
-            Debug.error("无法找到文件 " + resourceFile + " 请检查插件文件是否损坏!");
+            Debug.error("Unable to " + resourceFile + "RSC: ");
             return;
         }
         try {
@@ -499,7 +519,7 @@ public class CommonUtils {
             completeFile(configuration, configuration2);
             configuration2.save(file);
         } catch (Exception e) {
-            Debug.error("无法找到文件 " + resourceFile + " 的同步，请检查插件文件是否损坏!", e);
+            Debug.error("Unable to " + resourceFile + "RSC: ", e);
         }
     }
 
@@ -565,7 +585,7 @@ public class CommonUtils {
     }
 
     public static String richFormatSeconds(int seconds) {
-        String lore = "&e制作时间: &b" + seconds + "&es";
+        String lore = "RSC: " + seconds + "&es";
         if (seconds > 60) {
             lore = lore.concat("(" + CommonUtils.formatSeconds(seconds) + "&e)");
         }
@@ -621,12 +641,12 @@ public class CommonUtils {
 
     public static int clamp(int v, int a, int b, File file, ConfigurationSection section, String msg) {
         if (v < a) {
-            Debug.warn(file, section, msg + "，已转为 " + a, a, b);
+            Debug.warn(file, section, msg + "RSC: " + a, a, b);
             v = a;
         }
 
         if (v > b) {
-            Debug.warn(file, section, msg + "，已转为 " + b, a, b);
+            Debug.warn(file, section, msg + "RSC: " + b, a, b);
             v = b;
         }
 
@@ -635,12 +655,12 @@ public class CommonUtils {
 
     public static float clamp(float v, float a, float b, File file, ConfigurationSection section, String msg) {
         if (v < a) {
-            Debug.warn(file, section, msg + "，已转为 " + a, a, b);
+            Debug.warn(file, section, msg + "RSC: " + a, a, b);
             v = a;
         }
 
         if (v > b) {
-            Debug.warn(file, section, msg + "，已转为 " + b, a, b);
+            Debug.warn(file, section, msg + "RSC: " + b, a, b);
             v = b;
         }
 
@@ -649,12 +669,12 @@ public class CommonUtils {
 
     public static float clamp(float v, float a, float def, float b, File file, ConfigurationSection section, String msg) {
         if (v < a) {
-            Debug.warn(file, section, msg + "，已转为 " + def, a, b);
+            Debug.warn(file, section, msg + "RSC: " + def, a, b);
             v = a;
         }
 
         if (v > b) {
-            Debug.warn(file, section, msg + "，已转为 " + def, a, b);
+            Debug.warn(file, section, msg + "RSC: " + def, a, b);
             v = b;
         }
 
@@ -686,7 +706,7 @@ public class CommonUtils {
     public static boolean passItemIdConflictCheck(String id) {
         SlimefunItem sf = SlimefunItem.getById(id);
         if (sf == null) return true;
-        Debug.error("ID 冲突: " + id + " 与 " + sf.getAddon().getName() + " 中的物品发生了 ID 冲突");
+        Debug.error("ID : " + id + "RSC: " + sf.getAddon().getName() + " item ID ");
         return false;
     }
 
@@ -694,7 +714,7 @@ public class CommonUtils {
         ItemGroup ig = getIf(Slimefun.getRegistry().getAllItemGroups(),
             i -> i.getKey().getKey().equalsIgnoreCase(id));
         if (ig == null) return true;
-        Debug.error("ID 冲突: " + id + " 与粘液附属 " + ig.getAddon().getName() + " 中的物品组发生 ID 冲突");
+        Debug.error("ID : " + id + " addon " + ig.getAddon().getName() + " item group ID ");
         return false;
     }
 
@@ -705,7 +725,7 @@ public class CommonUtils {
             return v1;
         });
 
-        if (v == null) Debug.error("无法找到物品组 (item_group): " + id);
+        if (v == null) Debug.error("Unable toitem group (item_group): " + id);
         return v;
     }
 
@@ -731,7 +751,7 @@ public class CommonUtils {
 
     public static boolean passMenuIdConflictCheck(String id, ProjectAddon addon) {
         if (getIf(addon.getMenus(), m -> m.getId().equalsIgnoreCase(id)) == null) return true;
-        Debug.error("ID 冲突：已存在菜单 ID 为" + id + "的菜单");
+        Debug.error("ID : menu ID " + id + "menu");
         return false;
     }
 }

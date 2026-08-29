@@ -97,7 +97,6 @@ dependencies {
     compileOnly(libs.graalvm.sdk.nativebridge)
     compileOnly(libs.graalvm.sdk.jniutils)
     compileOnly(libs.graalvm.regex)
-    compileOnly(libs.guizhan.lib.plugin)
     compileOnly(libs.placeholderapi)
     compileOnly(libs.byte.buddy)
     compileOnly(libs.paper.api) {

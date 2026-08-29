@@ -36,7 +36,7 @@ public class LinkedRecipeMachineTickerCreator extends RecipeMachineTickerCreator
         if (importFrom != null) {
             var sf = SlimefunItem.getById(importFrom);
             if (sf == null) {
-                Debug.warn(file, section, "无效的配方复制源 (recipes_import_from): " + importFrom);
+                Debug.warn(file, section, "InvalidrecipeSource (recipes_import_from): " + importFrom);
             } else {
                 result.addAll(readRecipes(sf));
             }
@@ -54,7 +54,7 @@ public class LinkedRecipeMachineTickerCreator extends RecipeMachineTickerCreator
 
         int saveAmount = section.getInt("saveAmount", 0);
         if (saveAmount < 0 || saveAmount >= 63) {
-            Debug.error(file, section, "配置错误 '预留数量' (saveAmount)", 0, 62);
+            Debug.error(file, section, "Configuration error '' (saveAmount)", 0, 62);
             return null;
         }
 
@@ -64,18 +64,18 @@ public class LinkedRecipeMachineTickerCreator extends RecipeMachineTickerCreator
             if (recipe == null) continue;
             int seconds = recipe.getInt("seconds");
             if (seconds < 0) {
-                Debug.warn(file, recipe, "缺少或配置错误 '时间间隔' (seconds)");
+                Debug.warn(file, recipe, "MissingConfiguration error '' (seconds)");
                 continue;
             }
             ConfigurationSection inputs = recipe.getConfigurationSection("input");
             if (inputs == null) {
-                Debug.warn(file, recipe, "缺少 '输入物品' (input)");
+                Debug.warn(file, recipe, "Missing 'item' (input)");
                 continue;
             }
 
             ConfigurationSection outputs = recipe.getConfigurationSection("output");
             if (outputs == null) {
-                Debug.warn(file, recipe, "缺少 '输出物品' (output)");
+                Debug.warn(file, recipe, "Missing 'item' (output)");
                 continue;
             }
 
@@ -91,7 +91,7 @@ public class LinkedRecipeMachineTickerCreator extends RecipeMachineTickerCreator
                 var item = CommonUtils.readItem(file, output, addon);
                 if (item != null) {
                     int chance = CommonUtils.clamp(output.getInt("chance", 100), 1, 100,
-                        file, output, "'概率 (chance) 非法'");
+                        file, output, "' (chance) '");
 
                     int slot = output.getInt("slot", -1);
                     if (slot == -1) {
@@ -122,12 +122,12 @@ public class LinkedRecipeMachineTickerCreator extends RecipeMachineTickerCreator
 
                 int slot = input.getInt("slot", -1);
                 if (slot == -1) {
-                    Debug.warn(file, input, "缺少或配置错误 '槽位' (slot)");
+                    Debug.warn(file, input, "MissingConfiguration error 'slot' (slot)");
                     continue;
                 }
 
                 if (slot < 0 || slot > 53) {
-                    Debug.warn(file, input, "'槽位' 非法 (slot)");
+                    Debug.warn(file, input, "'slot' (slot)");
                     continue;
                 }
 

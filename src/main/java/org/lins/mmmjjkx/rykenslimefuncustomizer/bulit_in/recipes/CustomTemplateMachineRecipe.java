@@ -108,7 +108,7 @@ public class CustomTemplateMachineRecipe extends CustomMachineRecipe {
 
     public ItemStack getDisplayTemplate() {
         ItemStack templateItem = templateStack.clone();
-        CommonUtils.addLore(templateItem, true, "&b&l&o*模板物品不消耗*");
+        CommonUtils.addLore(templateItem, true, "&b&l&o*Template item is not consumed*");
         return templateItem;
     }
 

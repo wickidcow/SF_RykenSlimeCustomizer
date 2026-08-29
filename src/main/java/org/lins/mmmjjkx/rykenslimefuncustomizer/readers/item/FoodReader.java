@@ -60,10 +60,10 @@ public class FoodReader extends YamlReader<CustomFood> {
     }
 
     private void nbtApply(String s, ConfigurationSection section, SlimefunItemStack sfis) {
-        int nutrition = CommonUtils.clamp(section.getInt("nutrition"), 1, Integer.MAX_VALUE, file, section, "饥饿值 (nutrition) 非法");
-        float saturation = CommonUtils.clamp(section.getInt("saturation"), 0f, Float.MAX_VALUE, file, section, "饱和度 (saturation) 非法");
+        int nutrition = CommonUtils.clamp(section.getInt("nutrition"), 1, Integer.MAX_VALUE, file, section, " (nutrition) ");
+        float saturation = CommonUtils.clamp(section.getInt("saturation"), 0f, Float.MAX_VALUE, file, section, " (saturation) ");
         boolean alwaysEatable = section.getBoolean("always_eatable", false);
-        float eatSeconds = CommonUtils.clamp((float) section.getDouble("eat_seconds", 1.6d), 0f, 1.6f, Float.MAX_VALUE, file, section, "食用时间 (eat_seconds) 非法");
+        float eatSeconds = CommonUtils.clamp((float) section.getDouble("eat_seconds", 1.6d), 0f, 1.6f, Float.MAX_VALUE, file, section, " (eat_seconds) ");
 
         NBT.modify(sfis, c -> {
             c.setInteger("nutrition", nutrition);

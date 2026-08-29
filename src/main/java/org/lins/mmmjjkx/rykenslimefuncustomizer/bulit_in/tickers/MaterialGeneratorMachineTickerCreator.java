@@ -40,12 +40,12 @@ public class MaterialGeneratorMachineTickerCreator implements TickerCreator {
                 if (outputCfg == null) break;
                 var item = CommonUtils.readItem(file, outputCfg, addon);
                 if (item == null) {
-                    Debug.error(file, outputCfg, "物品配置错误 (outputs)");
+                    Debug.error(file, outputCfg, "itemConfiguration error (outputs)");
                     continue;
                 }
 
                 int chance = CommonUtils.clamp(outputCfg.getInt("chance", 100), 1, 100,
-                    file, outputCfg, "'概率 (chance) 非法'");
+                    file, outputCfg, "' (chance) '");
 
                 outputs.add(item);
                 chances.add(chance);
@@ -56,10 +56,10 @@ public class MaterialGeneratorMachineTickerCreator implements TickerCreator {
         if (outputItem != null) {
             var item = CommonUtils.readItem(file, outputItem, addon);
             if (item == null) {
-                Debug.error(file, outputItem, "物品配置错误 (outputItem)");
+                Debug.error(file, outputItem, "itemConfiguration error (outputItem)");
             } else {
                 int chance = CommonUtils.clamp(outputItem.getInt("chance", 100), 1, 100,
-                    file, outputItem, "'概率 (chance) 非法'");
+                    file, outputItem, "' (chance) '");
 
                 outputs.add(item);
                 chances.add(chance);
@@ -68,7 +68,7 @@ public class MaterialGeneratorMachineTickerCreator implements TickerCreator {
 
         int tickRate = section.getInt("tickRate");
         if (tickRate < 1) {
-            Debug.error(file, section, "配置错误 '配方耗时' (tickRate)", 1, Integer.MAX_VALUE);
+            Debug.error(file, section, "Configuration error 'recipe' (tickRate)", 1, Integer.MAX_VALUE);
             return null;
         }
         return List.of(createMaterialGeneratorRecipe(
@@ -92,7 +92,7 @@ public class MaterialGeneratorMachineTickerCreator implements TickerCreator {
         if (recipes == null) return null;
         int status = section.getInt("status", -1);
         if (status < -1) {
-            Debug.error(file, section, "缺少或配置错误 '状态槽' (status)", -1, 53);
+            Debug.error(file, section, "MissingConfiguration error '' (status)", -1, 53);
             return null;
         }
 

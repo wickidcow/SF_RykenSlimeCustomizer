@@ -73,7 +73,7 @@ public class GitHubUpdater {
             @NonNull String folderName) {
         try (CloseableHttpClient client = HttpClients.createDefault()) {
             String url = "https://api.github.com/repos/" + author + "/" + repo + "/releases/latest";
-            Debug.info("尝试从 " + url + " 更新附属 " + prjId);
+            Debug.info("RSC: " + url + " addon " + prjId);
             HttpGet get = new HttpGet(url);
             HttpResponse response = client.execute(get);
             String entity = EntityUtils.toString(response.getEntity());
@@ -83,7 +83,7 @@ public class GitHubUpdater {
             String releaseName = release.getName();
 
             if (releaseName == null) {
-                Debug.warn("无法检查附属 " + prjId + "的更新: 已到达 GitHub API 速率限制 (60 请求/h)");
+                Debug.warn("Unable toaddon " + prjId + ": GitHub API (60 /h)");
                 return false;
             }
 
@@ -126,7 +126,7 @@ public class GitHubUpdater {
                 URL urlObj = new URL(zipUrl);
 
                 if (!zip.exists() && !zip.createNewFile())
-                    throw new IOException("创建下载文件失败");
+                    throw new IOException("failed");
 
 
                 long result = Files.copy(urlObj.openStream(), zip.toPath(), StandardCopyOption.REPLACE_EXISTING);
@@ -144,7 +144,7 @@ public class GitHubUpdater {
             }
             return true;
         } catch (Exception e) {
-            Debug.warn("无法更新附属 " + prjId, e);
+            Debug.warn("Unable toaddon " + prjId, e);
             return false;
         }
     }

@@ -63,7 +63,7 @@ public interface BaseRSCItemGroup {
 
     default void readAction(String action, SlimefunGuideMode mode, Player p, int slot, ItemStack clickedItem, ClickAction clickAction) {
         if (action.split(" ").length != 2) {
-            Debug.warn("在" + getKey().getKey() + "物品组按钮中发现未知的操作格式: " + action);
+            Debug.warn("RSC: " + getKey().getKey() + "item group: " + action);
             return;
         }
 
@@ -71,7 +71,7 @@ public interface BaseRSCItemGroup {
         String content = action.split(" ")[1];
         switch (type) {
             case "link" -> {
-                p.sendMessage(CMIChatColor.translate("&e单击此处打开链接: "));
+                p.sendMessage(CMIChatColor.translate("&eClick here to open the link: "));
                 TextComponent link = new TextComponent(content);
                 link.setColor(net.md_5.bungee.api.ChatColor.GRAY);
 
@@ -85,7 +85,7 @@ public interface BaseRSCItemGroup {
             }
             case "console" -> {
                 if (CommandSafe.isBadCommand(content)) {
-                    Debug.danger("在" + getKey().getKey() + "物品组按钮中发现执行服务器高危操作,请联系附属对应作者进行处理!!!");
+                    Debug.danger("RSC: " + getKey().getKey() + "item group,addon!!!");
                     return;
                 }
                 content = action.replace(type + " ", "");
@@ -94,7 +94,7 @@ public interface BaseRSCItemGroup {
             case "open_itemgroup" -> {
                 if (content.split(":").length < 2) {
                     Debug.warn(
-                        "在" + getKey().getKey() + "物品组按钮中发现未知的物品组 NamespacedKey: " + content);
+                        "RSC: " + getKey().getKey() + "item groupitem group NamespacedKey: " + content);
                     return;
                 }
                 String namespace = content.split(":")[0];
@@ -109,7 +109,7 @@ public interface BaseRSCItemGroup {
                 Optional<PlayerProfile> Oprofile = PlayerProfile.find(p);
                 if (Oprofile.isEmpty()) {
                     Debug.warn(
-                        "在" + getKey().getKey() + "物品组按钮中发现无法获取 PlayerProfile: " + p.getName());
+                        "RSC: " + getKey().getKey() + "item groupUnable to PlayerProfile: " + p.getName());
                     return;
                 }
                 PlayerProfile profile = Oprofile.get();
@@ -126,13 +126,13 @@ public interface BaseRSCItemGroup {
                 Optional<PlayerProfile> Oprofile = PlayerProfile.find(p);
                 if (Oprofile.isEmpty()) {
                     Debug.warn(
-                        "在" + getKey().getKey() + "物品组按钮中发现无法获取 PlayerProfile: " + p.getName());
+                        "RSC: " + getKey().getKey() + "item groupUnable to PlayerProfile: " + p.getName());
                     return;
                 }
                 SlimefunItem item = SlimefunItem.getById(content);
                 if (item == null) {
                     Debug.warn(
-                        "在" + getKey().getKey() + "物品组按钮中发现未知的 SlimefunItem ID: " + content);
+                        "RSC: " + getKey().getKey() + "item group SlimefunItem ID: " + content);
                     return;
                 }
                 PlayerProfile profile = Oprofile.get();
@@ -145,7 +145,7 @@ public interface BaseRSCItemGroup {
                 File file = new File(getProjectAddon().getScriptsFolder(), content + ".js");
                 if (!file.exists()) {
                     Debug.warn(
-                        "在" + getKey().getKey() + "物品组按钮中发现执行脚本时遇到了问题: " + "找不到脚本文件 " + file.getName());
+                        "RSC: " + getKey().getKey() + "item groupscript: " + "script " + file.getName());
                 } else {
                     eval = JavaScriptEval.create(file, getProjectAddon());
                 }
@@ -154,7 +154,7 @@ public interface BaseRSCItemGroup {
                     eval.evalFunction("onButtonGroupClick", p, slot, clickedItem, clickAction, mode);
                 }
             }
-            default -> Debug.warn("在" + getKey().getKey() + "物品组按钮中发现未知的操作类型: " + action);
+            default -> Debug.warn("RSC: " + getKey().getKey() + "item group: " + action);
         }
     }
 
@@ -176,15 +176,15 @@ public interface BaseRSCItemGroup {
 
     static void addItemToGroup0(ItemGroup itemGroup, SlimefunItem sf) {
         if (itemGroup instanceof BaseRSCItemGroup group) {
-            Debug.debug(() -> "添加物品 " + sf + " 到物品组 " + group.getKey());
+            Debug.debug(() -> "item " + sf + " item group " + group.getKey());
             group.addContent(sf);
             return;
         }
         if (itemGroup instanceof FlexItemGroup) {
-            Debug.error("无法将物品 "+ sf + " 添加到 " + itemGroup.getKey() + " 因为是 FlexItemGroup!");
+            Debug.error("Unable toitem "+ sf + "RSC: " + itemGroup.getKey() + " FlexItemGroup!");
             return;
         }
-        Debug.debug(() -> "添加物品 " + sf + " 到物品组 " + itemGroup.getKey());
+        Debug.debug(() -> "item " + sf + " item group " + itemGroup.getKey());
         itemGroup.add(sf);
     }
 
@@ -195,7 +195,7 @@ public interface BaseRSCItemGroup {
             case SlimefunItem sf -> { return !sf.isDisabledIn(p.getWorld()); }
             case String ignored -> { return true; }
             default -> {
-                Debug.error("物品组 " + getKey().getKey() + " 中存在未知内容: " + content);
+                Debug.error("item group " + getKey().getKey() + "RSC: " + content);
                 return false;
             }
         }

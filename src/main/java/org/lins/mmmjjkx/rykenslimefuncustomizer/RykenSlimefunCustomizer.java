@@ -30,7 +30,6 @@ import me.matl114.logitech.core.Machines.AutoMachines.StackMachine;
 import me.matl114.logitech.core.Registries.RecipeSupporter;
 import net.byteflux.libby.BukkitLibraryManager;
 import net.byteflux.libby.Library;
-import net.guizhanss.guizhanlib.updater.GuizhanBuildsUpdater;
 import net.kyori.adventure.internal.properties.AdventureProperties;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -149,10 +148,10 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
 
         if (!Boolean.TRUE.equals(AdventureProperties.TEXT_WARN_WHEN_LEGACY_FORMATTING_DETECTED.value())) {
             Debug.warn("=======================================================================");
-            Debug.warn("检测到 net.kyori.adventure.text.warnWhenLegacyFormattingDetected = false");
-            Debug.warn("为了避免大量无效日志刷屏，我们强烈建议您添加以下 JVM 参数以禁止警告:               ");
+            Debug.warn("Detected net.kyori.adventure.text.warnWhenLegacyFormattingDetected = false");
+            Debug.warn("To avoid excessive legacy-format warnings, add the following JVM argument:               ");
             Debug.warn("-Dnet.kyori.adventure.text.warn_when_legacy_formatting_detected=false  ");
-            Debug.warn("参见 https://docs.papermc.io/paper/reference/system-properties/#netkyoriadventuretextwarnwhenlegacyformattingdetected");
+            Debug.warn("See https://docs.papermc.io/paper/reference/system-properties/#netkyoriadventuretextwarnwhenlegacyformattingdetected");
             Debug.warn("=======================================================================");
         }
 
@@ -186,37 +185,29 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
             try {
                 handleJEG();
             } catch (NoClassDefFoundError e) {
-                Debug.warn("JustEnoughGuide 版本过低，无法适配", e);
+                Debug.warn("JustEnoughGuide is too old for this integration", e);
             } catch (IOException e) {
                 Debug.warn("", e);
             }
         }
-
-        if (getConfig().getBoolean("pluginUpdate", false)
-                && getDescription().getVersion().startsWith("Build")
-                && getServer().getPluginManager().isPluginEnabled("GuizhanLibPlugin")) {
-            debug(() -> "Loading updater...");
-            GuizhanBuildsUpdater.start(this, getFile(), "balugaq", "RykenSlimeCustomizer", "main");
-        }
-
         getServer().getScheduler().runTaskLater(this, () -> runtime = true, 1);
 
         handleLogitech();
 
         Debug.info("============================");
-        Debug.info("RykenSlimefunCustomizer加载成功！");
-        Debug.info("原作者: lijinhong11");
-        Debug.info("改作者: balugaq");
-        Debug.info("项目主页: https://github.com/balugaq/RykenSlimeCustomizer");
+        Debug.info("RykenSlimefunCustomizer loaded successfully!");
+        Debug.info("Original author: lijinhong11");
+        Debug.info("Maintainer: balugaq");
+        Debug.info("Project: https://github.com/balugaq/RykenSlimeCustomizer");
         Debug.info("============================");
     }
 
     private void handleJEG() throws NoClassDefFoundError, IOException {
-        Debug.info("已检测到 JustEnoughGuide，正在适配...");
+        Debug.info("JustEnoughGuide detected; enabling integration...");
 
         SaveditemsGroup itemGroup = new SaveditemsGroup(
             Keys.newKey("saveditems"),
-            new CustomItemStack(Material.COMMAND_BLOCK, "&c保存的物品 (RSC saveditems)"));
+            new CustomItemStack(Material.COMMAND_BLOCK, "&cSaved Items (RSC saveditems)"));
 
         SaveditemsGroup.instance = itemGroup;
 
@@ -291,7 +282,7 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
                 if (sf.getAddon() != RykenSlimefunCustomizer.INSTANCE || !isNotStackable(sf)) continue;
                 // only handle not stackable items
                 if (STACKMACHINE_LIST.remove(sf) != null) {
-                    Debug.debug(() -> "已删除 STACKMACHINE_LIST 中的" + sf);
+                    Debug.debug(() -> " STACKMACHINE_LIST " + sf);
                     var idx = bwm_instance.indexOf(sf);
                     synchronized (bwm_instance) {
                         if (idx != -1) bwm_instance.set(idx, placeholder);
@@ -302,7 +293,7 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
                     i++;
                 }
                 if (STACKMGENERATOR_LIST.remove(sf) != null) {
-                    Debug.debug(() -> "已删除 STACKMGENERATOR_LIST 中的" + sf);
+                    Debug.debug(() -> " STACKMGENERATOR_LIST " + sf);
                     var idx = bwg_instance.indexOf(sf);
                     synchronized (bwg_instance) {
                         if (idx != -1) bwg_instance.set(idx, placeholder);
@@ -315,7 +306,7 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
             }
 
             logitechNotStackableIds = null; // gc
-            Debug.info("已自动禁用机器在逻辑工艺中的可堆叠属性! 共 " + i + " 个机器");
+            Debug.info("machine! " + i + " machine");
         }, 300L); // wait recipe supporter
     }
 
@@ -329,7 +320,7 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
         smbm = null;
 
         // Plugin shutdown logic
-        Debug.info("RykenSlimeCustomizer 已卸载!");
+        Debug.info("RykenSlimeCustomizer unloaded!");
     }
 
     @NonNull @Override

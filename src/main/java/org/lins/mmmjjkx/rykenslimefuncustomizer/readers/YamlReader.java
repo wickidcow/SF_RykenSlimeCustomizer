@@ -85,7 +85,7 @@ public abstract class YamlReader<T> {
 
             for (SlimefunItemStack item : items) {
                 addon.getPreloadItems().put(item.getItemId(), item);
-                Debug.debug("&a已预加载物品: " + item.getItemId());
+                Debug.debug("&aitem: " + item.getItemId());
             }
         }
     }
@@ -99,7 +99,7 @@ public abstract class YamlReader<T> {
         } else {
             rt = CommonUtils.getRecipeType(recipeTypeStr.toUpperCase(Locale.ROOT));
             if (rt == null) {
-                Debug.error("错误的配方类型 (recipe_type): " + recipeTypeStr);
+                Debug.error("recipe (recipe_type): " + recipeTypeStr);
                 return new Pair<>(RecipeType.NULL, new ItemStack[0]);
             }
         }
@@ -113,7 +113,7 @@ public abstract class YamlReader<T> {
     }
 
     public final List<T> readAll() {
-        Debug.info("正在加载" + addon.getAddonId() + "/"
+        Debug.info("Loading" + addon.getAddonId() + "/"
                 + this.getClass()
                         .getSimpleName()
                         .substring(0, this.getClass().getSimpleName().length() - 6));
@@ -122,7 +122,7 @@ public abstract class YamlReader<T> {
             ConfigurationSection section = configuration.getConfigurationSection(key);
             if (section == null) continue;
 
-            Debug.debug("开始读取配置: " + key);
+            Debug.debug("Reading: " + key);
 
             ConfigurationSection register = section.getConfigurationSection("register");
             String id = addon.getId(key, section.getString("id_alias"));
@@ -130,7 +130,7 @@ public abstract class YamlReader<T> {
 
             if (section.getBoolean("lateInit", false)) {
                 putLateInit(key);
-                Debug.debug("检查结果：延迟加载");
+                Debug.debug("RSC: ");
                 continue;
             }
 
@@ -139,15 +139,15 @@ public abstract class YamlReader<T> {
                 if (object != null) {
                     addon.addLoadedObject();
                     objects.add(object);
-                    Debug.debug("&aSUCCESS | 读取项" + key + "成功！");
+                    Debug.debug("&aSUCCESS | " + key + "successfully!");
                 } else {
-                    Debug.debug("&cFAILURE | 读取项" + key + "失败！");
+                    Debug.debug("&cFAILURE | " + key + "failed!");
                 }
             } catch (Exception e) {
-                Debug.warn(file, configuration, "无法读取配置 (" + key + ") ! 已跳过", e);
+                Debug.warn(file, configuration, "Unable to (" + key + ") ! skipped", e);
             }
         }
-        Debug.info("附属" + addon.getAddonId() + " 已加载 " + getLoadingProgress(addon));
+        Debug.info("addon" + addon.getAddonId() + " Loaded " + getLoadingProgress(addon));
         return objects;
     }
 
@@ -156,27 +156,27 @@ public abstract class YamlReader<T> {
     }
 
     public List<T> loadLateInits() {
-        Debug.info("正在加载延迟项 " + addon.getAddonId() + "/"
+        Debug.info("Loading " + addon.getAddonId() + "/"
                 + this.getClass()
                         .getSimpleName()
                         .substring(0, this.getClass().getSimpleName().length() - 6));
         List<T> objects = new ArrayList<>();
         lateInits.forEach(key -> {
-            Debug.debug("开始读取配置：" + key);
+            Debug.debug("Reading: " + key);
             try {
                 var object = readEach(key);
                 if (object != null) {
                     addon.addLoadedObject();
                     objects.add(object);
-                    Debug.debug("&aSUCCESS | 读取项" + key + "成功！");
+                    Debug.debug("&aSUCCESS | " + key + "successfully!");
                 } else {
-                    Debug.debug("&cFAILURE | 读取项" + key + "失败！");
+                    Debug.debug("&cFAILURE | " + key + "failed!");
                 }
             } catch (Exception e) {
-                Debug.warn(file, configuration, "无法读取配置 (" + key + ") ! 已跳过", e);
+                Debug.warn(file, configuration, "Unable to (" + key + ") ! skipped", e);
             }
         });
-        Debug.info("附属" + addon.getAddonId() + " 已加载 " + getLoadingProgress(addon));
+        Debug.info("addon" + addon.getAddonId() + " Loaded " + getLoadingProgress(addon));
 
         lateInits.clear();
 
@@ -196,7 +196,7 @@ public abstract class YamlReader<T> {
         if (unfinished) return false;
         if (!logitech_stackable && RykenSlimefunCustomizer.logitechNotStackableIds != null) {
             RykenSlimefunCustomizer.logitechNotStackableIds.add(id);
-            Debug.debug(() -> "物品 " + id + " 将不能被逻辑工艺-堆叠机器堆叠!");
+            Debug.debug(() -> "item " + id + " -machine!");
         }
 
         for (String condition : conditions) {
@@ -204,19 +204,19 @@ public abstract class YamlReader<T> {
             String head = splits[0];
             if (head.equalsIgnoreCase("hasplugin")) {
                 if (splits.length != 2) {
-                    Debug.error("读取" + key + "的注册条件时发现问题: hasplugin 仅需要一个参数");
+                    Debug.error("RSC: " + key + ": hasplugin ");
                     continue;
                 }
                 boolean b = PluginStateCache.isEnabled(splits[1]);
                 if (!b) {
                     if (warn) {
-                        Debug.warn(key + "需要服务端插件" + splits[1] + "才能被注册");
+                        Debug.warn(key + "RSC: " + splits[1] + "RSC: ");
                     }
                     return false;
                 }
             } else if (head.equalsIgnoreCase("itemexist")) {
                 if (splits.length != 2) {
-                    Debug.error("读取" + key + "的注册条件时发现问题: itemexist 仅需要一个参数");
+                    Debug.error("RSC: " + key + ": itemexist ");
                     continue;
                 }
 
@@ -224,14 +224,14 @@ public abstract class YamlReader<T> {
 
                 if (addon.getSfStack(itemId) == null) {
                     if (warn) {
-                        Debug.warn(key + "需要物品" + splits[1] + "才能被注册");
+                        Debug.warn(key + "item" + splits[1] + "RSC: ");
                     }
 
                     return false;
                 }
             } else if (head.equalsIgnoreCase("!itemexist")) {
                 if (splits.length != 2) {
-                    Debug.error("读取" + key + "的注册条件时发现问题: !itemexist 仅需要一个参数");
+                    Debug.error("RSC: " + key + ": !itemexist ");
                     continue;
                 }
 
@@ -239,26 +239,26 @@ public abstract class YamlReader<T> {
 
                 if (addon.getSfStack(itemId) != null) {
                     if (warn) {
-                        Debug.warn(key + "需要物品" + splits[1] + "不存在才能被注册");
+                        Debug.warn(key + "item" + splits[1] + "RSC: ");
                     }
 
                     return false;
                 }
             } else if (head.equalsIgnoreCase("!hasplugin")) {
                 if (splits.length != 2) {
-                    Debug.error("读取" + key + "的注册条件时发现问题: !hasplugin 仅需要一个参数");
+                    Debug.error("RSC: " + key + ": !hasplugin ");
                     continue;
                 }
                 boolean b = PluginStateCache.isEnabled(splits[1]);
                 if (b) {
                     if (warn) {
-                        Debug.warn(key + "需要卸载服务端插件 " + splits[1] + " 才能被注册");
+                        Debug.warn(key + "RSC: " + splits[1] + "RSC: ");
                     }
                     return false;
                 }
             } else if (head.equalsIgnoreCase("version")) {
                 if (splits.length != 3) {
-                    Debug.error("读取" + key + "的注册条件时发现问题: version 需要两个参数");
+                    Debug.error("RSC: " + key + ": version ");
                     continue;
                 }
 
@@ -266,7 +266,7 @@ public abstract class YamlReader<T> {
                 try {
                     version = MinecraftVersion.of(splits[2]);
                 } catch (IllegalArgumentException ignored) {
-                    Debug.error("读取" + key + "的注册条件时发现问题: 版本号 " + splits[2] + " 不是正常的版本号！");
+                    Debug.error("RSC: " + key + ": Version " + splits[2] + " Version!");
                     continue;
                 }
 
@@ -280,53 +280,53 @@ public abstract class YamlReader<T> {
                     case "==" -> pass = curr.compareTo(version) == 0;
                     case "!=" -> pass = curr.compareTo(version) != 0;
                     default -> {
-                        Debug.warn("读取" + key + "的注册条件时发现问题: version 需要合法的比较符! 已跳过");
+                        Debug.warn("RSC: " + key + ": version ! skipped");
                         pass = true;
                     }
                 }
                 if (!pass) {
                     if (warn) {
-                        Debug.warn(key + "需要服务端版本" + splits[1] + " " + splits[2] + "才能被注册");
+                        Debug.warn(key + "Version" + splits[1] + " " + splits[2] + "RSC: ");
                     }
                     return false;
                 }
             } else if (head.contains("config")) {
                 AddonConfig config = addon.getConfig();
                 if (config == null) {
-                    Debug.error("读取" + key + "的注册条件时发现问题: 无法获取配置");
+                    Debug.error("RSC: " + key + ": Unable to");
                     continue;
                 }
 
                 switch (head) {
                     case "config.boolean" -> {
                         if (splits.length != 2) {
-                            Debug.error("读取" + key + "的注册条件时发现问题: config.boolean需要一个参数");
+                            Debug.error("RSC: " + key + ": config.boolean");
                             continue;
                         }
 
                         if (!config.config().getBoolean(splits[1])) {
                             if (warn) {
-                                Debug.warn(key + "需要配置选项" + splits[1] + "为true才能被注册");
+                                Debug.warn(key + "RSC: " + splits[1] + "true");
                             }
                             return false;
                         }
                     }
                     case "config.string" -> {
                         if (splits.length != 3) {
-                            Debug.error("读取" + key + "的注册条件时发现问题: config.string需要两个参数");
+                            Debug.error("RSC: " + key + ": config.string");
                             continue;
                         }
 
                         if (!Objects.equals(config.config().getString(splits[1]), splits[2])) {
                             if (warn) {
-                                Debug.warn(key + "需要配置选项" + splits[1] + "为" + splits[2] + "才能被注册");
+                                Debug.warn(key + "RSC: " + splits[1] + "RSC: " + splits[2] + "RSC: ");
                             }
                             return false;
                         }
                     }
                     case "config.int" -> {
                         if (splits.length != 4) {
-                            Debug.error("读取" + key + "的注册条件时发现问题: config.int需要三个参数");
+                            Debug.error("RSC: " + key + ": config.int");
                             continue;
                         }
 
@@ -340,7 +340,7 @@ public abstract class YamlReader<T> {
                                 "config.int",
                                 current,
                                 destination,
-                                (op) -> "需要配置选项" + configKey + op + splits[3] + "才能被注册",
+                                (op) -> "RSC: " + configKey + op + splits[3] + "RSC: ",
                                 warn)) {
                             return false;
                         }
@@ -363,31 +363,31 @@ public abstract class YamlReader<T> {
         boolean b =
                 switch (operator) {
                     case ">" -> {
-                        operation = "大于";
+                        operation = "RSC: ";
                         yield current > destination;
                     }
                     case "<" -> {
-                        operation = "小于";
+                        operation = "RSC: ";
                         yield current < destination;
                     }
                     case ">=" -> {
-                        operation = "大于或等于";
+                        operation = "RSC: ";
                         yield current >= destination;
                     }
                     case "<=" -> {
-                        operation = "小于或等于";
+                        operation = "RSC: ";
                         yield current <= destination;
                     }
                     case "==" -> {
-                        operation = "等于";
+                        operation = "RSC: ";
                         yield current == destination;
                     }
                     case "!=" -> {
-                        operation = "不等于";
+                        operation = "RSC: ";
                         yield current != destination;
                     }
                     default -> {
-                        Debug.error("读取" + key + "的注册条件时发现问题: " + regParam + "需要合法的比较符！");
+                        Debug.error("RSC: " + key + "RSC: " + regParam + "RSC: ");
                         yield true;
                     }
                 };
@@ -438,7 +438,7 @@ public abstract class YamlReader<T> {
         if (section.contains("recipeOutput")) {
             output = CommonUtils.readItem(file, section.getConfigurationSection("recipeOutput"), addon);
             if (output == null) {
-                Debug.warn(file, section, "你设置了物品输出，但是输出物品无效 (recipeOutput) 已跳过");
+                Debug.warn(file, section, "item, itemInvalid (recipeOutput) skipped");
                 return null;
             }
         }
@@ -462,7 +462,7 @@ public abstract class YamlReader<T> {
     public boolean isInvalidSlots(List<Integer> slots, ConfigurationSection section, ItemTransportFlow flow) {
         for (int slot : slots) {
             if (slot < 0 || slot > 53) {
-                Debug.warn(file, section, "槽位超出范围! " + (flow == ItemTransportFlow.INSERT ? "'输入槽' (input)" : "'输出槽' (output)"), 0, 53);
+                Debug.warn(file, section, "slot! " + (flow == ItemTransportFlow.INSERT ? "'' (input)" : "'' (output)"), 0, 53);
                 return true;
             }
         }
@@ -483,21 +483,21 @@ public abstract class YamlReader<T> {
 
         ConfigurationSection item = section.getConfigurationSection("item");
         if (item == null) {
-            Debug.error(file, section, "缺失配置 '物品' (item)");
+            Debug.error(file, section, " 'item' (item)");
             return null;
         }
 
 
         ItemStack stack = CommonUtils.readItem(file, item, addon);
         if (stack == null) {
-            Debug.error(file, item, "配置错误 '物品' (item)");
+            Debug.error(file, item, "Configuration error 'item' (item)");
             return null;
         }
 
         if ((noAir && stack.getType().isAir())
             || (noLegacy && stack.getType().isLegacy())
             || (mustBeBlock && !stack.getType().isBlock())) {
-            Debug.error(file, item, "机器物品材质必须为方块 '物品' (item)");
+            Debug.error(file, item, "machineitemblock 'item' (item)");
             return null;
         }
 
@@ -511,12 +511,12 @@ public abstract class YamlReader<T> {
         String scriptName = script + ".js";
         File file = new File(addon.getScriptsFolder(), scriptName);
         if (!file.exists()) {
-            Debug.warn(file, section, "找不到对应的脚本文件 (script), file=" + file.getAbsolutePath());
+            Debug.warn(file, section, "script (script), file=" + file.getAbsolutePath());
             return null;
         } else {
             var js = JavaScriptEval.create(file, addon);
             if (js != null) {
-                Debug.debug(file, () -> "成功加载了脚本文件 " + scriptName);
+                Debug.debug(file, () -> "successfullyscript " + scriptName);
             }
             return js;
         }
@@ -525,16 +525,16 @@ public abstract class YamlReader<T> {
     public static void resolveDropFrom(File file, ConfigurationSection section, SlimefunItemStack sfis, ProjectAddon addon) {
         int chance = 100;
         if (section.contains("drop_chance")) {
-            chance = CommonUtils.clamp(section.getInt("drop_chance", 100), 1, 100, file, section, "'掉落概率 (drop_chance) 非法'");
+            chance = CommonUtils.clamp(section.getInt("drop_chance", 100), 1, 100, file, section, "' (drop_chance) '");
         } else if (section.contains("chance")) {
-            chance = CommonUtils.clamp(section.getInt("chance", 100), 1, 100, file, section, "'掉落概率 (chance) 非法'");
+            chance = CommonUtils.clamp(section.getInt("chance", 100), 1, 100, file, section, "' (chance) '");
         }
         int amount = section.isInt("drop_amount") ? section.getInt("drop_amount", 1) : -1;
 
         String dropMaterial = section.getString("drop_from", "");
         Optional<Material> xm = CommonUtils.getMaterial(dropMaterial);
         if (xm.isEmpty()) {
-            Debug.warn(file, section, "掉落方块材料类型 (drop_from) 无效 已跳过");
+            Debug.warn(file, section, "block (drop_from) Invalid skipped");
             return;
         }
         Material material = xm.get();
@@ -550,7 +550,7 @@ public abstract class YamlReader<T> {
             if (between.contains("-")) {
                 String[] split = between.split("-");
                 if (split.length != 2) {
-                    Debug.warn(file, section, "掉落数量区间 (drop_amount) 非法，已将掉落数量转为 " + amt);
+                    Debug.warn(file, section, " (drop_amount) , " + amt);
                     min = max = amt;
                     break resolve_amount;
                 }
@@ -559,14 +559,14 @@ public abstract class YamlReader<T> {
                     min = Integer.parseInt(split[0]);
                     max = Integer.parseInt(split[1]);
                 } catch (NumberFormatException e) {
-                    Debug.warn(file, section, "掉落数量区间 (drop_amount) 非法，已将掉落数量转为 " + amt);
+                    Debug.warn(file, section, " (drop_amount) , " + amt);
                     min = max = amt;
                 }
             } else {
                 try {
                     min = max = Integer.parseInt(between);
                 } catch (NumberFormatException e) {
-                    Debug.warn(file, section, "掉落数量 (drop_amount) 非法，已将掉落数量转为 " + amt);
+                    Debug.warn(file, section, " (drop_amount) , " + amt);
                     min = max = 1;
                 }
             }

@@ -50,7 +50,7 @@ public class ResearchReader extends YamlReader<Research> {
         if (section == null) return null;
 
         if (!VALID_KEY.matcher(s).matches()) {
-            Debug.error(file, section, "研究注册 ID 无效，不满足 " + VALID_KEY + " 的匹配");
+            Debug.error(file, section, "research ID Invalid, " + VALID_KEY + "RSC: ");
             return null;
         }
 
@@ -60,15 +60,15 @@ public class ResearchReader extends YamlReader<Research> {
         List<String> items = section.getStringList("items");
 
         if (researchId <= 0) {
-            Debug.error(file, section, "缺少或配置错误 '研究数字 ID' (id)", 1, Integer.MAX_VALUE);
+            Debug.error(file, section, "MissingConfiguration error 'research ID' (id)", 1, Integer.MAX_VALUE);
             return null;
         }
         if (cost <= 0) {
-            Debug.error(file, section, "缺少或配置错误 '研究等级花费' (levelCost)", 1, Integer.MAX_VALUE);
+            Debug.error(file, section, "MissingConfiguration error 'research' (levelCost)", 1, Integer.MAX_VALUE);
             return null;
         }
         if (name == null || name.isBlank()) {
-            Debug.error(file, section, "缺少或配置错误 '名称' (name)");
+            Debug.error(file, section, "MissingConfiguration error 'Name' (name)");
             return null;
         }
 
@@ -79,7 +79,7 @@ public class ResearchReader extends YamlReader<Research> {
         if (hasCurrency) {
             currency = section.getDouble("currencyCost");
             if (currency < 0) {
-                Debug.warn(file, section, "缺少或配置错误 '研究货币花费' (currencyCost)", 1, Integer.MAX_VALUE);
+                Debug.warn(file, section, "MissingConfiguration error 'research' (currencyCost)", 1, Integer.MAX_VALUE);
                 hasCurrency = false;
             }
         }
@@ -94,7 +94,7 @@ public class ResearchReader extends YamlReader<Research> {
         for (String item : items) {
             SlimefunItem sfItem = SlimefunItem.getById(item.toUpperCase(Locale.ROOT));
             if (sfItem == null) {
-                Debug.warn(file, section, "不是粘液物品 (item): " + item);
+                Debug.warn(file, section, "item (item): " + item);
                 continue;
             }
             research.addItems(sfItem);

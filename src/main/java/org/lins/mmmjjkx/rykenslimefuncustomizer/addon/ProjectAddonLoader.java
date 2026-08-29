@@ -115,11 +115,11 @@ public class ProjectAddonLoader {
             return future.get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            Debug.error("等待异步加载任务时线程被中断，附属内容可能缺失！", e);
+            Debug.error(", addon!", e);
         } catch (ExecutionException e) {
-            Debug.error("异步加载任务执行失败，附属内容可能缺失！", e);
+            Debug.error("failed, addon!", e);
         } catch (TimeoutException e) {
-            Debug.error("等待异步加载任务超时 (" + TIMEOUT_SECONDS + "s) ，附属内容可能缺失！", e);
+            Debug.error("RSC: " + TIMEOUT_SECONDS + "s) , addon!", e);
         }
         return null;
     }
@@ -132,7 +132,7 @@ public class ProjectAddonLoader {
         if (!RykenSlimefunCustomizer.allowUpdate(addon.getAddonId())) return;
         String[] split = addon.getGitHubRepo().split("/");
         if (split.length < 2) {
-            Debug.warn("无效的 GitHub 仓库: " + addon.getGitHubRepo() + " 自动更新功能将不会启用!");
+            Debug.warn("Invalid GitHub Repository: " + addon.getGitHubRepo() + "RSC: ");
             return;
         }
 
@@ -145,18 +145,18 @@ public class ProjectAddonLoader {
                 String id = infoYml.getString("id", "");
 
                 if (!id.equals(addon.getAddonId())) {
-                    Debug.info("&a成功更新附属 " + addon.getAddonId() + "!"
-                        + "&b附属 ID 已从 &e" + addon.getAddonId() + " 变更为 &d" + id);
+                    Debug.info("&asuccessfullyaddon " + addon.getAddonId() + "!"
+                        + "&baddon ID &e" + addon.getAddonId() + "RSC: " + id);
                 } else {
-                    Debug.info("&a成功更新附属 " + addon.getAddonId() + "! 配置将在下次重启时生效!");
+                    Debug.info("&asuccessfullyaddon " + addon.getAddonId() + "RSC: ");
                 }
             }
         } catch (ExecutionException e) {
-            Debug.error("附属 " + desc + " 更新失败!", e);
+            Debug.error("addon " + desc + " failed!", e);
         } catch (InterruptedException e) {
-            Debug.warn("附属 " + desc + " 更新被终止!", e);
+            Debug.warn("addon " + desc + "RSC: ", e);
         } catch (TimeoutException e) {
-            Debug.warn("附属 " + desc + " 更新超时! (120s)", e);
+            Debug.warn("addon " + desc + " ! (120s)", e);
         }
     }
 
@@ -165,7 +165,7 @@ public class ProjectAddonLoader {
 
         var folder = RykenSlimefunCustomizer.addonManager.getProjectIds().get(depend);
         if (folder == null) return false;
-        Debug.info("正在尝试加载 RSC 附属依赖 " + depend);
+        Debug.info(" RSC addonDependencies " + depend);
         return RykenSlimefunCustomizer.addonManager.loadAddon(folder);
     }
 
@@ -190,8 +190,8 @@ public class ProjectAddonLoader {
             try {
                 Files.copy(configFile.toPath(), existingConfig.toPath());
             } catch (IOException e) {
-                Debug.error("无法复制配置文件 " + configFile.getAbsolutePath() + " 到 " + customConfigFolder.getAbsolutePath()
-                    + "，附属可能不按预期工作！", e);
+                Debug.error("Unable to " + configFile.getAbsolutePath() + "RSC: " + customConfigFolder.getAbsolutePath()
+                    + ", addon!", e);
             }
         }
 
@@ -205,7 +205,7 @@ public class ProjectAddonLoader {
         try {
             dest.save(existingConfig);
         } catch (IOException e) {
-            Debug.error("无法保存配置文件: " + existingConfig.getAbsolutePath(), e);
+            Debug.error("Unable to: " + existingConfig.getAbsolutePath(), e);
         }
 
         addon.setConfig(customConfigObj);
@@ -218,7 +218,7 @@ public class ProjectAddonLoader {
 
         File file = new File(addon.getScriptsFolder(), scriptListener + ".js");
         if (!file.exists()) {
-            Debug.warn("无法找到附属 " + addon.getAddonId() + " 的对应监听脚本文件 " + file.getName());
+            Debug.warn("Unable toaddon " + addon.getAddonId() + " script " + file.getName());
             return;
         }
 
@@ -242,7 +242,7 @@ public class ProjectAddonLoader {
             Bukkit.getPluginManager().registerEvents(listenerObj, RykenSlimefunCustomizer.INSTANCE);
 
             addon.setEventListener(listenerObj);
-            Debug.info("成功注册附属 " + addon.getAddonId() + " 的监听脚本: " + file.getName());
+            Debug.info("successfullyaddon " + addon.getAddonId() + " script: " + file.getName());
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
@@ -255,28 +255,28 @@ public class ProjectAddonLoader {
         File infoYml = new File(projectDir, Constants.INFO_FILE);
         YamlConfiguration infoCfg = readYml(projectDir, Constants.INFO_FILE);
 
-        Debug.info("开始读取文件夹 " + projectDir.getName() + " 中的项目信息...");
+        Debug.info("Reading " + projectDir.getName() + "RSC: ");
 
         String id = infoCfg.getString("id");
         if (id == null) {
-            Debug.error(infoYml, infoCfg, "缺少附属 ID (id)");
+            Debug.error(infoYml, infoCfg, "Missingaddon ID (id)");
             return null;
         }
         RykenSlimefunCustomizer.addonManager.setLoadingAddon(id);
 
         String name = infoCfg.getString("name");
         if (name == null) {
-            Debug.error(infoYml, infoCfg, "缺少附属名称 (name)");
+            Debug.error(infoYml, infoCfg, "MissingaddonName (name)");
             return null;
         }
 
         if (name.isBlank()) {
-            Debug.error(infoYml, infoCfg, "附属名称 (name) 无效: " + name);
+            Debug.error(infoYml, infoCfg, "addonName (name) Invalid: " + name);
             return null;
         }
 
         String version = infoCfg.getString("version", "1.0.0");
-        String desc = "附属(name=" + name + ", id=" + id + ", version=" + version + ") ";
+        String desc = "addon(name=" + name + ", id=" + id + ", version=" + version + ") ";
 
         String description = infoCfg.getString("description", "");
         List<String> authors = infoCfg.getStringList("authors");
@@ -295,7 +295,7 @@ public class ProjectAddonLoader {
         }
 
         if (!failedDepends.isEmpty()) {
-            Debug.error(desc + "需要以下 RSC 附属依赖项，而指定的依赖未加载成功!");
+            Debug.error(desc + " RSC addonDependencies, Dependenciessuccessfully!");
             for (var depend : failedDepends) {
                 Debug.error(" - " + depend);
             }
@@ -313,7 +313,7 @@ public class ProjectAddonLoader {
         }
 
         if (!failedDepends.isEmpty()) {
-            Debug.error(desc + "需要以下插件依赖项，而指定的插件尚未加载或未加载成功!");
+            Debug.error(desc + "Plugin dependencies, successfully!");
             for (var depend : failedDepends) {
                 Debug.error(" - " + depend);
             }
@@ -338,11 +338,11 @@ public class ProjectAddonLoader {
             if (idPattern.contains("%0")) {
                 addon.setIdPattern(idPattern);
             } else {
-                Debug.warn("在名称为 " + projectDir.getName() + "的文件夹中有无效的配置: idPattern | idPattern 必须包含 %0（原id） 已跳过");
+                Debug.warn("Name " + projectDir.getName() + "HasInvalid: idPattern | idPattern %0 (id) skipped");
             }
         }
 
-        Debug.info("读取完成，开始加载附属 " + addon.getAddonId() + " 中的内容...");
+        Debug.info("Read complete, Loadingaddon " + addon.getAddonId() + "RSC: ");
 
         // group, recipe type, menu 都会在自定义物品/机器加载的时候实时读取，所以需要提前加载
         // 而这些耗时都不大，所以不需要放到异步里执行
@@ -385,7 +385,7 @@ public class ProjectAddonLoader {
         SuperMultiBlockMachineReader superMultiBlockMachineReader = new SuperMultiBlockMachineReader(projectDir, addon);
         GenerationReader generationReader = new GenerationReader(projectDir, addon);
 
-        Debug.info("开始加载 " + projectDir.getName() + " 中的物品内容...");
+        Debug.info("Loading " + projectDir.getName() + " item...");
         addon.addTotalObjects(mobDropsReader.getSize()
                 + resourceReader.getSize()
                 + itemReader.getSize()
@@ -408,7 +408,7 @@ public class ProjectAddonLoader {
 
         // ===== T1: 预加载 (preload)，互相异步，整体等待 T0 完成 =====
         RykenSlimefunCustomizer.addonManager.setLockingMainThread(true);
-        Debug.info("开始预加载 " + projectDir.getName() + " 中的物品内容...");
+        Debug.info("RSC: " + projectDir.getName() + " item...");
         awaitAll(
             runAsync(mobDropsReader::preload),
             runAsync(resourceReader::preload),
@@ -432,7 +432,7 @@ public class ProjectAddonLoader {
         RykenSlimefunCustomizer.addonManager.setLockingMainThread(false);
 
         // ===== T2: 注册 (readAll)，互相异步，整体等待 T1 完成 =====
-        Debug.info("开始注册 " + projectDir.getName() + " 存放的内容...");
+        Debug.info("RSC: " + projectDir.getName() + "RSC: ");
         var mobDropsFuture = supplyAsync(mobDropsReader::readAll);
         var resourceFuture = supplyAsync(resourceReader::readAll);
         var itemFuture = supplyAsync(itemReader::readAll);
@@ -499,7 +499,7 @@ public class ProjectAddonLoader {
         addon.setGenerationInfos(timedGet(generationFuture));
 
         // ===== T3: 延迟加载 (loadLateInits)，互相异步，整体等待 T2 完成 =====
-        Debug.info("开始加载要求延迟加载的内容...");
+        Debug.info("Loading...");
 
         var mobDropsLateFuture = supplyAsync(mobDropsReader::loadLateInits);
         var resourceLateFuture = supplyAsync(resourceReader::loadLateInits);
@@ -592,8 +592,8 @@ public class ProjectAddonLoader {
         }
         ScriptEval.getInitTasks().clear();
 
-        Debug.info("加载附属 " + addon.getAddonId() + " 成功!");
-        Debug.info("共 " + addon.getTotalObjects() + " 个配置项，加载成功 " + addon.getLoadedObjects() + " 个配置项");
+        Debug.info("addon " + addon.getAddonId() + " successfully!");
+        Debug.info("RSC: " + addon.getTotalObjects() + " , successfully " + addon.getLoadedObjects() + "RSC: ");
 
         return addon;
     }

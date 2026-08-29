@@ -59,7 +59,7 @@ public class RSCItemGroupJEG extends FlexItemGroup implements BaseRSCItemGroup {
     public RSCItemGroupJEG(NamespacedKey key, ItemStack item, int tier, ProjectAddon addon, GroupType type, Visible visible, boolean forceHidden, boolean hasParent, int page) {
         super(key, item, tier);
 
-        Debug.debug(() -> "创建物品组: " + key + " type=" + type.name());
+        Debug.debug(() -> "item group: " + key + " type=" + type.name());
 
         contents = new ArrayList<>();
         this.addon = addon;
@@ -71,17 +71,17 @@ public class RSCItemGroupJEG extends FlexItemGroup implements BaseRSCItemGroup {
     }
 
     public void addContent(SlimefunItem sf) {
-        Debug.debug(() -> "已添加物品 " + sf.getId() + " 至 " + getKey());
+        Debug.debug(() -> "item " + sf.getId() + "RSC: " + getKey());
         contents.add(sf);
     }
 
     public void addContent(ItemGroup itemGroup) {
-        Debug.debug(() -> "已添加物品组 " + itemGroup.getKey().getKey() + " 至 " + getKey());
+        Debug.debug(() -> "item group " + itemGroup.getKey().getKey() + "RSC: " + getKey());
         contents.add(itemGroup);
     }
 
     public void addContent(String action) {
-        Debug.debug(() -> "已添加 Action " + action + " 至 " + getKey());
+        Debug.debug(() -> " Action " + action + "RSC: " + getKey());
         contents.add(action);
     }
 

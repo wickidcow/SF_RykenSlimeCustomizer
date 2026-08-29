@@ -68,7 +68,7 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
         for (String type : pt) {
             Optional<ProtectionType> result = CommonUtils.getEnum(ProtectionType.class, type);
             if (result.isEmpty()) {
-                Debug.warn(file, section, " 盔甲保护类型 (protection_types) 非法: " + type);
+                Debug.warn(file, section, " (protection_types) : " + type);
                 continue;
             }
             protectionTypes.add(result.get());
@@ -95,7 +95,7 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
             for (String effect : effects) {
                 String[] split = effect.split(" ");
                 if (split.length != 2) {
-                    Debug.warn(file, pieceSection, "药水格式非法 (potion_effects) " + effect);
+                    Debug.warn(file, pieceSection, " (potion_effects) " + effect);
                     continue;
                 }
                 String effectName = split[0];
@@ -103,12 +103,12 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
 
                 PotionEffectType type = PotionEffectType.getByName(effectName);
                 if (type == null) {
-                    Debug.warn(file, pieceSection, "药水效果类型非法 (potion_effects) " + effectName);
+                    Debug.warn(file, pieceSection, " (potion_effects) " + effectName);
                     continue;
                 }
 
                 if (amplifier < 0) {
-                    Debug.warn(file, pieceSection, "药水效果等级非法 (potion_effects) " + effect, 1, Integer.MAX_VALUE);
+                    Debug.warn(file, pieceSection, " (potion_effects) " + effect, 1, Integer.MAX_VALUE);
                     continue;
                 }
 
@@ -132,7 +132,7 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
         }
 
         if (pieces.isEmpty()) {
-            Debug.error(file, section, "没有设置盔甲部分");
+            Debug.error(file, section, "Has");
             return null;
         }
 
@@ -148,7 +148,7 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
         for (String check : CHECKS) {
             ConfigurationSection piece = section.getConfigurationSection(check);
             if (piece == null) {
-                Debug.warn(file, section, "缺失配置 '盔甲部件' (" + check + ")");
+                Debug.warn(file, section, "RSC: " + check + ")");
                 continue;
             }
 
@@ -156,7 +156,7 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
             ItemStack stack = CommonUtils.readItem(file, piece, addon);
 
             if (stack == null) {
-                Debug.warn(file, piece, "缺失配置 '盔甲部件' (" + check + ")");
+                Debug.warn(file, piece, "RSC: " + check + ")");
                 continue;
             }
 

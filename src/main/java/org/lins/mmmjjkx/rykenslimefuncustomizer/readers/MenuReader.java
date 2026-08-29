@@ -68,12 +68,12 @@ public class MenuReader extends YamlReader<CustomMenu> {
         int size = section.getInt("size", NOT_SET);
 
         if (section.contains("size") && size != NOT_SET && size % 9 != 0) {
-            Debug.error(file, section, "菜单大小必须是 9 的倍数 (size): " + size);
+            Debug.error(file, section, "menu 9 (size): " + size);
             return null;
         }
 
         if (size != NOT_SET && size < 9 || size > 54) {
-            Debug.error(file, section, "菜单大小超出范围 (size): " + size, 9, 54);
+            Debug.error(file, section, "menu (size): " + size, 9, 54);
             return null;
         }
 
@@ -86,7 +86,7 @@ public class MenuReader extends YamlReader<CustomMenu> {
                 CustomMenu menu =
                         CommonUtils.getIf(addon.getMenus(), m -> m.getId().equals(menuId));
                 if (menu == null) {
-                    Debug.error(file, section, "无法找到要导入的菜单 (import): " + menuId);
+                    Debug.error(file, section, "Unable tomenu (import): " + menuId);
                     return null;
                 } else {
                     return new CustomMenu(s, title, menu);
@@ -105,7 +105,7 @@ public class MenuReader extends YamlReader<CustomMenu> {
         Map<Integer, ItemStack> slotMap = new HashMap<>();
         ConfigurationSection slots = section.getConfigurationSection("slots");
         if (slots == null) {
-            Debug.error(file, section, "没有预设物品 (slots)");
+            Debug.error(file, section, "Hasitem (slots)");
             return null;
         }
 
@@ -113,13 +113,13 @@ public class MenuReader extends YamlReader<CustomMenu> {
             try {
                 int realSlot = Integer.parseInt(slot);
                 if (realSlot > 53 || realSlot < 0) {
-                    Debug.warn(file, section, "槽位超出范围: " + slot + " 已跳过", 0, 53);
+                    Debug.warn(file, section, "slot: " + slot + " skipped", 0, 53);
                     continue;
                 }
                 ConfigurationSection item = slots.getConfigurationSection(slot);
                 ItemStack itemStack = CommonUtils.readItem(file, item, addon);
                 if (itemStack == null) {
-                    Debug.warn(file, section, "槽位对应的物品无效 (slots): " + slot + " 已跳过");
+                    Debug.warn(file, section, "slotitemInvalid (slots): " + slot + " skipped");
                     continue;
                 }
                 if (item.getBoolean("progressbar", false)) {
@@ -140,26 +140,26 @@ public class MenuReader extends YamlReader<CustomMenu> {
             } catch (NumberFormatException e) {
                 String[] range = slot.split("-");
                 if (range.length != 2) {
-                    Debug.error(file, section, "槽位区间表达式非法 (slots): " + slot);
+                    Debug.error(file, section, "slot (slots): " + slot);
                     continue;
                 }
                 ConfigurationSection item = slots.getConfigurationSection(slot);
                 ItemStack stack = CommonUtils.readItem(file, item, addon);
                 if (stack == null) {
-                    Debug.warn(file, section, "槽位对应的物品无效 (slots): " + slot);
+                    Debug.warn(file, section, "slotitemInvalid (slots): " + slot);
                     continue;
                 }
                 try {
                     IntStream.rangeClosed(Integer.parseInt(range[0]), Integer.parseInt(range[1]))
                         .forEach(i -> {
                         if (i < 0 || i > 53) {
-                            Debug.warn(file, section, "槽位超出范围: " + slot, 0, 53);
+                            Debug.warn(file, section, "slot: " + slot, 0, 53);
                             return;
                         }
                         slotMap.put(i, stack);
                     });
                 } catch (NumberFormatException e2) {
-                    Debug.error(file, section, "槽位区间表达式非法 (slots): " + slot);
+                    Debug.error(file, section, "slot (slots): " + slot);
                     return null;
                 }
             }

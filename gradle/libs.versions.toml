@@ -24,7 +24,6 @@ graalvm-sdk-word = { module = "org.graalvm.sdk:word", version = "25.1.3" }
 graalvm-sdk-nativebridge = { module = "org.graalvm.sdk:nativebridge", version = "25.1.3" }
 graalvm-sdk-jniutils = { module = "org.graalvm.sdk:jniutils", version = "25.1.3" }
 graalvm-regex = { module = "org.graalvm.regex:regex", version = "25.1.3" }
-guizhan-lib-plugin = { module = "net.guizhanss:GuizhanLibPlugin", version = "2.3.0" }
 placeholderapi = { module = "me.clip:placeholderapi", version = "2.11.6" }
 byte-buddy = { module = "net.bytebuddy:byte-buddy", version = "1.18.11" }
 slimefun-legacy = { module = "com.github.wickidcow:Slimefun-Legacy", version = "4.1.40" }
