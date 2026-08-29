@@ -9,10 +9,10 @@ plugins {
 }
 
 group = "com.github.wickidcow"
-version = "3.1.7-Legacy2"
+version = "3.1.7-Legacy3"
 
 val archiveName = "SF_RykenSlimeCustomizer"
-val slimefunLegacyVersion = "4.1.40"
+val slimefunLegacyVersion = "4.1.41"
 
 java {
     // Paper 26.2 publishes Java 25 API classes. Build with Java 25 while
