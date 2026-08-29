@@ -205,7 +205,7 @@ public class CustomSuperMultiBlockMachine extends AdvancedCustomMachine implemen
                     if (defaultNotice) {
                         String click = noMenuWhenNotFormed ? "Right click" : "Left click";
                         SuperMultiBlockManager.findNearbyPlayers(loc, 10, p -> {
-                            p.sendMessage(CMIChatColor.colorize("RSC message" + getItemName() + ". &a" + click + " Shift+" + click + " layer."));
+                            p.sendMessage(CMIChatColor.colorize("RSC: " + getItemName() + ". &a" + click + " Shift+" + click + " layer."));
                         });
                     }
                 }
@@ -289,7 +289,7 @@ public class CustomSuperMultiBlockMachine extends AdvancedCustomMachine implemen
                 int newLayer = instance.getLayers()[newLayerIndex];
                 instance.showEntities(newLayer);
                 if (defaultNotice) {
-                    p.sendMessage(CMIChatColor.colorize("&amultiblock layer y=" + newLayer + "RSC message" + (newLayerIndex + 1) + "/" + (instance.layerCount()) + " layer)"));
+                    p.sendMessage(CMIChatColor.colorize("&amultiblock layer y=" + newLayer + "RSC: " + (newLayerIndex + 1) + "/" + (instance.layerCount()) + " layer)"));
                 }
                 return;
             }
@@ -309,7 +309,7 @@ public class CustomSuperMultiBlockMachine extends AdvancedCustomMachine implemen
             StorageCacheUtils.setData(instance.getCoreLocation(), "LayerIndex", "" + newLayerIndex);
             instance.updateLayer(instance, oldLayer, newLayer);
             if (defaultNotice) {
-                p.sendMessage(CMIChatColor.colorize("&amultiblock layer y=" + newLayer + "RSC message" + (newLayerIndex + 1) + "/" + (instance.layerCount()) + " layer)"));
+                p.sendMessage(CMIChatColor.colorize("&amultiblock layer y=" + newLayer + "RSC: " + (newLayerIndex + 1) + "/" + (instance.layerCount()) + " layer)"));
             }
         }
     }

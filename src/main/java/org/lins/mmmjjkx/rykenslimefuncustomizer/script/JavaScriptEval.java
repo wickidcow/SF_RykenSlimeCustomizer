@@ -134,14 +134,14 @@ public class JavaScriptEval extends ScriptEval {
             Value bindings = jsEngine.getBindings("js");
 
             if (!bindings.hasMember(funName)) {
-                Debug.debug(() -> "addon" + addon.getAddonId() + "script" + getFile().getName() + "RSC message" + "RSC message" + funName);
+                Debug.debug(() -> "addon" + addon.getAddonId() + "script" + getFile().getName() + "RSC: " + "RSC: " + funName);
                 failedFunctions.add(funName);
                 return null;
             }
 
             Value member = bindings.getMember(funName);
             if (!member.canExecute()) {
-                Debug.debug(() -> "addon" + addon.getAddonId() + "script" + getFile().getName() + "RSC message" + "RSC message" + funName + "RSC message");
+                Debug.debug(() -> "addon" + addon.getAddonId() + "script" + getFile().getName() + "RSC: " + "RSC: " + funName + "RSC: ");
                 failedFunctions.add(funName);
                 return null;
             }
@@ -153,7 +153,7 @@ public class JavaScriptEval extends ScriptEval {
         try {
             Value result = function.execute(args);
             Debug.debug(
-                    "RSC message" + getAddon().getAddonName() + "script" + getFile().getName() + "RSC message" + funName);
+                    "RSC: " + getAddon().getAddonName() + "script" + getFile().getName() + "RSC: " + funName);
             return result;
         } catch (IllegalStateException e) {
             if (!e.getMessage().contains("Multi threaded access")) {
@@ -179,7 +179,7 @@ public class JavaScriptEval extends ScriptEval {
         }
 
         Debug.error(
-                "RSC message" + getAddon().getAddonName() + "script" + getFile().getName() + "RSC message", e);
+                "RSC: " + getAddon().getAddonName() + "script" + getFile().getName() + "RSC: ", e);
     }
 
     protected final synchronized void contextInit() {
@@ -192,7 +192,7 @@ public class JavaScriptEval extends ScriptEval {
                         Source.newBuilder("js", getFileContext(), "JavaScript").build());
             } catch (IOException e) {
                 Debug.error(
-                        "RSC message" + getAddon().getAddonName() + "script" + getFile().getName() + "RSC message", e);
+                        "RSC: " + getAddon().getAddonName() + "script" + getFile().getName() + "RSC: ", e);
             }
         }
     }

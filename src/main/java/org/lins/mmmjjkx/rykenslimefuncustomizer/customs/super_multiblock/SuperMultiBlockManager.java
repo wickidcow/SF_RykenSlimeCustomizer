@@ -289,7 +289,7 @@ public class SuperMultiBlockManager {
                 if (descriptor != null) {
                     addProjectile(location, descriptor, !instance.getMachine().isAllowSwitchDisplayLayer(), glow);
                 } else {
-                    Debug.error("Unable tomultiblock: machine:" + instance.getMachine().getId() + "RSC message" + location);
+                    Debug.error("Unable tomultiblock: machine:" + instance.getMachine().getId() + "RSC: " + location);
                 }
             }
 

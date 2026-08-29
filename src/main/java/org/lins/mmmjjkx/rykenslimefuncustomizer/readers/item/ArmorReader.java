@@ -148,7 +148,7 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
         for (String check : CHECKS) {
             ConfigurationSection piece = section.getConfigurationSection(check);
             if (piece == null) {
-                Debug.warn(file, section, "RSC message" + check + ")");
+                Debug.warn(file, section, "RSC: " + check + ")");
                 continue;
             }
 
@@ -156,7 +156,7 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
             ItemStack stack = CommonUtils.readItem(file, piece, addon);
 
             if (stack == null) {
-                Debug.warn(file, piece, "RSC message" + check + ")");
+                Debug.warn(file, piece, "RSC: " + check + ")");
                 continue;
             }
 

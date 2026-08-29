@@ -69,7 +69,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         boolean addRadiationLore = section.getBoolean("add_radiation_lore", true);
         Optional<Radioactivity> radioactivity = CommonUtils.getEnum(Radioactivity.class, radio);
         if (radioactivity.isEmpty()) {
-            Debug.warn(file, section, "RSC message" + radio + " skipped");
+            Debug.warn(file, section, "RSC: " + radio + " skipped");
             return instance;
         }
 

@@ -95,7 +95,7 @@ public interface MaterialGeneartorMachineTicker extends MachineTicker {
         ItemStack speed = new CustomItemStack(
             Material.KNOWLEDGE_BOOK,
             "&a&lSpeed",
-            "RSC message" + getOnlyRecipe().getTicks() + "RSC message"
+            "RSC: " + getOnlyRecipe().getTicks() + "RSC: "
         );
         List<ItemStack> list = new ArrayList<>();
         for (ItemStack gen : getOnlyRecipe().getOutput()) {

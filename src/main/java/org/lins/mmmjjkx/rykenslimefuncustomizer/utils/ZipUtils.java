@@ -41,7 +41,7 @@ public final class ZipUtils {
         }
 
         if (!zipFile.exists())
-            throw new FileNotFoundException("RSC message");
+            throw new FileNotFoundException("RSC: ");
 
         try (ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(zipFile))) {
             ZipEntry zipEntry = zipInputStream.getNextEntry();
@@ -67,7 +67,7 @@ public final class ZipUtils {
                         }
 
                         if (zipEntry.getSize() != -1 && totalBytesRead != zipEntry.getSize()) {
-                            throw new IOException("RSC message");
+                            throw new IOException("RSC: ");
                         }
                     }
                 }

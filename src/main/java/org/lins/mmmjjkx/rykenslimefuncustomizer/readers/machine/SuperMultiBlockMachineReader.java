@@ -131,7 +131,7 @@ public class SuperMultiBlockMachineReader extends YamlReader<CustomSuperMultiBlo
 
         if (redirectMenu != null) {
             if (definition.getMapping().get(redirectMenu) == null) {
-                Debug.error(file, section, "RSC message" + redirectMenu);
+                Debug.error(file, section, "RSC: " + redirectMenu);
                 return null;
             }
 

@@ -50,7 +50,7 @@ public class ResearchReader extends YamlReader<Research> {
         if (section == null) return null;
 
         if (!VALID_KEY.matcher(s).matches()) {
-            Debug.error(file, section, "research ID Invalid, " + VALID_KEY + "RSC message");
+            Debug.error(file, section, "research ID Invalid, " + VALID_KEY + "RSC: ");
             return null;
         }
 

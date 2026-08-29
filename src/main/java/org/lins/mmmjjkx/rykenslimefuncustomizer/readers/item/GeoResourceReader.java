@@ -113,7 +113,7 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
         ConfigurationSection item = section.getConfigurationSection("item");
         ItemStack stack = CommonUtils.readItem(file, item, addon);
         if (stack == null) {
-            Debug.error("addon" + addon.getAddonId() + "Source" + id + "RSC message" + "itemUnable to");
+            Debug.error("addon" + addon.getAddonId() + "Source" + id + "RSC: " + "itemUnable to");
             return null;
         }
 

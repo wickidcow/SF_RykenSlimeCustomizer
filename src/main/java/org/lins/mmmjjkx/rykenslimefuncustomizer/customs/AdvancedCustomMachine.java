@@ -206,9 +206,9 @@ public class AdvancedCustomMachine extends AContainer implements RecipeDisplayIt
                 ).get(10, TimeUnit.SECONDS);
             }
         } catch (ExecutionException e) {
-            Debug.error("script " + eval.getFile().getName() + "#" + methodName + "RSC message", e);
+            Debug.error("script " + eval.getFile().getName() + "#" + methodName + "RSC: ", e);
         } catch (InterruptedException e) {
-            Debug.error("script " + eval.getFile().getName() + "#" + methodName + "RSC message", e);
+            Debug.error("script " + eval.getFile().getName() + "#" + methodName + "RSC: ", e);
         } catch (TimeoutException e) {
             Debug.error("script " + eval.getFile().getName() + "#" + methodName + " ! (10s)", e);
         }

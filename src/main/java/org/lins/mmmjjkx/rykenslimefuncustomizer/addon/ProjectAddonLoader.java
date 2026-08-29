@@ -119,7 +119,7 @@ public class ProjectAddonLoader {
         } catch (ExecutionException e) {
             Debug.error("failed, addon!", e);
         } catch (TimeoutException e) {
-            Debug.error("RSC message" + TIMEOUT_SECONDS + "s) , addon!", e);
+            Debug.error("RSC: " + TIMEOUT_SECONDS + "s) , addon!", e);
         }
         return null;
     }
@@ -132,7 +132,7 @@ public class ProjectAddonLoader {
         if (!RykenSlimefunCustomizer.allowUpdate(addon.getAddonId())) return;
         String[] split = addon.getGitHubRepo().split("/");
         if (split.length < 2) {
-            Debug.warn("Invalid GitHub Repository: " + addon.getGitHubRepo() + "RSC message");
+            Debug.warn("Invalid GitHub Repository: " + addon.getGitHubRepo() + "RSC: ");
             return;
         }
 
@@ -146,15 +146,15 @@ public class ProjectAddonLoader {
 
                 if (!id.equals(addon.getAddonId())) {
                     Debug.info("&asuccessfullyaddon " + addon.getAddonId() + "!"
-                        + "&baddon ID &e" + addon.getAddonId() + "RSC message" + id);
+                        + "&baddon ID &e" + addon.getAddonId() + "RSC: " + id);
                 } else {
-                    Debug.info("&asuccessfullyaddon " + addon.getAddonId() + "RSC message");
+                    Debug.info("&asuccessfullyaddon " + addon.getAddonId() + "RSC: ");
                 }
             }
         } catch (ExecutionException e) {
             Debug.error("addon " + desc + " failed!", e);
         } catch (InterruptedException e) {
-            Debug.warn("addon " + desc + "RSC message", e);
+            Debug.warn("addon " + desc + "RSC: ", e);
         } catch (TimeoutException e) {
             Debug.warn("addon " + desc + " ! (120s)", e);
         }
@@ -190,7 +190,7 @@ public class ProjectAddonLoader {
             try {
                 Files.copy(configFile.toPath(), existingConfig.toPath());
             } catch (IOException e) {
-                Debug.error("Unable to " + configFile.getAbsolutePath() + "RSC message" + customConfigFolder.getAbsolutePath()
+                Debug.error("Unable to " + configFile.getAbsolutePath() + "RSC: " + customConfigFolder.getAbsolutePath()
                     + ", addon!", e);
             }
         }
@@ -255,7 +255,7 @@ public class ProjectAddonLoader {
         File infoYml = new File(projectDir, Constants.INFO_FILE);
         YamlConfiguration infoCfg = readYml(projectDir, Constants.INFO_FILE);
 
-        Debug.info("Reading " + projectDir.getName() + "RSC message");
+        Debug.info("Reading " + projectDir.getName() + "RSC: ");
 
         String id = infoCfg.getString("id");
         if (id == null) {
@@ -342,7 +342,7 @@ public class ProjectAddonLoader {
             }
         }
 
-        Debug.info("Read complete, Loadingaddon " + addon.getAddonId() + "RSC message");
+        Debug.info("Read complete, Loadingaddon " + addon.getAddonId() + "RSC: ");
 
         // group, recipe type, menu 都会在自定义物品/机器加载的时候实时读取，所以需要提前加载
         // 而这些耗时都不大，所以不需要放到异步里执行
@@ -408,7 +408,7 @@ public class ProjectAddonLoader {
 
         // ===== T1: 预加载 (preload)，互相异步，整体等待 T0 完成 =====
         RykenSlimefunCustomizer.addonManager.setLockingMainThread(true);
-        Debug.info("RSC message" + projectDir.getName() + " item...");
+        Debug.info("RSC: " + projectDir.getName() + " item...");
         awaitAll(
             runAsync(mobDropsReader::preload),
             runAsync(resourceReader::preload),
@@ -432,7 +432,7 @@ public class ProjectAddonLoader {
         RykenSlimefunCustomizer.addonManager.setLockingMainThread(false);
 
         // ===== T2: 注册 (readAll)，互相异步，整体等待 T1 完成 =====
-        Debug.info("RSC message" + projectDir.getName() + "RSC message");
+        Debug.info("RSC: " + projectDir.getName() + "RSC: ");
         var mobDropsFuture = supplyAsync(mobDropsReader::readAll);
         var resourceFuture = supplyAsync(resourceReader::readAll);
         var itemFuture = supplyAsync(itemReader::readAll);
@@ -593,7 +593,7 @@ public class ProjectAddonLoader {
         ScriptEval.getInitTasks().clear();
 
         Debug.info("addon " + addon.getAddonId() + " successfully!");
-        Debug.info("RSC message" + addon.getTotalObjects() + " , successfully " + addon.getLoadedObjects() + "RSC message");
+        Debug.info("RSC: " + addon.getTotalObjects() + " , successfully " + addon.getLoadedObjects() + "RSC: ");
 
         return addon;
     }

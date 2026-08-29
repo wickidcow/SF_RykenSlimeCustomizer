@@ -74,12 +74,12 @@ public class MobDropsReader extends YamlReader<CustomMobDrop> {
         Material eggMaterial = CommonUtils.getEnum(Material.class, entityType + "_SPAWN_EGG").orElse(Material.EGG);
         int chance = CommonUtils.clamp(section.getInt("chance", 100), 1, 100, file, section, "' (chance) '");
 
-        Component lore = t("RSC message")
+        Component lore = t("RSC: ")
                 .append(t("&b"))
                 .append(Component.translatable(entityType.translationKey()))
                 .append(t(" &aHas"))
                 .append(t(" &b " + chance + "%"))
-                .append(t("RSC message"));
+                .append(t("RSC: "));
 
         ItemStack itemStack = new CustomItemStack(eggMaterial, meta -> {
             meta.lore(List.of(lore));

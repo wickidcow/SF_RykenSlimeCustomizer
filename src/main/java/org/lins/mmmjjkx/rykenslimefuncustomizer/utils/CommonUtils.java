@@ -508,7 +508,7 @@ public class CommonUtils {
             return;
         }
         if (stream == null) {
-            Debug.error("Unable to " + resourceFile + "RSC message");
+            Debug.error("Unable to " + resourceFile + "RSC: ");
             return;
         }
         try {
@@ -519,7 +519,7 @@ public class CommonUtils {
             completeFile(configuration, configuration2);
             configuration2.save(file);
         } catch (Exception e) {
-            Debug.error("Unable to " + resourceFile + "RSC message", e);
+            Debug.error("Unable to " + resourceFile + "RSC: ", e);
         }
     }
 
@@ -585,7 +585,7 @@ public class CommonUtils {
     }
 
     public static String richFormatSeconds(int seconds) {
-        String lore = "RSC message" + seconds + "&es";
+        String lore = "RSC: " + seconds + "&es";
         if (seconds > 60) {
             lore = lore.concat("(" + CommonUtils.formatSeconds(seconds) + "&e)");
         }
@@ -641,12 +641,12 @@ public class CommonUtils {
 
     public static int clamp(int v, int a, int b, File file, ConfigurationSection section, String msg) {
         if (v < a) {
-            Debug.warn(file, section, msg + "RSC message" + a, a, b);
+            Debug.warn(file, section, msg + "RSC: " + a, a, b);
             v = a;
         }
 
         if (v > b) {
-            Debug.warn(file, section, msg + "RSC message" + b, a, b);
+            Debug.warn(file, section, msg + "RSC: " + b, a, b);
             v = b;
         }
 
@@ -655,12 +655,12 @@ public class CommonUtils {
 
     public static float clamp(float v, float a, float b, File file, ConfigurationSection section, String msg) {
         if (v < a) {
-            Debug.warn(file, section, msg + "RSC message" + a, a, b);
+            Debug.warn(file, section, msg + "RSC: " + a, a, b);
             v = a;
         }
 
         if (v > b) {
-            Debug.warn(file, section, msg + "RSC message" + b, a, b);
+            Debug.warn(file, section, msg + "RSC: " + b, a, b);
             v = b;
         }
 
@@ -669,12 +669,12 @@ public class CommonUtils {
 
     public static float clamp(float v, float a, float def, float b, File file, ConfigurationSection section, String msg) {
         if (v < a) {
-            Debug.warn(file, section, msg + "RSC message" + def, a, b);
+            Debug.warn(file, section, msg + "RSC: " + def, a, b);
             v = a;
         }
 
         if (v > b) {
-            Debug.warn(file, section, msg + "RSC message" + def, a, b);
+            Debug.warn(file, section, msg + "RSC: " + def, a, b);
             v = b;
         }
 
@@ -706,7 +706,7 @@ public class CommonUtils {
     public static boolean passItemIdConflictCheck(String id) {
         SlimefunItem sf = SlimefunItem.getById(id);
         if (sf == null) return true;
-        Debug.error("ID : " + id + "RSC message" + sf.getAddon().getName() + " item ID ");
+        Debug.error("ID : " + id + "RSC: " + sf.getAddon().getName() + " item ID ");
         return false;
     }
 

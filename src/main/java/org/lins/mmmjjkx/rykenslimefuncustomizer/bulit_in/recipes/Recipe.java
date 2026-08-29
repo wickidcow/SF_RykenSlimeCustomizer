@@ -58,10 +58,10 @@ public interface Recipe {
         for (var wrapper : wrappers) {
             lore.add(CommonUtils.getItemName(wrapper.getStack()) + CMIChatColor.translate("&e x" + wrapper.getAmount()));
             if (wrapper.getNoConsume().getNoConsumeAmountExcludeLinked() != 0) {
-                lore.add(CMIChatColor.translate("RSC message" + wrapper.getNoConsume().getNoConsumeAmountExcludeLinked() + " items are not consumed"));
+                lore.add(CMIChatColor.translate("&e" + wrapper.getNoConsume().getNoConsumeAmountExcludeLinked() + " item(s) are not consumed"));
             }
             if (!wrapper.getNoConsume().getLinkedNoConsume().isEmpty()) {
-                lore.add(CMIChatColor.translate("RSC message" + Arrays.toString(wrapper.getNoConsume().getLinkedNoConsume().toIntArray()) + " items are not consumed"));
+                lore.add(CMIChatColor.translate("&eItems in slots " + Arrays.toString(wrapper.getNoConsume().getLinkedNoConsume().toIntArray()) + " are not consumed"));
             }
         }
 
@@ -80,11 +80,11 @@ public interface Recipe {
 
     static String getOutputChanceLore(double chance) {
         String cs = String.format("%.1f", chance); // 保留 1 位小数
-        return CMIChatColor.translate("&aHas&b " + cs + "% &a output chance");
+        return CMIChatColor.translate("&b" + cs + "% &achance to output");
     }
 
     static String getOutputChanceLore(int chance) {
-        return CMIChatColor.translate("&aHas&b " + chance + "% &a output chance");
+        return CMIChatColor.translate("&b" + chance + "% &achance to output");
     }
 
     static ItemStack tagOutputChance(ItemStack item, double chance) {

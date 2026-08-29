@@ -72,17 +72,17 @@ public class RSCItemGroupLegacy extends FlexItemGroup implements BaseRSCItemGrou
     }
 
     public void addContent(SlimefunItem sf) {
-        Debug.debug(() -> "item " + sf.getId() + "RSC message" + getKey());
+        Debug.debug(() -> "item " + sf.getId() + "RSC: " + getKey());
         contents.add(sf);
     }
 
     public void addContent(ItemGroup itemGroup) {
-        Debug.debug(() -> "item group " + itemGroup.getKey().getKey() + "RSC message" + getKey());
+        Debug.debug(() -> "item group " + itemGroup.getKey().getKey() + "RSC: " + getKey());
         contents.add(itemGroup);
     }
 
     public void addContent(String action) {
-        Debug.debug(() -> " Action " + action + "RSC message" + getKey());
+        Debug.debug(() -> " Action " + action + "RSC: " + getKey());
         contents.add(action);
     }
 

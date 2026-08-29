@@ -237,7 +237,7 @@ public class SuperMultiBlock extends SuperMultiBlockManager implements Asynchron
             }
         }, 3L);
 
-        player.sendMessage(CMIChatColor.translate("RSC message" + color + (created + built) + "/" + getLocations().size() + " &ablock"));
+        player.sendMessage(CMIChatColor.translate("RSC: " + color + (created + built) + "/" + getLocations().size() + " &ablock"));
     }
 
     private void fail(Player player, Location l, String reason) {

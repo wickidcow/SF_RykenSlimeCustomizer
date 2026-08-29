@@ -111,7 +111,7 @@ public final class ProjectAddonManager {
         }
 
         if (projectIds.containsKey(id)) {
-            Debug.error("ID : " + id + "RSC message" + projectIds.get(id).getName() + " addonaddon ID! addonUnable to!");
+            Debug.error("ID : " + id + "RSC: " + projectIds.get(id).getName() + " addonaddon ID! addonUnable to!");
             return false;
         }
         projectIds.put(id, prjFolder);
@@ -159,7 +159,7 @@ public final class ProjectAddonManager {
         for (ProjectAddon addon : projectAddons.values()) {
             Debug.info(addon.getAddonName() + " (" + addon.getAddonId() + ")" + " Version: " + addon.getAddonVersion());
         }
-        Debug.info("RSC message" + projectAddons.size() + "addon");
+        Debug.info("RSC: " + projectAddons.size() + "addon");
     }
 
     public void checkFiles() {

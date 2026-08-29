@@ -130,7 +130,7 @@ public abstract class YamlReader<T> {
 
             if (section.getBoolean("lateInit", false)) {
                 putLateInit(key);
-                Debug.debug("RSC message");
+                Debug.debug("RSC: ");
                 continue;
             }
 
@@ -204,19 +204,19 @@ public abstract class YamlReader<T> {
             String head = splits[0];
             if (head.equalsIgnoreCase("hasplugin")) {
                 if (splits.length != 2) {
-                    Debug.error("RSC message" + key + ": hasplugin ");
+                    Debug.error("RSC: " + key + ": hasplugin ");
                     continue;
                 }
                 boolean b = PluginStateCache.isEnabled(splits[1]);
                 if (!b) {
                     if (warn) {
-                        Debug.warn(key + "RSC message" + splits[1] + "RSC message");
+                        Debug.warn(key + "RSC: " + splits[1] + "RSC: ");
                     }
                     return false;
                 }
             } else if (head.equalsIgnoreCase("itemexist")) {
                 if (splits.length != 2) {
-                    Debug.error("RSC message" + key + ": itemexist ");
+                    Debug.error("RSC: " + key + ": itemexist ");
                     continue;
                 }
 
@@ -224,14 +224,14 @@ public abstract class YamlReader<T> {
 
                 if (addon.getSfStack(itemId) == null) {
                     if (warn) {
-                        Debug.warn(key + "item" + splits[1] + "RSC message");
+                        Debug.warn(key + "item" + splits[1] + "RSC: ");
                     }
 
                     return false;
                 }
             } else if (head.equalsIgnoreCase("!itemexist")) {
                 if (splits.length != 2) {
-                    Debug.error("RSC message" + key + ": !itemexist ");
+                    Debug.error("RSC: " + key + ": !itemexist ");
                     continue;
                 }
 
@@ -239,26 +239,26 @@ public abstract class YamlReader<T> {
 
                 if (addon.getSfStack(itemId) != null) {
                     if (warn) {
-                        Debug.warn(key + "item" + splits[1] + "RSC message");
+                        Debug.warn(key + "item" + splits[1] + "RSC: ");
                     }
 
                     return false;
                 }
             } else if (head.equalsIgnoreCase("!hasplugin")) {
                 if (splits.length != 2) {
-                    Debug.error("RSC message" + key + ": !hasplugin ");
+                    Debug.error("RSC: " + key + ": !hasplugin ");
                     continue;
                 }
                 boolean b = PluginStateCache.isEnabled(splits[1]);
                 if (b) {
                     if (warn) {
-                        Debug.warn(key + "RSC message" + splits[1] + "RSC message");
+                        Debug.warn(key + "RSC: " + splits[1] + "RSC: ");
                     }
                     return false;
                 }
             } else if (head.equalsIgnoreCase("version")) {
                 if (splits.length != 3) {
-                    Debug.error("RSC message" + key + ": version ");
+                    Debug.error("RSC: " + key + ": version ");
                     continue;
                 }
 
@@ -266,7 +266,7 @@ public abstract class YamlReader<T> {
                 try {
                     version = MinecraftVersion.of(splits[2]);
                 } catch (IllegalArgumentException ignored) {
-                    Debug.error("RSC message" + key + ": Version " + splits[2] + " Version!");
+                    Debug.error("RSC: " + key + ": Version " + splits[2] + " Version!");
                     continue;
                 }
 
@@ -280,53 +280,53 @@ public abstract class YamlReader<T> {
                     case "==" -> pass = curr.compareTo(version) == 0;
                     case "!=" -> pass = curr.compareTo(version) != 0;
                     default -> {
-                        Debug.warn("RSC message" + key + ": version ! skipped");
+                        Debug.warn("RSC: " + key + ": version ! skipped");
                         pass = true;
                     }
                 }
                 if (!pass) {
                     if (warn) {
-                        Debug.warn(key + "Version" + splits[1] + " " + splits[2] + "RSC message");
+                        Debug.warn(key + "Version" + splits[1] + " " + splits[2] + "RSC: ");
                     }
                     return false;
                 }
             } else if (head.contains("config")) {
                 AddonConfig config = addon.getConfig();
                 if (config == null) {
-                    Debug.error("RSC message" + key + ": Unable to");
+                    Debug.error("RSC: " + key + ": Unable to");
                     continue;
                 }
 
                 switch (head) {
                     case "config.boolean" -> {
                         if (splits.length != 2) {
-                            Debug.error("RSC message" + key + ": config.boolean");
+                            Debug.error("RSC: " + key + ": config.boolean");
                             continue;
                         }
 
                         if (!config.config().getBoolean(splits[1])) {
                             if (warn) {
-                                Debug.warn(key + "RSC message" + splits[1] + "true");
+                                Debug.warn(key + "RSC: " + splits[1] + "true");
                             }
                             return false;
                         }
                     }
                     case "config.string" -> {
                         if (splits.length != 3) {
-                            Debug.error("RSC message" + key + ": config.string");
+                            Debug.error("RSC: " + key + ": config.string");
                             continue;
                         }
 
                         if (!Objects.equals(config.config().getString(splits[1]), splits[2])) {
                             if (warn) {
-                                Debug.warn(key + "RSC message" + splits[1] + "RSC message" + splits[2] + "RSC message");
+                                Debug.warn(key + "RSC: " + splits[1] + "RSC: " + splits[2] + "RSC: ");
                             }
                             return false;
                         }
                     }
                     case "config.int" -> {
                         if (splits.length != 4) {
-                            Debug.error("RSC message" + key + ": config.int");
+                            Debug.error("RSC: " + key + ": config.int");
                             continue;
                         }
 
@@ -340,7 +340,7 @@ public abstract class YamlReader<T> {
                                 "config.int",
                                 current,
                                 destination,
-                                (op) -> "RSC message" + configKey + op + splits[3] + "RSC message",
+                                (op) -> "RSC: " + configKey + op + splits[3] + "RSC: ",
                                 warn)) {
                             return false;
                         }
@@ -363,31 +363,31 @@ public abstract class YamlReader<T> {
         boolean b =
                 switch (operator) {
                     case ">" -> {
-                        operation = "RSC message";
+                        operation = "RSC: ";
                         yield current > destination;
                     }
                     case "<" -> {
-                        operation = "RSC message";
+                        operation = "RSC: ";
                         yield current < destination;
                     }
                     case ">=" -> {
-                        operation = "RSC message";
+                        operation = "RSC: ";
                         yield current >= destination;
                     }
                     case "<=" -> {
-                        operation = "RSC message";
+                        operation = "RSC: ";
                         yield current <= destination;
                     }
                     case "==" -> {
-                        operation = "RSC message";
+                        operation = "RSC: ";
                         yield current == destination;
                     }
                     case "!=" -> {
-                        operation = "RSC message";
+                        operation = "RSC: ";
                         yield current != destination;
                     }
                     default -> {
-                        Debug.error("RSC message" + key + "RSC message" + regParam + "RSC message");
+                        Debug.error("RSC: " + key + "RSC: " + regParam + "RSC: ");
                         yield true;
                     }
                 };

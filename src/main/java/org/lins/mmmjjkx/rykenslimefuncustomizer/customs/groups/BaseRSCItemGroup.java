@@ -63,7 +63,7 @@ public interface BaseRSCItemGroup {
 
     default void readAction(String action, SlimefunGuideMode mode, Player p, int slot, ItemStack clickedItem, ClickAction clickAction) {
         if (action.split(" ").length != 2) {
-            Debug.warn("RSC message" + getKey().getKey() + "item group: " + action);
+            Debug.warn("RSC: " + getKey().getKey() + "item group: " + action);
             return;
         }
 
@@ -85,7 +85,7 @@ public interface BaseRSCItemGroup {
             }
             case "console" -> {
                 if (CommandSafe.isBadCommand(content)) {
-                    Debug.danger("RSC message" + getKey().getKey() + "item group,addon!!!");
+                    Debug.danger("RSC: " + getKey().getKey() + "item group,addon!!!");
                     return;
                 }
                 content = action.replace(type + " ", "");
@@ -94,7 +94,7 @@ public interface BaseRSCItemGroup {
             case "open_itemgroup" -> {
                 if (content.split(":").length < 2) {
                     Debug.warn(
-                        "RSC message" + getKey().getKey() + "item groupitem group NamespacedKey: " + content);
+                        "RSC: " + getKey().getKey() + "item groupitem group NamespacedKey: " + content);
                     return;
                 }
                 String namespace = content.split(":")[0];
@@ -109,7 +109,7 @@ public interface BaseRSCItemGroup {
                 Optional<PlayerProfile> Oprofile = PlayerProfile.find(p);
                 if (Oprofile.isEmpty()) {
                     Debug.warn(
-                        "RSC message" + getKey().getKey() + "item groupUnable to PlayerProfile: " + p.getName());
+                        "RSC: " + getKey().getKey() + "item groupUnable to PlayerProfile: " + p.getName());
                     return;
                 }
                 PlayerProfile profile = Oprofile.get();
@@ -126,13 +126,13 @@ public interface BaseRSCItemGroup {
                 Optional<PlayerProfile> Oprofile = PlayerProfile.find(p);
                 if (Oprofile.isEmpty()) {
                     Debug.warn(
-                        "RSC message" + getKey().getKey() + "item groupUnable to PlayerProfile: " + p.getName());
+                        "RSC: " + getKey().getKey() + "item groupUnable to PlayerProfile: " + p.getName());
                     return;
                 }
                 SlimefunItem item = SlimefunItem.getById(content);
                 if (item == null) {
                     Debug.warn(
-                        "RSC message" + getKey().getKey() + "item group SlimefunItem ID: " + content);
+                        "RSC: " + getKey().getKey() + "item group SlimefunItem ID: " + content);
                     return;
                 }
                 PlayerProfile profile = Oprofile.get();
@@ -145,7 +145,7 @@ public interface BaseRSCItemGroup {
                 File file = new File(getProjectAddon().getScriptsFolder(), content + ".js");
                 if (!file.exists()) {
                     Debug.warn(
-                        "RSC message" + getKey().getKey() + "item groupscript: " + "script " + file.getName());
+                        "RSC: " + getKey().getKey() + "item groupscript: " + "script " + file.getName());
                 } else {
                     eval = JavaScriptEval.create(file, getProjectAddon());
                 }
@@ -154,7 +154,7 @@ public interface BaseRSCItemGroup {
                     eval.evalFunction("onButtonGroupClick", p, slot, clickedItem, clickAction, mode);
                 }
             }
-            default -> Debug.warn("RSC message" + getKey().getKey() + "item group: " + action);
+            default -> Debug.warn("RSC: " + getKey().getKey() + "item group: " + action);
         }
     }
 
@@ -181,7 +181,7 @@ public interface BaseRSCItemGroup {
             return;
         }
         if (itemGroup instanceof FlexItemGroup) {
-            Debug.error("Unable toitem "+ sf + "RSC message" + itemGroup.getKey() + " FlexItemGroup!");
+            Debug.error("Unable toitem "+ sf + "RSC: " + itemGroup.getKey() + " FlexItemGroup!");
             return;
         }
         Debug.debug(() -> "item " + sf + " item group " + itemGroup.getKey());
@@ -195,7 +195,7 @@ public interface BaseRSCItemGroup {
             case SlimefunItem sf -> { return !sf.isDisabledIn(p.getWorld()); }
             case String ignored -> { return true; }
             default -> {
-                Debug.error("item group " + getKey().getKey() + "RSC message" + content);
+                Debug.error("item group " + getKey().getKey() + "RSC: " + content);
                 return false;
             }
         }

@@ -321,7 +321,7 @@ public class MainCommand implements TabExecutor {
                 }
 
                 if (!player.isOnGround()) {
-                    sendMessage(sender, "RSC message");
+                    sendMessage(sender, "RSC: ");
                     return false;
                 }
 
@@ -359,7 +359,7 @@ public class MainCommand implements TabExecutor {
                                     offsetY = 0;
                                     i = 0;
                                 } else {
-                                    sendMessage(player, "&aSaved successfully!" + cnt + "RSC message");
+                                    sendMessage(player, "&aSaved successfully!" + cnt + "RSC: ");
                                     break;
                                 }
                             }
@@ -386,10 +386,10 @@ public class MainCommand implements TabExecutor {
                                                 RykenSlimefunCustomizer.addonManager.get(prjId);
 
                                         CommonUtils.saveItem(itemStack, filePath, addon);
-                                        sendMessage(player, "RSC message" + source);
+                                        sendMessage(player, "RSC: " + source);
                                         cnt++;
                                     } catch (Exception e) {
-                                        Debug.error("RSC message" + source + "itemfailed", e);
+                                        Debug.error("RSC: " + source + "itemfailed", e);
                                     }
                                 }
                             }
@@ -529,19 +529,19 @@ public class MainCommand implements TabExecutor {
             return;
         }
         sendMessage(sender, """
- &aRykenSlimeCustomizer
- &e/rsc (help) 
- &e/rsc reload addon
- &e/rsc reloadPlugin 
- &e/rsc list successfullyaddon
- &e/rsc enable <addonsName> addon
- &e/rsc disable <addonID> addon
- &e/rsc saveitem <addonID> <ID> item
- &e/rsc menupreview <ID> machinemenu
- &e/rsc getsaveditem <addonID> <ID> item
- &e/rsc resaveitems Hasitem
- &e/rsc clearScriptCache scriptfailed
- &e/rsc cleardisplayprojectiles multiblock""");
+ &aRykenSlimefunCustomizer
+ &e/rsc &7- Show this help menu
+ &e/rsc reload &7- Reload RSC addons
+ &e/rsc reloadPlugin &7- Reload plugin configuration
+ &e/rsc list &7- List loaded RSC addons
+ &e/rsc enable <addonName> &7- Enable an addon
+ &e/rsc disable <addonID> &7- Disable an addon
+ &e/rsc saveitem <addonID> <ID> &7- Save the held item
+ &e/rsc menupreview <ID> &7- Preview a machine menu
+ &e/rsc getsaveditem <addonID> <ID> &7- Get a saved item
+ &e/rsc resaveitems <start|end> &7- Resave stored items after a version change
+ &e/rsc clearScriptCache &7- Clear cached scripts
+ &e/rsc cleardisplayprojectiles &7- Clear multiblock display entities""");
     }
 
     public static void sendMessage(CommandSender sender, String s) {
