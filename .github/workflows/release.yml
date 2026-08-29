@@ -5,8 +5,10 @@ on:
     branches:
       - main
     paths:
+      - 'src/**'
       - 'build.gradle.kts'
       - 'gradle/libs.versions.toml'
+      - '.github/workflows/release.yml'
   workflow_dispatch:
 
 permissions:
@@ -52,10 +54,21 @@ jobs:
           fi
 
       - name: Build release JAR
-        if: steps.tag_check.outputs.exists == 'false'
         run: |
           chmod +x gradlew
           ./gradlew clean build --stacktrace
+
+      - name: Refresh existing GitHub release asset
+        if: steps.tag_check.outputs.exists == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: v${{ steps.version.outputs.version }}
+          JAR: build/libs/SF_RykenSlimeCustomizer${{ steps.version.outputs.version }}.jar
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh release upload "$TAG" "$JAR" --clobber
+          echo "Refreshed $TAG with the current Legacy hotfix build."
 
       - name: Create GitHub release with raw JAR
         if: steps.tag_check.outputs.exists == 'false'
