@@ -6,6 +6,7 @@ on:
       - cleanup/no-guizhan-english
     paths:
       - tools/apply_no_guizhan_english_cleanup.py
+      - tools/polish_english.py
       - .github/workflows/apply-cleanup.yml
   workflow_dispatch:
 
@@ -34,10 +35,13 @@ jobs:
       - name: Apply deterministic cleanup
         run: python3 tools/apply_no_guizhan_english_cleanup.py
 
+      - name: Polish English-facing text
+        run: python3 tools/polish_english.py
+
       - name: Verify GuizhanLib is no longer required
         shell: bash
         run: |
-          if grep -RInE 'net\.guizhanss\.guizhanlib|libs\.guizhan\.lib\.plugin|^[[:space:]]*-[[:space:]]*GuizhanLibPlugin[[:space:]]*$' \
+          if grep -RInE 'net\.guizhanss\.guizhanlib|net\.guizhanss\.minecraft\.guizhanlib|libs\.guizhan\.lib\.plugin|^[[:space:]]*-[[:space:]]*GuizhanLibPlugin[[:space:]]*$' \
             src build.gradle.kts gradle/libs.versions.toml; then
             echo 'GuizhanLib dependency/API references remain.' >&2
             exit 1
