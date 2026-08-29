@@ -66,12 +66,12 @@ public class SuperReader extends YamlReader<SlimefunItem> {
         try {
             clazz = Class.forName(className);
         } catch (ClassNotFoundException e) {
-            Debug.error(file, section, "不存在基类 (class)", e);
+            Debug.error(file, section, " (class)", e);
             return null;
         }
 
         if (!SlimefunItem.class.isAssignableFrom(clazz)) {
-            Debug.error(file, section, "基类不是粘液物品 (class)");
+            Debug.error(file, section, "item (class)");
             return null;
         }
 
@@ -80,7 +80,7 @@ public class SuperReader extends YamlReader<SlimefunItem> {
         boolean ignoreAccessible = section.getBoolean("ignore_accessible", false);
 
         if (ignoreAccessible) {
-            Debug.warn(file, section, "ignore_accessible 选项被启用，这可能会导致潜在的安全漏洞!");
+            Debug.warn(file, section, "ignore_accessible , !");
         }
         // 0-based index
         int constructorIndex = section.getInt("ctor", 0);
@@ -88,11 +88,11 @@ public class SuperReader extends YamlReader<SlimefunItem> {
             if (ignoreAccessible) {
                 // try to find a private constructor
                 if (clazz.getDeclaredConstructors().length < constructorIndex + 1) {
-                    Debug.error(file, section, "无法找到第 " + constructorIndex + " 个构造函数 (0-based) (ctor)");
+                    Debug.error(file, section, "Unable to " + constructorIndex + " (0-based) (ctor)");
                     return null;
                 }
             } else {
-                Debug.error(file, section, "无法找到第 " + constructorIndex + " 个可访问构造函数 (0-based) (ctor)");
+                Debug.error(file, section, "Unable to " + constructorIndex + " (0-based) (ctor)");
                 return null;
             }
         }
@@ -139,14 +139,14 @@ public class SuperReader extends YamlReader<SlimefunItem> {
             instance = (SlimefunItem) dynamicConstructor.newInstance(newArgs.toArray());
 
         } catch (InstantiationException | InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
-            Debug.error(file, section, "无法创建类", e);
+            Debug.error(file, section, "Unable to", e);
             return null;
         }
 
         if (section.contains("method")) {
             ConfigurationSection methodArray = section.getConfigurationSection("method");
             if (methodArray == null) {
-                Debug.error(file, section, "无效的方法表达 (method)");
+                Debug.error(file, section, "Invalid (method)");
                 return null;
             }
             for (String methodName : methodArray.getKeys(false)) {
@@ -163,7 +163,7 @@ public class SuperReader extends YamlReader<SlimefunItem> {
                         methodName,
                         Arrays.stream(args1).map(Object::getClass).toArray(Class<?>[]::new));
                 if (method == null) {
-                    Debug.warn(file, methodArray, "没有找到方法 (method): " + methodName);
+                    Debug.warn(file, methodArray, "Has (method): " + methodName);
                     continue;
                 }
 
@@ -173,7 +173,7 @@ public class SuperReader extends YamlReader<SlimefunItem> {
                     }
                     method.invoke(instance, args1);
                 } catch (InvocationTargetException | IllegalAccessException e) {
-                    Debug.warn(file, methodArray, "无法调用方法 (method): " + methodName, e);
+                    Debug.warn(file, methodArray, "Unable to (method): " + methodName, e);
                     continue;
                 }
             }
@@ -182,7 +182,7 @@ public class SuperReader extends YamlReader<SlimefunItem> {
         if (section.contains("field")) {
             ConfigurationSection fieldArray = section.getConfigurationSection("field");
             if (fieldArray == null) {
-                Debug.error(file, section, "无效的字段表达 (field)");
+                Debug.error(file, section, "Invalid (field)");
                 return null;
             }
             for (String fieldName : fieldArray.getKeys(false)) {
@@ -190,16 +190,16 @@ public class SuperReader extends YamlReader<SlimefunItem> {
                     Field field = getField(clazz, fieldName);
 
                     if (field == null) {
-                        Debug.warn(file, fieldArray, "无法找到字段 (field): " + fieldName);
+                        Debug.warn(file, fieldArray, "Unable to (field): " + fieldName);
                         continue;
                     }
                     if (Modifier.isStatic(field.getModifiers())) {
-                        Debug.warn(file, fieldArray, "字段 (field) " + fieldName + " 为 static");
+                        Debug.warn(file, fieldArray, " (field) " + fieldName + " static");
                         continue;
                     }
 
                     if (Modifier.isFinal(field.getModifiers())) {
-                        Debug.warn(file, fieldArray, "字段 (field) " + fieldName + " 为 final");
+                        Debug.warn(file, fieldArray, " (field) " + fieldName + " final");
                         continue;
                     }
 
@@ -209,7 +209,7 @@ public class SuperReader extends YamlReader<SlimefunItem> {
                     Object object = fieldArray.getObject(fieldName, field.getType());
                     field.set(instance, object);
                 } catch (Throwable e) {
-                    Debug.warn(file, fieldArray, "无法修改字段 (field) " + fieldName, e);
+                    Debug.warn(file, fieldArray, "Unable to (field) " + fieldName, e);
                     continue;
                 }
             }
@@ -217,7 +217,7 @@ public class SuperReader extends YamlReader<SlimefunItem> {
         try {
             instance.register(RykenSlimefunCustomizer.INSTANCE);
         } catch (Throwable e) {
-            Debug.error(file, section, "无法注册类", e);
+            Debug.error(file, section, "Unable to", e);
             return null;
         }
 

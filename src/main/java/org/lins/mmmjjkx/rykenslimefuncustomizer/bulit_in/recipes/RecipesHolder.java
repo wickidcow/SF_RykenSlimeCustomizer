@@ -16,8 +16,8 @@ import java.util.List;
 
 @NullMarked
 public interface RecipesHolder extends ProcessorHolder, RecipeDisplayItem {
-    ItemStack RECIPE_INPUT = new CustomItemStack(Material.GREEN_STAINED_GLASS_PANE, "&a多物品输入", "", "&2> &a点击查看");
-    ItemStack RECIPE_OUTPUT = new CustomItemStack(Material.GREEN_STAINED_GLASS_PANE, "&a多物品输出", "", "&2> &a点击查看");
+    ItemStack RECIPE_INPUT = new CustomItemStack(Material.GREEN_STAINED_GLASS_PANE, "&aMultiple item input", "", "&2> &aClick to view");
+    ItemStack RECIPE_OUTPUT = new CustomItemStack(Material.GREEN_STAINED_GLASS_PANE, "&aMultiple item output", "", "&2> &aClick to view");
 
     List<? extends Recipe> getRecipes();
 

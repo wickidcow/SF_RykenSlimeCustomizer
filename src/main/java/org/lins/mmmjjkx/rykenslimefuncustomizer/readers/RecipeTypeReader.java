@@ -49,13 +49,13 @@ public class RecipeTypeReader extends YamlReader<RecipeType> {
 
         ItemStack item = CommonUtils.readItem(file, section, addon);
         if (item == null) {
-            Debug.error(file, section, "缺少或配置错误 '物品' (item)");
+            Debug.error(file, section, "MissingConfiguration error 'item' (item)");
             return null;
         }
 
         String bindToMultiblock = section.getString("bind-to-multiblock");
         if (bindToMultiblock != null) {
-            Debug.debug(file, () -> "已绑定配方类型 " + s + " -> 多方块 " + bindToMultiblock);
+            Debug.debug(file, () -> "recipe " + s + " -> multiblock " + bindToMultiblock);
             return new CustomRecipeType(Keys.newKey(s), item, (recipe, result) -> {
                 MultiBlockMachineReader.addPreaddRecipe(bindToMultiblock, recipe, result);
             }, (a, b) -> {/* unregister recipe is not supported yet*/});

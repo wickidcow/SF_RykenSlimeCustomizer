@@ -196,8 +196,8 @@ public class MachineMenuPreviewGroup extends FlexItemGroup {
             backIcon = ChestMenuUtils.getBackButton(
                 player,
                 "",
-                "&f左键: &7返回上一页",
-                "&fShift + 左键: &7返回主菜单"
+                "&fLeft click: &7Previous page",
+                "&fShift + Left click: &7Main menu"
             );
         }
         inv.addItem(slot, backIcon, (p, s, i, a) -> {

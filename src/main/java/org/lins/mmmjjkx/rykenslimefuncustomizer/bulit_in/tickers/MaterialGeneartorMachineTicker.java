@@ -19,9 +19,9 @@ import java.util.List;
 
 @NullMarked
 public interface MaterialGeneartorMachineTicker extends MachineTicker {
-    ItemStack NO_POWER = new CustomItemStack(Material.RED_STAINED_GLASS_PANE, "&4电力不足", "");
-    ItemStack NO_SPACE = new CustomItemStack(Material.ORANGE_STAINED_GLASS_PANE, "&c空间不足", "");
-    ItemStack PROCESSING = new CustomItemStack(Material.LIME_STAINED_GLASS_PANE, "&a生产中", "");
+    ItemStack NO_POWER = new CustomItemStack(Material.RED_STAINED_GLASS_PANE, "&4Not enough power", "");
+    ItemStack NO_SPACE = new CustomItemStack(Material.ORANGE_STAINED_GLASS_PANE, "&cNot enough space", "");
+    ItemStack PROCESSING = new CustomItemStack(Material.LIME_STAINED_GLASS_PANE, "&aProcessing", "");
 
     @Override
     default MachineTicker.Type getType() {
@@ -94,8 +94,8 @@ public interface MaterialGeneartorMachineTicker extends MachineTicker {
     default List<ItemStack> getDisplayRecipes() {
         ItemStack speed = new CustomItemStack(
             Material.KNOWLEDGE_BOOK,
-            "&a&l速度",
-            "&a&l每 &b&l" + getOnlyRecipe().getTicks() + " &a&l个粘液刻生成一次"
+            "&a&lSpeed",
+            "RSC message" + getOnlyRecipe().getTicks() + "RSC message"
         );
         List<ItemStack> list = new ArrayList<>();
         for (ItemStack gen : getOnlyRecipe().getOutput()) {

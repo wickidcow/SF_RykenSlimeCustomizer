@@ -46,8 +46,8 @@ import java.util.Map;
 @NullMarked
 @Getter
 public class CustomLinkedMachineRecipe extends AbstractRecipe {
-    ItemStack LINKED_RECIPE_INPUT = new CustomItemStack(Material.GREEN_STAINED_GLASS_PANE, "&a强配方物品输入", "", "&2> &a点击查看");
-    ItemStack LINKED_RECIPE_OUTPUT = new CustomItemStack(Material.GREEN_STAINED_GLASS_PANE, "&a强配方物品输出", "", "&2> &a点击查看");
+    ItemStack LINKED_RECIPE_INPUT = new CustomItemStack(Material.GREEN_STAINED_GLASS_PANE, "&aLinked recipe input", "", "&2> &aClick to view");
+    ItemStack LINKED_RECIPE_OUTPUT = new CustomItemStack(Material.GREEN_STAINED_GLASS_PANE, "&aLinked recipe output", "", "&2> &aClick to view");
     private final Map<Integer, ItemStack> linkedInput;
     private final LinkedOutput linkedOutput;
     private final IntSet noConsumeIndexes;

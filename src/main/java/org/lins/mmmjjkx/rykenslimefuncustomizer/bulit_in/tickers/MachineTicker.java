@@ -46,7 +46,7 @@ public interface MachineTicker extends DataCache, RecipesHolder, CustomMenuHolde
     default void init() {
         var menu = getCustomMenu();
         if (menu == null) {
-            Debug.warn("未找到菜单 " + this.getMachine().getId() + " 使用默认菜单");
+            Debug.warn("Not foundmenu " + this.getMachine().getId() + " menu");
             this.createPreset(
                 this.getMachine(),
                 this.getMachine().getItemName(),
@@ -93,7 +93,7 @@ public interface MachineTicker extends DataCache, RecipesHolder, CustomMenuHolde
             } else {
                 var typeOptional = CommonUtils.getEnum(Type.class, tpc);
                 if (typeOptional.isEmpty()) {
-                    Debug.warn(file, section, " 机器类型 (ticker_type) 非法: " + tpc + ", 已转换为 RECIPE");
+                    Debug.warn(file, section, " machine (ticker_type) : " + tpc + ", RECIPE");
                     type = Type.RECIPE;
                 } else {
                     type = typeOptional.get();

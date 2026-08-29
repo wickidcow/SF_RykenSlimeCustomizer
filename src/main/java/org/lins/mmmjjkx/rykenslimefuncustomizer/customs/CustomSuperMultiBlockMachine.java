@@ -194,7 +194,7 @@ public class CustomSuperMultiBlockMachine extends AdvancedCustomMachine implemen
             if (!instance.startSuperMultiBlock(smb)) {
                 if (defaultNotice) {
                     SuperMultiBlockManager.findNearbyPlayers(loc, 10, p -> {
-                        p.sendMessage(CMIChatColor.colorize("&c附近存在其他多方块阻碍，无法搭建该多方块，请拆除后重试。"));
+                        p.sendMessage(CMIChatColor.colorize("&cmultiblock, Unable tomultiblock, . "));
                     });
                 }
                 evalFunction("cannotStartSuperMultiBlock", b, this);
@@ -203,9 +203,9 @@ public class CustomSuperMultiBlockMachine extends AdvancedCustomMachine implemen
                     onFormed(smb.getCoreLocation());
                 } else {
                     if (defaultNotice) {
-                        String click = noMenuWhenNotFormed ? "右键" : "左键";
+                        String click = noMenuWhenNotFormed ? "Right click" : "Left click";
                         SuperMultiBlockManager.findNearbyPlayers(loc, 10, p -> {
-                            p.sendMessage(CMIChatColor.colorize("&a你已放置 " + getItemName() + ". &a" + click + " 或 Shift+" + click + "以切换投影层."));
+                            p.sendMessage(CMIChatColor.colorize("RSC message" + getItemName() + ". &a" + click + " Shift+" + click + " layer."));
                         });
                     }
                 }
@@ -229,7 +229,7 @@ public class CustomSuperMultiBlockMachine extends AdvancedCustomMachine implemen
         if (evalFunction("onFormed", partLocation, this) == null) {
             if (defaultNotice) {
                 SuperMultiBlockManager.findNearbyPlayers(partLocation, 10, p -> {
-                    p.sendMessage(CMIChatColor.colorize("&a已搭建完成 " + getItemName()));
+                    p.sendMessage(CMIChatColor.colorize("&aformed successfully " + getItemName()));
                 });
             }
         }
@@ -238,7 +238,7 @@ public class CustomSuperMultiBlockMachine extends AdvancedCustomMachine implemen
     public void onUnformed(Location partLocation) {
         if (evalFunction("onUnformed", partLocation, this) == null) {
             SuperMultiBlockManager.findNearbyPlayers(partLocation, 10, p -> {
-                p.sendMessage(CMIChatColor.colorize("&c" + getItemName() + "&c已被破坏!"));
+                p.sendMessage(CMIChatColor.colorize("&c" + getItemName() + "&cwas broken!"));
             });
         }
     }
@@ -289,7 +289,7 @@ public class CustomSuperMultiBlockMachine extends AdvancedCustomMachine implemen
                 int newLayer = instance.getLayers()[newLayerIndex];
                 instance.showEntities(newLayer);
                 if (defaultNotice) {
-                    p.sendMessage(CMIChatColor.colorize("&a已切换多方块显示层为 y=" + newLayer + " (第" + (newLayerIndex + 1) + "/" + (instance.layerCount()) + "层)"));
+                    p.sendMessage(CMIChatColor.colorize("&amultiblock layer y=" + newLayer + "RSC message" + (newLayerIndex + 1) + "/" + (instance.layerCount()) + " layer)"));
                 }
                 return;
             }
@@ -298,7 +298,7 @@ public class CustomSuperMultiBlockMachine extends AdvancedCustomMachine implemen
                 instance.showAllEntities();
                 setLayerIndex(instance, DISPLAY_ALL);
                 if (defaultNotice) {
-                    p.sendMessage(CMIChatColor.colorize("&a已切换多方块显示层为所有层"));
+                    p.sendMessage(CMIChatColor.colorize("&amultiblock layerHas layer"));
                 }
                 return;
             }
@@ -309,7 +309,7 @@ public class CustomSuperMultiBlockMachine extends AdvancedCustomMachine implemen
             StorageCacheUtils.setData(instance.getCoreLocation(), "LayerIndex", "" + newLayerIndex);
             instance.updateLayer(instance, oldLayer, newLayer);
             if (defaultNotice) {
-                p.sendMessage(CMIChatColor.colorize("&a已切换多方块显示层为 y=" + newLayer + " (第" + (newLayerIndex + 1) + "/" + (instance.layerCount()) + "层)"));
+                p.sendMessage(CMIChatColor.colorize("&amultiblock layer y=" + newLayer + "RSC message" + (newLayerIndex + 1) + "/" + (instance.layerCount()) + " layer)"));
             }
         }
     }

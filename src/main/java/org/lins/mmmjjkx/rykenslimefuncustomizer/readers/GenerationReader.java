@@ -61,7 +61,7 @@ public class GenerationReader extends YamlReader<GenerationInfo> {
         while (areaSection.contains(String.valueOf(c))) {
             var cfg = areaSection.getConfigurationSection(String.valueOf(c));
             if (cfg == null) {
-                Debug.error(file, areaSection, "无效的生成表达 (areas): " + c);
+                Debug.error(file, areaSection, "Invalid (areas): " + c);
                 continue;
             }
 

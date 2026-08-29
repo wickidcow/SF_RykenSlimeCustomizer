@@ -68,19 +68,19 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
         if (section.contains("energy")) {
             ConfigurationSection energySettings = section.getConfigurationSection("energy");
             if (energySettings == null) {
-                Debug.error(file, section, "缺少或配置错误 '能源设置' (energy)");
+                Debug.error(file, section, "MissingConfiguration error 'Source' (energy)");
                 return null;
             }
             int capacity = energySettings.getInt("capacity", -1);
             if (capacity < 1) {
-                Debug.error(file, section, "缺少或配置错误 '电容量' (capacity)", 1, Integer.MAX_VALUE);
+                Debug.error(file, section, "MissingConfiguration error '' (capacity)", 1, Integer.MAX_VALUE);
                 return null;
             }
             MachineRecord record = new MachineRecord(capacity);
             String encType = energySettings.getString("type");
             Optional<EnergyNetComponentType> enc = CommonUtils.getEnum(EnergyNetComponentType.class, encType);
             if (enc.isEmpty()) {
-                Debug.warn(file, energySettings, "错误的能源网络组件类型 (type):" + encType + " 已转为无电机器");
+                Debug.warn(file, energySettings, "Source (type):" + encType + " machine");
                 // Keep the documented fallback behavior, but do not return early: the
                 // common registration path below must still run for the fallback machine.
                 machine = new ScriptMachineNoEnergy(base, menu, input, output, eval, -1);
@@ -89,7 +89,7 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
                 // top-level machine section made valid generator configurations resolve -1.
                 int energyOutput = energySettings.getInt("energyOutput", -1);
                 if (energyOutput < 1) {
-                    Debug.error(file, energySettings, "缺少或配置错误 '能源输出' (energyOutput)");
+                    Debug.error(file, energySettings, "MissingConfiguration error 'Source' (energyOutput)");
                     return null;
                 } else {
                     machine = new CustomEnergyGenerator(base, menu, input, output, record, enc.get(), eval, energyOutput);

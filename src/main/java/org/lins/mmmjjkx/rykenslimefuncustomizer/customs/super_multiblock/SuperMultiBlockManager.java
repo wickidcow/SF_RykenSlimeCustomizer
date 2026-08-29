@@ -227,7 +227,7 @@ public class SuperMultiBlockManager {
 
                     if (superMultiBlock.getMachine().isDefaultNotice()) {
                         findNearbyPlayers(location, 10, p -> {
-                            p.sendMessage(CMIChatColor.colorize("&c已搭建完成 y=" + layer));
+                            p.sendMessage(CMIChatColor.colorize("&cformed successfully y=" + layer));
                         });
                     }
                 }
@@ -289,7 +289,7 @@ public class SuperMultiBlockManager {
                 if (descriptor != null) {
                     addProjectile(location, descriptor, !instance.getMachine().isAllowSwitchDisplayLayer(), glow);
                 } else {
-                    Debug.error("无法展示超大多方块投影: 机器:" + instance.getMachine().getId() + "，位置:" + location);
+                    Debug.error("Unable tomultiblock: machine:" + instance.getMachine().getId() + "RSC message" + location);
                 }
             }
 

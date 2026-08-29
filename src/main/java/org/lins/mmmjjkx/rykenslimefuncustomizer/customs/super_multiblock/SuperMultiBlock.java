@@ -181,12 +181,12 @@ public class SuperMultiBlock extends SuperMultiBlockManager implements Asynchron
             if (part instanceof SlimefunMultiBlockPart sf) {
                 var sfItem = sf.target.getItem();
                 if (sfItem == null) {
-                    fail(player, l, "未知的粘液方块: " + sfItem);
+                    fail(player, l, "block: " + sfItem);
                     continue;
                 }
                 var mt = sf.blockData.getPlacementMaterial();
                 if (!mt.isBlock()) {
-                    fail(player, l, "未知的粘液方块: " + sfItem + "/" + mt);
+                    fail(player, l, "block: " + sfItem + "/" + mt);
                     continue;
                 }
 
@@ -215,7 +215,7 @@ public class SuperMultiBlock extends SuperMultiBlockManager implements Asynchron
             }
 
             if (part instanceof CustomMultiBlockPart) {
-                fail(player, l, "该方块由脚本检测，无法自动放置");
+                fail(player, l, "blockscript, Unable to");
                 continue;
             }
         }
@@ -228,16 +228,16 @@ public class SuperMultiBlock extends SuperMultiBlockManager implements Asynchron
         Bukkit.getScheduler().runTaskLaterAsynchronously(RykenSlimefunCustomizer.INSTANCE, () -> {
             for (var l : getLocations()) {
                 if (!isFormedCached(l)) {
-                    player.sendMessage(CMIChatColor.translate("&c方块 (" + l.getBlockX() + ", " + l.getBlockY() + ", " + l.getBlockZ() + ") 未搭建完成"));
+                    player.sendMessage(CMIChatColor.translate("&cblock (" + l.getBlockX() + ", " + l.getBlockY() + ", " + l.getBlockZ() + ") not fully formed"));
                 }
             }
-            player.sendMessage(CMIChatColor.translate(isFullyFormedCached() ? "&a多方块已搭建完成!" : "&c多方块未搭建完成!"));
+            player.sendMessage(CMIChatColor.translate(isFullyFormedCached() ? "&amultiblockformed successfully!" : "&cmultiblocknot fully formed!"));
             if (isFullyFormedCached()) {
                 removeProjectiles(this);
             }
         }, 3L);
 
-        player.sendMessage(CMIChatColor.translate("&a已搭建 " + color + (created + built) + "/" + getLocations().size() + " &a个方块"));
+        player.sendMessage(CMIChatColor.translate("RSC message" + color + (created + built) + "/" + getLocations().size() + " &ablock"));
     }
 
     private void fail(Player player, Location l, String reason) {

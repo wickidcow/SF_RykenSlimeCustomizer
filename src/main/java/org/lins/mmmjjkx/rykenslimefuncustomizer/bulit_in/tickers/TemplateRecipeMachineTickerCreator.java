@@ -26,7 +26,7 @@ public class TemplateRecipeMachineTickerCreator extends RecipeMachineTickerCreat
         if (importFrom != null) {
             var sf = SlimefunItem.getById(importFrom);
             if (sf == null) {
-                Debug.warn(file, section, "无效的配方复制源 (recipes_import_from): " + importFrom);
+                Debug.warn(file, section, "InvalidrecipeSource (recipes_import_from): " + importFrom);
             } else {
                 result.addAll(readRecipes(sf));
             }
@@ -50,7 +50,7 @@ public class TemplateRecipeMachineTickerCreator extends RecipeMachineTickerCreat
             var item = addon.getSfStack(key);
 
             if (item == null) {
-                Debug.error(file, section, "无法找到作为模板的物品: " + key);
+                Debug.error(file, section, "Unable toitem: " + key);
                 continue;
             }
 
@@ -71,7 +71,7 @@ public class TemplateRecipeMachineTickerCreator extends RecipeMachineTickerCreat
     public @Nullable MachineTicker create(File file, AdvancedCustomMachine sf, ConfigurationSection section, @Nullable CustomMenu menu, ProjectAddon addon) {
         int templateSlot = section.getInt("templateSlot");
         if (templateSlot < 0 || templateSlot > 53) {
-            Debug.error(file, section, "缺少或配置错误 '模板槽位' (templateSlot)", 0, 53);
+            Debug.error(file, section, "MissingConfiguration error 'slot' (templateSlot)", 0, 53);
             return null;
         }
 

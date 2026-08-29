@@ -49,12 +49,12 @@ public class SolarGeneratorReader extends YamlReader<CustomSolarGenerator> {
         int nightEnergy = section.getInt("nightEnergy");
 
         if (dayEnergy < 1) {
-            Debug.error(file, section, "缺少或配置错误 '白天产电量' (dayEnergy)", 1, Integer.MAX_VALUE);
+            Debug.error(file, section, "MissingConfiguration error '' (dayEnergy)", 1, Integer.MAX_VALUE);
             return null;
         }
 
         if (nightEnergy < 1) {
-            Debug.error(file, section, "缺少或配置错误 '夜晚产电量' (nightEnergy)", 1, Integer.MAX_VALUE);
+            Debug.error(file, section, "MissingConfiguration error '' (nightEnergy)", 1, Integer.MAX_VALUE);
             return null;
         }
 
@@ -62,7 +62,7 @@ public class SolarGeneratorReader extends YamlReader<CustomSolarGenerator> {
         int lightLevel = section.getInt("lightLevel", 15);
 
         if (lightLevel < 0 || lightLevel > 15) {
-            Debug.error(file, section, "缺少或配置错误 '所需光照等级' (lightLevel)", 1, 15);
+            Debug.error(file, section, "MissingConfiguration error '' (lightLevel)", 1, 15);
             return null;
         }
 

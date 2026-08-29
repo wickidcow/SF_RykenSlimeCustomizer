@@ -89,11 +89,11 @@ public final class ProjectAddonManager {
         for (String scFile : scFiles) {
             File sc = new File(prjFolder, scFile);
             if (sc.exists()) {
-                Debug.error("你错误地将 SC 配置文件放入了 RSC 中! 你必须转换为 RSC 附属才可使用！查阅 https://rsc.slimefun.cn/#/addon/sc-to-rsc");
+                Debug.error(" SC RSC ! RSC addon! https://rsc.slimefun.cn/#/addon/sc-to-rsc");
                 return;
             }
         }
-        Debug.warn("在名称为 " + prjFolder.getName() + " 的文件夹下不存在 RSC 附属配置文件!");
+        Debug.warn("Name " + prjFolder.getName() + " RSC addon!");
     }
 
     public boolean preloadAddon(File prjFolder) {
@@ -106,12 +106,12 @@ public final class ProjectAddonManager {
         YamlConfiguration infoConfig = YamlConfiguration.loadConfiguration(info);
         String id = infoConfig.getString("id");
         if (id == null || id.isBlank()) {
-            Debug.error(info, infoConfig, "无效的附属 ID (id) !");
+            Debug.error(info, infoConfig, "Invalidaddon ID (id) !");
             return false;
         }
 
         if (projectIds.containsKey(id)) {
-            Debug.error("ID 冲突: " + id + " 与 " + projectIds.get(id).getName() + " 下的附属使用了相同的附属 ID! 导致此附属无法加载!");
+            Debug.error("ID : " + id + "RSC message" + projectIds.get(id).getName() + " addonaddon ID! addonUnable to!");
             return false;
         }
         projectIds.put(id, prjFolder);
@@ -155,11 +155,11 @@ public final class ProjectAddonManager {
 
         Bukkit.getScheduler().runTaskLater(RykenSlimefunCustomizer.INSTANCE, BaseRSCItemGroup::addItemsToGroups, 1L);
 
-        Debug.info("已加载的附属列表：");
+        Debug.info("Loaded addons: ");
         for (ProjectAddon addon : projectAddons.values()) {
-            Debug.info(addon.getAddonName() + " (" + addon.getAddonId() + ")" + " 版本号: " + addon.getAddonVersion());
+            Debug.info(addon.getAddonName() + " (" + addon.getAddonId() + ")" + " Version: " + addon.getAddonVersion());
         }
-        Debug.info("共计" + projectAddons.size() + "个附属被加载");
+        Debug.info("RSC message" + projectAddons.size() + "addon");
     }
 
     public void checkFiles() {
@@ -168,7 +168,7 @@ public final class ProjectAddonManager {
             boolean b = Arrays.stream(Objects.requireNonNull(folder.listFiles()))
                     .anyMatch(f -> f.isFile() && f.getName().equals("info.yml"));
             if (b) {
-                Debug.warn("你应当在 \"plugin/RykenSlimefunCustomizer/addons/附属文件夹\" 中存入配置文件，而不是在 \"plugin/RykenSlimefunCustomizer\" 中");
+                Debug.warn(" \"plugin/RykenSlimefunCustomizer/addons/addon\" , \"plugin/RykenSlimefunCustomizer\" ");
             }
         }
     }

@@ -11,7 +11,6 @@ import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineRecipe;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
-import net.guizhanss.minecraft.guizhanlib.gugu.minecraft.helpers.inventory.ItemStackHelper;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -57,35 +56,35 @@ public interface Recipe {
     static ItemStack asInputInfoStack(List<InputWrapper> wrappers) {
         List<String> lore = new ArrayList<>();
         for (var wrapper : wrappers) {
-            lore.add(ItemStackHelper.getName(wrapper.getStack()) + CMIChatColor.translate("&e x" + wrapper.getAmount()));
+            lore.add(CommonUtils.getItemName(wrapper.getStack()) + CMIChatColor.translate("&e x" + wrapper.getAmount()));
             if (wrapper.getNoConsume().getNoConsumeAmountExcludeLinked() != 0) {
-                lore.add(CMIChatColor.translate("&e其中 " + wrapper.getNoConsume().getNoConsumeAmountExcludeLinked() + " 个物品不消耗"));
+                lore.add(CMIChatColor.translate("RSC message" + wrapper.getNoConsume().getNoConsumeAmountExcludeLinked() + " items are not consumed"));
             }
             if (!wrapper.getNoConsume().getLinkedNoConsume().isEmpty()) {
-                lore.add(CMIChatColor.translate("&e其中位于 " + Arrays.toString(wrapper.getNoConsume().getLinkedNoConsume().toIntArray()) + " 的物品不消耗"));
+                lore.add(CMIChatColor.translate("RSC message" + Arrays.toString(wrapper.getNoConsume().getLinkedNoConsume().toIntArray()) + " items are not consumed"));
             }
         }
 
-        return new CustomItemStack(Material.GREEN_STAINED_GLASS_PANE, "&e总计物品: ", lore);
+        return new CustomItemStack(Material.GREEN_STAINED_GLASS_PANE, "&eItems: ", lore);
     }
 
     static ItemStack asOutputInfoStack(ItemStack[] outputs, IntList chances) {
         List<String> lore = new ArrayList<>();
         for (int i = 0; i < outputs.length; i++) {
             var output = outputs[i];
-            lore.add(getOutputChanceLore(chances.getInt(i)) + ": " + ItemStackHelper.getName(output) + CMIChatColor.translate("&e x" + output.getAmount()));
+            lore.add(getOutputChanceLore(chances.getInt(i)) + ": " + CommonUtils.getItemName(output) + CMIChatColor.translate("&e x" + output.getAmount()));
         }
 
-        return new CustomItemStack(Material.GREEN_STAINED_GLASS_PANE, "&e总计物品: ", lore);
+        return new CustomItemStack(Material.GREEN_STAINED_GLASS_PANE, "&eItems: ", lore);
     }
 
     static String getOutputChanceLore(double chance) {
         String cs = String.format("%.1f", chance); // 保留 1 位小数
-        return CMIChatColor.translate("&a有&b " + cs + "% &a的概率产出");
+        return CMIChatColor.translate("&aHas&b " + cs + "% &a output chance");
     }
 
     static String getOutputChanceLore(int chance) {
-        return CMIChatColor.translate("&a有&b " + chance + "% &a的概率产出");
+        return CMIChatColor.translate("&aHas&b " + chance + "% &a output chance");
     }
 
     static ItemStack tagOutputChance(ItemStack item, double chance) {
@@ -105,7 +104,7 @@ public interface Recipe {
 
     static ItemStack tagNoConsume(ItemStack item) {
         item = item.clone();
-        CommonUtils.addLore(item, true, "&d该物品不消耗");
+        CommonUtils.addLore(item, true, "&dThis item is not consumed");
         return item;
     }
 

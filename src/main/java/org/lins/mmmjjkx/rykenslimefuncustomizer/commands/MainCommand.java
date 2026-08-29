@@ -66,16 +66,16 @@ public class MainCommand implements TabExecutor {
                 return true;
             } else if (args[0].equalsIgnoreCase("reload")) {
                 if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.reload")) {
-                    sendMessage(sender, "&4你没有权限去做这些！");
+                    sendMessage(sender, "&4You do not have permission to do that!");
                     return false;
                 }
 
                 RykenSlimefunCustomizer.reload();
-                sendMessage(sender, "&a重载成功！");
+                sendMessage(sender, "&aReload successful!");
                 return true;
             } else if (args[0].equalsIgnoreCase("list")) {
                 if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.list")) {
-                    sendMessage(sender, "&4你没有权限去做这些！");
+                    sendMessage(sender, "&4You do not have permission to do that!");
                     return false;
                 }
 
@@ -83,7 +83,7 @@ public class MainCommand implements TabExecutor {
                 List<String> nameWithId = addons.stream()
                         .map(a -> a.getAddonName() + "(id: " + a.getAddonId() + ")")
                         .toList();
-                StringBuilder component = new StringBuilder("&a已加载的附属: ");
+                StringBuilder component = new StringBuilder("&aLoaded addons: ");
                 for (String nwi : nameWithId) {
                     component.append("&a").append(nwi);
                     if (nameWithId.indexOf(nwi) != (nameWithId.size() - 1)) {
@@ -94,7 +94,7 @@ public class MainCommand implements TabExecutor {
                 return true;
             } else if (args[0].equalsIgnoreCase("reloadPlugin")) {
                 if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.reloadPlugin")) {
-                    sendMessage(sender, "&4你没有权限去做这些！");
+                    sendMessage(sender, "&4You do not have permission to do that!");
                     return false;
                 }
 
@@ -102,61 +102,61 @@ public class MainCommand implements TabExecutor {
                 if (RykenSlimefunCustomizer.INSTANCE.getConfig().getBoolean("saveExample")) {
                     RykenSlimefunCustomizer.saveExample();
                 }
-                sendMessage(sender, "&a重载配置成功！");
+                sendMessage(sender, "&aConfiguration reloaded successfully!");
                 return true;
             } else if (args[0].equalsIgnoreCase("resaveitems")) {
                 if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.resaveitems")) {
-                    sendMessage(sender, "&4你没有权限去做这些！");
+                    sendMessage(sender, "&4You do not have permission to do that!");
                     return false;
                 }
 
                 if (!(sender instanceof Player player)) {
-                    sendMessage(sender, "&4只有玩家才能执行此命令！");
+                    sendMessage(sender, "&4Only players can run this command!");
                     return false;
                 }
 
                 if (!PluginStateCache.isEnabled("JustEnoughGuide")) {
-                    sendMessage(sender, "&4此命令需要服务器安装JustEnoughGuide才能正常使用");
+                    sendMessage(sender, "&4JustEnoughGuide");
                     return false;
                 }
 
-                sendMessage(player, "&c注意：为确保正常保存所有物品，请站在一个空旷平整的地面上，不要移动，并执行/rsc resaveitems start");
-                sendMessage(player, "&c执行此指令后，会自动在您下方生成一些箱子，用于存放保存的物品");
-                sendMessage(player, "&c接下来，您可以升级/降低服务器版本，箱子中的物品在世界升级时会自动被服务器修正");
-                sendMessage(player, "&c在您重新进入世界后，输入/rsc resaveitems end 以自动重新保存物品");
-                sendMessage(player, "&c保存会自动替换原文件，为避免保存失败，请做好plugins/RykenSlimefunCustomizer下的所有文件的备份");
+                sendMessage(player, "&c: Hasitem, , , /rsc resaveitems start");
+                sendMessage(player, "&c, , item");
+                sendMessage(player, "&c, /Version, item");
+                sendMessage(player, "&c, /rsc resaveitems end item");
+                sendMessage(player, "&c, Save failed, plugins/RykenSlimefunCustomizerHas");
             } else if (args[0].equalsIgnoreCase("clearScriptCache")) {
                 if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.clearscriptcache")) {
-                    sendMessage(sender, "&4你没有权限去做这些！");
+                    sendMessage(sender, "&4You do not have permission to do that!");
                     return false;
                 }
 
                 RykenSlimefunCustomizer.clearScriptCache();
-                sendMessage(sender, "&a清除脚本缓存成功！");
+                sendMessage(sender, "&ascriptsuccessfully!");
                 return true;
             } else if (args[0].equalsIgnoreCase("cleardisplayprojectiles")) {
                 if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.cleardisplayprojectiles")) {
-                    sendMessage(sender, "&4你没有权限去做这些！");
+                    sendMessage(sender, "&4You do not have permission to do that!");
                     return false;
                 }
 
                 RykenSlimefunCustomizer.clearDisplayProjectiles();
-                sendMessage(sender, "&a清除多方块显示实体成功！");
+                sendMessage(sender, "&amultiblocksuccessfully!");
                 return true;
             } else if (args[0].equalsIgnoreCase("buildSuperMultiBlock")) {
                 if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.buildSuperMultiBlock")) {
-                    sendMessage(sender, "&4你没有权限去做这些！");
+                    sendMessage(sender, "&4You do not have permission to do that!");
                     return false;
                 }
 
                 if (!(sender instanceof Player player)) {
-                    sendMessage(sender, "&4只有玩家才能执行此命令！");
+                    sendMessage(sender, "&4Only players can run this command!");
                     return false;
                 }
 
                 Block b = player.getTargetBlockExact(8, FluidCollisionMode.NEVER);
                 if (b == null || b.getType().isAir()) {
-                    sendMessage(player, "&4你必须要看向一个超大多方块才能执行此指令");
+                    sendMessage(player, "&4multiblock");
                     return false;
                 }
 
@@ -164,68 +164,68 @@ public class MainCommand implements TabExecutor {
                 if (smb == null) {
                     smb = SuperMultiBlockManager.getCoreStorage().get(b.getLocation());
                     if (smb == null) {
-                        sendMessage(player, "&4你必须要看向一个超大多方块才能执行此指令");
+                        sendMessage(player, "&4multiblock");
                         return false;
                     }
                 }
 
                 smb.buildMultiBlock(player);
             } else {
-                sendMessage(sender, "&4找不到此子指令！");
+                sendMessage(sender, "&4Unknown subcommand!");
                 return false;
             }
         } else if (args.length == 2) {
             if (args[0].equalsIgnoreCase("enable")) {
                 if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.enable")) {
-                    sendMessage(sender, "&4你没有权限去做这些！");
+                    sendMessage(sender, "&4You do not have permission to do that!");
                     return false;
                 }
 
                 File file = new File(ProjectAddonManager.ADDONS_DIRECTORY, args[1]);
 
                 if (!file.exists() || !file.isDirectory()) {
-                    sendMessage(sender, "&4没有这个文件夹！");
+                    sendMessage(sender, "&4Folder not found!");
                     return false;
                 }
 
                 if (RykenSlimefunCustomizer.addonManager.isLoaded(file)) {
-                    sendMessage(sender, "&4此附属已经被加载了！");
+                    sendMessage(sender, "&4addon!");
                     return false;
                 }
 
                 if (RykenSlimefunCustomizer.addonManager.loadAddon(file)) {
-                    sendMessage(sender, "&a加载附属成功！");
+                    sendMessage(sender, "&aAddon loaded successfully!");
                 } else {
-                    sendMessage(sender, "&c附属加载失败！");
+                    sendMessage(sender, "&cAddon failed to load!");
                 }
                 return true;
             } else if (args[0].equalsIgnoreCase("disable")) {
                 if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.disable")) {
-                    sendMessage(sender, "&4你没有权限去做这些！");
+                    sendMessage(sender, "&4You do not have permission to do that!");
                     return false;
                 }
 
                 String id = args[1];
                 ProjectAddon addon = RykenSlimefunCustomizer.addonManager.get(id);
                 if (addon == null) {
-                    sendMessage(sender, "&4没有这个附属！");
+                    sendMessage(sender, "&4Addon not found!");
                     return false;
                 }
 
                 RykenSlimefunCustomizer.addonManager.unloadAddon(addon);
 
-                sendMessage(sender, "&a卸载此附属成功！");
+                sendMessage(sender, "&aAddon unloaded successfully!");
                 return true;
             } else if (args[0].equalsIgnoreCase("info")) {
                 if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.info")) {
-                    sendMessage(sender, "&4你没有权限去做这些！");
+                    sendMessage(sender, "&4You do not have permission to do that!");
                     return false;
                 }
 
                 String id = args[1];
                 ProjectAddon addon = RykenSlimefunCustomizer.addonManager.get(id);
                 if (addon == null) {
-                    sendMessage(sender, "&4没有这个附属！");
+                    sendMessage(sender, "&4Addon not found!");
                     return false;
                 }
 
@@ -233,95 +233,95 @@ public class MainCommand implements TabExecutor {
                 String authorsRemoveBrackets = authors.substring(1, authors.length() - 1);
 
                 StringBuilder builder = new StringBuilder()
-                        .append("名称: &a")
+                        .append("Name: &a")
                         .append(addon.getAddonName())
                         .append("\n&f")
                         .append("ID: &a")
                         .append(addon.getAddonId())
                         .append("\n&f")
-                        .append("作者(们): &a")
+                        .append("Authors: &a")
                         .append(authorsRemoveBrackets)
                         .append("\n&f")
-                        .append("版本: &a")
+                        .append("Version: &a")
                         .append(addon.getAddonVersion())
                         .append("\n&f")
-                        .append("依赖: &a")
+                        .append("Dependencies: &a")
                         .append(addon.getDepends())
                         .append("\n&f")
-                        .append("插件依赖: &a")
+                        .append("Plugin dependencies: &a")
                         .append(addon.getPluginDepends())
                         .append("\n&f")
-                        .append("描述: &a")
+                        .append("Description: &a")
                         .append(addon.getDescription());
 
                 if (addon.getGitHubRepo() != null && !addon.getGitHubRepo().isBlank()) {
-                    builder.append("\n&f").append("Github仓库: &e").append(addon.getGitHubRepo());
+                    builder.append("\n&f").append("GithubRepository: &e").append(addon.getGitHubRepo());
                 }
 
                 sendMessage(sender, builder.toString());
                 return true;
             } else if (args[0].equalsIgnoreCase("menupreview")) {
                 if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.menupreview")) {
-                    sendMessage(sender, "&4你没有权限去做这些！");
+                    sendMessage(sender, "&4You do not have permission to do that!");
                     return false;
                 }
 
                 String menuPresetId = args[1];
                 BlockMenuPreset bmp = Slimefun.getRegistry().getMenuPresets().get(menuPresetId);
                 if (bmp == null) {
-                    sendMessage(sender, "&4没有这个菜单！");
+                    sendMessage(sender, "&4Menu not found!");
                     return false;
                 }
                 if (sender instanceof Player p) {
                     bmp.open(p);
                     return true;
                 } else {
-                    sendMessage(sender, "&4你不能在控制台使用此指令！");
+                    sendMessage(sender, "&4This command cannot be used from the console!");
                     return false;
                 }
             } else if (args[0].equalsIgnoreCase("reload")) {
                 if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.reload")) {
-                    sendMessage(sender, "&4你没有权限去做这些！");
+                    sendMessage(sender, "&4You do not have permission to do that!");
                     return false;
                 }
 
                 String prjId = args[1];
                 ProjectAddon addon = RykenSlimefunCustomizer.addonManager.get(prjId);
                 if (addon == null) {
-                    sendMessage(sender, "&4没有这个附属！");
+                    sendMessage(sender, "&4Addon not found!");
                     return false;
                 }
 
                 if (RykenSlimefunCustomizer.addonManager.reloadAddon(addon)) {
-                    sendMessage(sender, "&a重载成功！");
+                    sendMessage(sender, "&aReload successful!");
                 } else {
-                    sendMessage(sender, "&c重载失败！");
+                    sendMessage(sender, "&cReload failed!");
                 }
                 return true;
             } else if (args[0].equalsIgnoreCase("resaveitems")) {
                 if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.resaveitems")) {
-                    sendMessage(sender, "&4你没有权限去做这些！");
+                    sendMessage(sender, "&4You do not have permission to do that!");
                     return false;
                 }
 
                 if (!(sender instanceof Player player)) {
-                    sendMessage(sender, "&4只有玩家才能执行此命令！");
+                    sendMessage(sender, "&4Only players can run this command!");
                     return false;
                 }
 
                 if (!PluginStateCache.isEnabled("JustEnoughGuide")) {
-                    sendMessage(sender, "&4此命令需要服务器安装JustEnoughGuide才能正常使用");
+                    sendMessage(sender, "&4JustEnoughGuide");
                     return false;
                 }
 
                 if (player.getLocation().toBlockLocation().getBlockY()
                         == player.getWorld().getMinHeight()) {
-                    sendMessage(sender, "&4所处Y过低，请站高一些");
+                    sendMessage(sender, "&4Y, ");
                     return false;
                 }
 
                 if (!player.isOnGround()) {
-                    sendMessage(sender, "&4请站在地上");
+                    sendMessage(sender, "RSC message");
                     return false;
                 }
 
@@ -344,7 +344,7 @@ public class MainCommand implements TabExecutor {
                         }
                     }
 
-                    sendMessage(player, "&a保存成功！共" + cnt + "个物品，请执行下一步操作");
+                    sendMessage(player, "&aSaved successfully!" + cnt + "item, ");
                 } else if (args[1].equalsIgnoreCase("end")) {
                     Bukkit.getScheduler().runTaskLater(RykenSlimefunCustomizer.INSTANCE, () -> {
                         int i = 0;
@@ -359,7 +359,7 @@ public class MainCommand implements TabExecutor {
                                     offsetY = 0;
                                     i = 0;
                                 } else {
-                                    sendMessage(player, "&a已重新保存成功！共" + cnt + "个文件");
+                                    sendMessage(player, "&aSaved successfully!" + cnt + "RSC message");
                                     break;
                                 }
                             }
@@ -386,10 +386,10 @@ public class MainCommand implements TabExecutor {
                                                 RykenSlimefunCustomizer.addonManager.get(prjId);
 
                                         CommonUtils.saveItem(itemStack, filePath, addon);
-                                        sendMessage(player, "&a已重新保存 " + source);
+                                        sendMessage(player, "RSC message" + source);
                                         cnt++;
                                     } catch (Exception e) {
-                                        Debug.error("&c保存" + source + "物品失败", e);
+                                        Debug.error("RSC message" + source + "itemfailed", e);
                                     }
                                 }
                             }
@@ -397,16 +397,16 @@ public class MainCommand implements TabExecutor {
                     },
                     1L);
                 } else {
-                    sendMessage(sender, "&4请输入正确的参数！ (start/end)");
+                    sendMessage(sender, "&4Enter a valid argument! (start/end)");
                 }
             } else {
-                sendMessage(sender, "&4找不到此子指令！");
+                sendMessage(sender, "&4Unknown subcommand!");
                 return false;
             }
         } else if (args.length == 3) {
             if (args[0].equalsIgnoreCase("saveitem")) {
                 if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.saveitem")) {
-                    sendMessage(sender, "&4你没有权限去做这些！");
+                    sendMessage(sender, "&4You do not have permission to do that!");
                     return false;
                 }
 
@@ -414,25 +414,25 @@ public class MainCommand implements TabExecutor {
                 String itemId = args[2];
                 ProjectAddon addon = RykenSlimefunCustomizer.addonManager.get(prjId);
                 if (addon == null) {
-                    sendMessage(sender, "&4没有这个附属！");
+                    sendMessage(sender, "&4Addon not found!");
                     return false;
                 }
                 if (sender instanceof Player p) {
                     ItemStack itemStack = p.getInventory().getItemInMainHand();
                     if (itemStack.getType() == Material.AIR) {
-                        sendMessage(sender, "&4你不能保存空气！");
+                        sendMessage(sender, "&4You cannot save air!");
                         return false;
                     }
                     CommonUtils.saveItem(itemStack, itemId, addon);
-                    sendMessage(sender, "&a保存成功！");
+                    sendMessage(sender, "&aSaved successfully!");
                     return true;
                 } else {
-                    sendMessage(sender, "&4你不能在控制台使用此指令！");
+                    sendMessage(sender, "&4This command cannot be used from the console!");
                     return false;
                 }
             } else if (args[0].equalsIgnoreCase("getsaveditem")) {
                 if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.getsaveditem")) {
-                    sendMessage(sender, "&4你没有权限去做这些！");
+                    sendMessage(sender, "&4You do not have permission to do that!");
                     return false;
                 }
 
@@ -440,21 +440,21 @@ public class MainCommand implements TabExecutor {
                 String itemId = args[2];
                 ProjectAddon addon = RykenSlimefunCustomizer.addonManager.get(prjId);
                 if (addon == null) {
-                    sendMessage(sender, "&4没有这个附属！");
+                    sendMessage(sender, "&4Addon not found!");
                     return false;
                 }
 
                 File file = new File(
                         RykenSlimefunCustomizer.addonManager.getAddonFolder(prjId), "saveditems/" + itemId + ".yml");
                 if (!file.exists() || file.length() == 0) {
-                    sendMessage(sender, "&4指向的物品文件没有内容！");
+                    sendMessage(sender, "&4The selected item file is empty!");
                     return false;
                 }
 
                 YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
                 ItemStack item = config.getItemStack("item");
                 if (item == null) {
-                    sendMessage(sender, "&4无法读取此物品文件！");
+                    sendMessage(sender, "&4Unable to read this item file!");
                     return false;
                 }
 
@@ -462,22 +462,22 @@ public class MainCommand implements TabExecutor {
                     ItemStack itemStack = p.getInventory().getItemInMainHand();
                     if (itemStack.getType() == Material.AIR) {
                         p.getInventory().setItemInMainHand(item);
-                        sendMessage(sender, "&a物品已放入你的手中！");
+                        sendMessage(sender, "&aThe item was placed in your hand!");
                         return true;
                     }
                     p.getInventory().addItem(item);
-                    sendMessage(sender, "&a物品已放入你的背包中！");
+                    sendMessage(sender, "&aThe item was added to your inventory!");
                     return true;
                 } else {
-                    sendMessage(sender, "&4你不能在控制台使用此指令！");
+                    sendMessage(sender, "&4This command cannot be used from the console!");
                     return false;
                 }
             } else {
-                sendMessage(sender, "&4找不到此子指令！");
+                sendMessage(sender, "&4Unknown subcommand!");
                 return false;
             }
         } else {
-            sendMessage(sender, "&4找不到此子指令！");
+            sendMessage(sender, "&4Unknown subcommand!");
             return false;
         }
         return false;
@@ -525,23 +525,23 @@ public class MainCommand implements TabExecutor {
 
     private void sendHelp(CommandSender sender) {
         if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.help")) {
-            sendMessage(sender, "&4你没有权限去做这些！");
+            sendMessage(sender, "&4You do not have permission to do that!");
             return;
         }
         sendMessage(sender, """
-                        &aRykenSlimeCustomizer帮助
-                        &e/rsc (help) 显示帮助
-                        &e/rsc reload 重载插件及附属
-                        &e/rsc reloadPlugin 重载插件
-                        &e/rsc list 显示加载成功的附属
-                        &e/rsc enable <addons里的文件夹名称> 加载某个附属
-                        &e/rsc disable <附属ID> 卸载某个附属
-                        &e/rsc saveitem <附属ID> <ID> 保存物品
-                        &e/rsc menupreview <ID> 预览机器菜单
-                        &e/rsc getsaveditem <附属ID> <ID> 获取保存的物品
-                        &e/rsc resaveitems 重新保存所有保存物品
-                        &e/rsc clearScriptCache 清除脚本失败缓存
-                        &e/rsc cleardisplayprojectiles 清除多方块显示实体""");
+ &aRykenSlimeCustomizer
+ &e/rsc (help) 
+ &e/rsc reload addon
+ &e/rsc reloadPlugin 
+ &e/rsc list successfullyaddon
+ &e/rsc enable <addonsName> addon
+ &e/rsc disable <addonID> addon
+ &e/rsc saveitem <addonID> <ID> item
+ &e/rsc menupreview <ID> machinemenu
+ &e/rsc getsaveditem <addonID> <ID> item
+ &e/rsc resaveitems Hasitem
+ &e/rsc clearScriptCache scriptfailed
+ &e/rsc cleardisplayprojectiles multiblock""");
     }
 
     public static void sendMessage(CommandSender sender, String s) {

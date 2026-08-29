@@ -63,14 +63,14 @@ public class ItemGroupReader extends YamlReader<ItemGroup> {
         ConfigurationSection item = section.getConfigurationSection("item");
         ItemStack stack = CommonUtils.readItem(file, item, addon);
         if (stack == null) {
-            Debug.error(file, section, "缺少或配置错误 '物品' (item)");
+            Debug.error(file, section, "MissingConfiguration error 'item' (item)");
             return null;
         }
 
         String type = section.getString("type", "");
         GroupType groupType = GroupType.getType(type);
         if (groupType == null) {
-            Debug.error(file, section, "缺少或配置错误 '物品组类型' (type): " + type);
+            Debug.error(file, section, "MissingConfiguration error 'item group' (type): " + type);
             return null;
         }
         NamespacedKey key = Keys.newKey(s);
@@ -86,15 +86,15 @@ public class ItemGroupReader extends YamlReader<ItemGroup> {
             ItemGroup raw = CommonUtils.getIf(Slimefun.getRegistry().getAllItemGroups(), ig -> ig.getKey().equals(parK));
             switch (raw) {
                 case null -> {
-                    Debug.error(file, section, "无法找到父物品组 (parent): " + par);
+                    Debug.error(file, section, "Unable toitem group (parent): " + par);
                     return null;
                 }
                 case NestedItemGroup nig -> {
                     if (groupType == GroupType.locked) {
-                        Debug.error(file, section, "无法将 LockedItemGroup 添加到 NestedItemGroup 中 (parent): " + par);
+                        Debug.error(file, section, "Unable to LockedItemGroup NestedItemGroup (parent): " + par);
                         return null;
                     }
-                    Debug.debug(() -> "由于技术限制原因，物品组 " + key + " 无法成为可嵌套物品组，因为其父物品组为 NestedItemGroup");
+                    Debug.debug(() -> ", item group " + key + " Unable toitem group, item group NestedItemGroup");
                     SubItemGroup group = new SubItemGroup(key, nig, stack, tier);
                     nig.addSubGroup(group);
                     group.register(RykenSlimefunCustomizer.INSTANCE);
@@ -103,7 +103,7 @@ public class ItemGroupReader extends YamlReader<ItemGroup> {
                 case RSCItemGroupLegacy rsc -> parent = rsc;
                 case RSCItemGroupJEG rsc -> parent = rsc;
                 default -> {
-                    Debug.error(file, section, "无法添加当前物品组至到指定的物品组 (parent): " + key + " -> " + par);
+                    Debug.error(file, section, "Unable toitem groupitem group (parent): " + key + " -> " + par);
                     return null;
                 }
             }
@@ -115,12 +115,12 @@ public class ItemGroupReader extends YamlReader<ItemGroup> {
             for (String ig : section.getStringList("parents")) {
                 NamespacedKey nk = NamespacedKey.fromString(ig.toLowerCase(Locale.ROOT));
                 if (nk == null) {
-                    Debug.warn(file, section, "NamespacedKey 非法 (parents): " + ig);
+                    Debug.warn(file, section, "NamespacedKey (parents): " + ig);
                     continue;
                 }
                 parents.add(nk);
             }
-            Debug.debug(() -> "由于技术限制原因，物品组 LockedItemGroup: " + key + " 无法成为可嵌套物品组");
+            Debug.debug(() -> ", item group LockedItemGroup: " + key + " Unable toitem group");
             ItemGroup group = new LockedItemGroup(key, stack, tier, parents.toArray(new NamespacedKey[0]));
             if (parent != null) {
                 parent.addContent(group);

@@ -113,7 +113,7 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
         ConfigurationSection item = section.getConfigurationSection("item");
         ItemStack stack = CommonUtils.readItem(file, item, addon);
         if (stack == null) {
-            Debug.error("在附属" + addon.getAddonId() + "中加载自然资源" + id + "时遇到了问题: " + "物品为空或格式错误导致无法加载");
+            Debug.error("addon" + addon.getAddonId() + "Source" + id + "RSC message" + "itemUnable to");
             return null;
         }
 

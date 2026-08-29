@@ -53,19 +53,19 @@ public class TemplateMachineReader extends YamlReader<AdvancedCustomMachine> {
 
         CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getId().equalsIgnoreCase(id));
         if (menu == null) {
-            Debug.warn(file, section, "未找到菜单 " + id + " (menu), 使用默认菜单");
+            Debug.warn(file, section, "Not foundmenu " + id + " (menu), menu");
         }
 
         List<Integer> input = section.getIntegerList("input");
         List<Integer> output = section.getIntegerList("output");
 
         if (input.isEmpty()) {
-            Debug.error(file, section, "缺少或配置错误 '输入槽' (input)");
+            Debug.error(file, section, "MissingConfiguration error '' (input)");
             return null;
         }
 
         if (output.isEmpty()) {
-            Debug.error(file, section, "缺少或配置错误 '输出槽' (output)");
+            Debug.error(file, section, "MissingConfiguration error '' (output)");
             return null;
         }
 
@@ -76,19 +76,19 @@ public class TemplateMachineReader extends YamlReader<AdvancedCustomMachine> {
 
         int capacity = section.getInt("capacity", -1);
         if (capacity <= 0) {
-            Debug.error(file, section, "缺少或配置错误 '能源容量' (capacity)", 1, Integer.MAX_VALUE);
+            Debug.error(file, section, "MissingConfiguration error 'Source' (capacity)", 1, Integer.MAX_VALUE);
             return null;
         }
 
         int energy = section.getInt("consumption", -1);
         if (energy <= 0) {
-            Debug.error(file, section, "缺少或配置错误 '能量消耗' (consumption)", 1, Integer.MAX_VALUE);
+            Debug.error(file, section, "MissingConfiguration error '' (consumption)", 1, Integer.MAX_VALUE);
             return null;
         }
 
         int speed = section.getInt("speed", 1);
         if (speed <= 0) {
-            Debug.error(file, section, "配置错误 '合成速度' (speed)", 1, Integer.MAX_VALUE);
+            Debug.error(file, section, "Configuration error 'Speed' (speed)", 1, Integer.MAX_VALUE);
             return null;
         }
 

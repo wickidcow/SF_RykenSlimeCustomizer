@@ -37,11 +37,11 @@ public final class ZipUtils {
         if (!desDirectory.exists()) {
             boolean mkdirSuccess = desDirectory.mkdirs();
             if (!mkdirSuccess)
-                throw new IOException("创建解压目标文件夹失败");
+                throw new IOException("failed");
         }
 
         if (!zipFile.exists())
-            throw new FileNotFoundException("找不到压缩包");
+            throw new FileNotFoundException("RSC message");
 
         try (ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(zipFile))) {
             ZipEntry zipEntry = zipInputStream.getNextEntry();
@@ -67,7 +67,7 @@ public final class ZipUtils {
                         }
 
                         if (zipEntry.getSize() != -1 && totalBytesRead != zipEntry.getSize()) {
-                            throw new IOException("读取的字节数与条目大小不一致");
+                            throw new IOException("RSC message");
                         }
                     }
                 }

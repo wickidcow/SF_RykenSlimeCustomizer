@@ -11,38 +11,38 @@ import java.util.concurrent.Callable;
 public class Debug {
     public static void error(File file, ConfigurationSection section, String msg) {
         printFileError(file);
-        error("在 " + section.getCurrentPath() + " 发现错误: " + msg);
+        error("RSC message" + section.getCurrentPath() + "RSC message" + msg);
     }
 
     public static void error(File file, ConfigurationSection section, String msg, Throwable e) {
         printFileError(file);
-        error("在 " + section.getCurrentPath() + " 发现错误: " + msg);
+        error("RSC message" + section.getCurrentPath() + "RSC message" + msg);
         e.printStackTrace();
     }
 
     public static void error(File file, ConfigurationSection section, String msg, Number start, Number end) {
         printFileError(file);
-        error("在 " + section.getCurrentPath() + " 发现错误: " + msg + ", 数值范围， [" + start + ", " + end + "]");
+        error("RSC message" + section.getCurrentPath() + "RSC message" + msg + "RSC message" + start + ", " + end + "]");
     }
 
     public static void warn(File file, ConfigurationSection section, String msg) {
         printFileWarning(file);
-        warn("在 " + section.getCurrentPath() + " 发现问题: " + msg);
+        warn("RSC message" + section.getCurrentPath() + "RSC message" + msg);
     }
 
     public static void warn(File file, ConfigurationSection section, String msg, Throwable e) {
         printFileWarning(file);
-        warn("在 " + section.getCurrentPath() + " 发现问题: " + msg);
+        warn("RSC message" + section.getCurrentPath() + "RSC message" + msg);
         e.printStackTrace();
     }
 
     public static void warn(File file, ConfigurationSection section, String msg, Number start, Number end) {
         printFileWarning(file);
-        warn("在 " + section.getCurrentPath() + " 发现问题: " + msg + ", 数值范围，[" + start + ", " + end + "]");
+        warn("RSC message" + section.getCurrentPath() + "RSC message" + msg + "RSC message" + start + ", " + end + "]");
     }
 
     public static void debug(File file, Callable<String> msg) {
-        debug(() -> "文件: " + file.getAbsolutePath());
+        debug(() -> "RSC message" + file.getAbsolutePath());
         debug(msg);
     }
 
@@ -51,11 +51,11 @@ public class Debug {
     }
 
     public static void printFileWarning(File file) {
-        warn("文件: " + shortenPath(file));
+        warn("RSC message" + shortenPath(file));
     }
 
     public static void printFileError(File file) {
-        error("文件: " + shortenPath(file));
+        error("RSC message" + shortenPath(file));
     }
 
     public static void warn(String message) {

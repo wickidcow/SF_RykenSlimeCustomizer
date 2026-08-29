@@ -58,12 +58,12 @@ public class MultiBlockMachineReader extends YamlReader<CustomMultiBlockMachine>
 
         int workSlot = section.getInt("work", -1);
         if (workSlot < 1 || workSlot > 9) {
-            Debug.error(file, section, "缺少或配置错误 '工作槽' (slot)", 1, 9);
+            Debug.error(file, section, "MissingConfiguration error '' (slot)", 1, 9);
             return null;
         }
 
         if (base.recipe() == null) {
-            Debug.error(file, section, "缺少或配置错误 '配方' (recipe)");
+            Debug.error(file, section, "MissingConfiguration error 'recipe' (recipe)");
             return null;
         }
 
@@ -79,12 +79,12 @@ public class MultiBlockMachineReader extends YamlReader<CustomMultiBlockMachine>
         }
 
         if (!hasDispenser) {
-            Debug.error(file, section, "缺少发射器");
+            Debug.error(file, section, "Missing");
             return null;
         }
 
         if (base.recipe()[workSlot - 1] == null) {
-            Debug.error(file, section, "工作槽对应的方块不存在");
+            Debug.error(file, section, "block");
             return null;
         }
 
@@ -94,7 +94,7 @@ public class MultiBlockMachineReader extends YamlReader<CustomMultiBlockMachine>
             String soundString = section.getString("sound");
             Optional<SoundEffect> soundEffect = CommonUtils.getEnum(SoundEffect.class, soundString);
             if (soundEffect.isEmpty()) {
-                Debug.error(file, section, "无效的声音类型 (sound): " + soundString);
+                Debug.error(file, section, "Invalid (sound): " + soundString);
                 return null;
             }
 
@@ -129,13 +129,13 @@ public class MultiBlockMachineReader extends YamlReader<CustomMultiBlockMachine>
             if (recipe == null) continue;
             ItemStack[] inputs = CommonUtils.readRecipe(file, recipe.getConfigurationSection("input"), addon);
             if (inputs == null) {
-                Debug.warn(file, recipe, "缺少 '输入物品' (input) 已跳过");
+                Debug.warn(file, recipe, "Missing 'item' (input) skipped");
                 continue;
             }
 
             ItemStack output = CommonUtils.readItem(file, recipe.getConfigurationSection("output"), addon);
             if (output == null) {
-                Debug.warn(file, recipe, "缺少 '输出物品' (output) 已跳过");
+                Debug.warn(file, recipe, "Missing 'item' (output) skipped");
                 continue;
             }
             map.put(inputs, output);

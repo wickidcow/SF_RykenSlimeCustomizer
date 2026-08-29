@@ -55,13 +55,13 @@ public class MaterialGeneratorReader extends YamlReader<AdvancedCustomMachine> {
 
         CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getId().equalsIgnoreCase(id));
         if (menu == null) {
-            Debug.warn(file, section, "未找到菜单 " + id + " (menu), 使用默认菜单");
+            Debug.warn(file, section, "Not foundmenu " + id + " (menu), menu");
         }
 
         List<Integer> output = section.getIntegerList("output");
 
         if (output.isEmpty()) {
-            Debug.error(file, section, "缺少或配置错误 '输出槽' (output)");
+            Debug.error(file, section, "MissingConfiguration error '' (output)");
             return null;
         }
 
@@ -71,13 +71,13 @@ public class MaterialGeneratorReader extends YamlReader<AdvancedCustomMachine> {
 
         int capacity = section.getInt("capacity", 0);
         if (capacity < 0) {
-            Debug.error(file, section, "配置错误 '能源容量' (capacity)", 0, Integer.MAX_VALUE);
+            Debug.error(file, section, "Configuration error 'Source' (capacity)", 0, Integer.MAX_VALUE);
             return null;
         }
 
         int energy = section.getInt("per", 0);
         if (energy < 0) {
-            Debug.error(file, section, "配置错误 '能量消耗' (per)", 0, Integer.MAX_VALUE);
+            Debug.error(file, section, "Configuration error '' (per)", 0, Integer.MAX_VALUE);
             return null;
         }
 

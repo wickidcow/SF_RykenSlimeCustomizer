@@ -64,7 +64,7 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
         int production = section.getInt("production", -1);
 
         if (production < 1) {
-            Debug.error(file, section, "缺少或配置错误 '产电量' (production)", 1, Integer.MAX_VALUE);
+            Debug.error(file, section, "MissingConfiguration error '' (production)", 1, Integer.MAX_VALUE);
             return null;
         }
 
@@ -87,13 +87,13 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
             ConfigurationSection item = fuelCfg.getConfigurationSection("item");
             ItemStack stack = CommonUtils.readItem(file, item, addon);
             if (stack == null) {
-                Debug.error(file, fuelCfg, "缺少 '输入物品' (input)");
+                Debug.error(file, fuelCfg, "Missing 'item' (input)");
                 continue;
             }
             int seconds = fuelCfg.getInt("seconds", -1);
 
             if (seconds < 0) {
-                Debug.warn(file, fuelCfg, "缺少或配置错误 '配方耗时' (seconds) 已跳过");
+                Debug.warn(file, fuelCfg, "MissingConfiguration error 'recipe' (seconds) skipped");
                 continue;
             }
 
@@ -101,7 +101,7 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
                 ConfigurationSection outputSet = fuelCfg.getConfigurationSection("output");
                 ItemStack output = CommonUtils.readItem(file, outputSet, addon);
                 if (output == null) {
-                    Debug.error(file, fuelCfg, "缺少 '输出物品' (output)");
+                    Debug.error(file, fuelCfg, "Missing 'item' (output)");
                     continue;
                 } else {
                     MachineFuel fuel = new MachineFuel(seconds, stack, output);
