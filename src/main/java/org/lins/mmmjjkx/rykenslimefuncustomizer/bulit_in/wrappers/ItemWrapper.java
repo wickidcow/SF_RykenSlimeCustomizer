@@ -3,6 +3,7 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.wrappers;
 import lombok.Data;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jspecify.annotations.NullMarked;
 
 import java.util.ArrayList;
@@ -19,13 +20,23 @@ public class ItemWrapper implements Cloneable {
     }
 
     public ItemWrapper(ItemStack stack, int amount) {
-        // Do not use ItemStack#asOne here. That calls clone() polymorphically,
-        // and SlimefunItemStack#clone recreates the Slimefun stack and requires
-        // non-null ItemMeta. AIR/placeholder-style inputs can legitimately have
-        // no ItemMeta, which made malformed or optional recipes crash loading.
-        this.stack = new ItemStack(stack);
+        this.stack = safeCopy(stack);
         this.stack.setAmount(1);
         this.amount = amount;
+    }
+
+    private static ItemStack safeCopy(ItemStack source) {
+        // Bukkit's ItemStack copy constructor calls clone() on subclasses.
+        // SlimefunItemStack#clone recreates custom data and can throw when a
+        // malformed/unresolved addon stack has null ItemMeta. Rebuild the
+        // Bukkit stack from its material and metadata instead, so bad addon
+        // recipes can be skipped without taking down the entire addon loader.
+        ItemStack copy = new ItemStack(source.getType(), Math.max(1, source.getAmount()));
+        ItemMeta meta = source.getItemMeta();
+        if (meta != null) {
+            copy.setItemMeta(meta);
+        }
+        return copy;
     }
 
     public Material getType() {
@@ -59,13 +70,13 @@ public class ItemWrapper implements Cloneable {
     public List<ItemStack> toStacks(int amt) {
         List<ItemStack> list = new ArrayList<>();
         for (int i = 0; i < countStack(amt) - 1; i++) {
-            ItemStack copy = new ItemStack(stack);
+            ItemStack copy = safeCopy(stack);
             copy.setAmount(stack.getMaxStackSize());
             list.add(copy);
         }
         int left = amt - (stack.getMaxStackSize() * Math.max(0, countStack(amt) - 1));
         if (left > 0) {
-            ItemStack copy = new ItemStack(stack);
+            ItemStack copy = safeCopy(stack);
             copy.setAmount(left);
             list.add(copy);
         }
@@ -73,13 +84,13 @@ public class ItemWrapper implements Cloneable {
     }
 
     public ItemStack asOneStack() {
-        ItemStack copy = new ItemStack(stack);
+        ItemStack copy = safeCopy(stack);
         copy.setAmount(Math.min(stack.getMaxStackSize(), getAmount()));
         return copy;
     }
 
     @Override
     public ItemWrapper clone() {
-        return new ItemWrapper(new ItemStack(stack), amount);
+        return new ItemWrapper(safeCopy(stack), amount);
     }
 }
