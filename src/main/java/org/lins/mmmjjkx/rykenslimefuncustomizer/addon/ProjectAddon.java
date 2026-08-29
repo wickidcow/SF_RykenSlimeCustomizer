@@ -278,16 +278,99 @@ public final class ProjectAddon {
     @Nullable
     public SlimefunItemStack getSfStack(String id) {
         String normalizedId = id.toUpperCase(Locale.ROOT);
-        var sf = SlimefunItem.getById(normalizedId);
-        if (sf != null) {
-            var item = sf.getItem();
-            if (item instanceof SlimefunItemStack sfis) {
-                return sfis;
-            }
-            // Slimefun Legacy and some addons can expose a plain ItemStack here.
-            // Wrap it instead of assuming the runtime type and throwing ClassCastException.
-            return new SlimefunItemStack(sf.getId(), item);
+
+        // Exact registered and exact addon-owned IDs always win. This keeps RSC
+        // internal IDs stable and only applies compatibility aliases when the
+        // original item truly does not exist.
+        var exact = toStack(SlimefunItem.getById(normalizedId));
+        if (exact != null) return exact;
+
+        var preload = getPreloadItems().get(normalizedId);
+        if (preload != null) return preload;
+
+        // InfinityExpansion2 renamed most IE1 IDs to IE_* and renamed a few
+        // families entirely. Resolve those historical IDs only when the target
+        // is actually registered, so unrelated missing-addon IDs still fail
+        // normally instead of being replaced with the wrong item.
+        String ie2Id = switch (normalizedId) {
+            case "INFINITE_INGOT" -> "IE_INFINITY_INGOT";
+            case "INFINITE_MACHINE_CIRCUIT" -> "IE_INFINITY_MACHINE_CIRCUIT";
+            case "INFINITE_MACHINE_CORE" -> "IE_INFINITY_MACHINE_CORE";
+            case "END_ESSENCE" -> "IE_ENDER_ESSENCE";
+            case "INFINITY_FORGE" -> "IE_INFINITY_WORKBENCH";
+            case "BASIC_STRAINER" -> "IE_STRAINER_1";
+            case "ADVANCED_STRAINER" -> "IE_STRAINER_2";
+            case "REINFORCED_STRAINER" -> "IE_STRAINER_3";
+            case "BASIC_COBBLE_GEN" -> "IE_COBBLESTONE_GENERATOR";
+            case "ADVANCED_COBBLE_GEN" -> "IE_COBBLESTONE_GENERATOR_2";
+            case "INFINITY_COBBLE_GEN" -> "IE_COBBLESTONE_GENERATOR_4";
+            case "BASIC_VIRTUAL_FARM" -> "IE_VIRTUAL_FARM";
+            case "ADVANCED_VIRTUAL_FARM" -> "IE_VIRTUAL_FARM_2";
+            case "INFINITY_VIRTUAL_FARM" -> "IE_VIRTUAL_FARM_4";
+            case "BASIC_TREE_GROWER" -> "IE_TREE_GROWER";
+            case "ADVANCED_TREE_GROWER" -> "IE_TREE_GROWER_2";
+            case "INFINITY_TREE_GROWER" -> "IE_TREE_GROWER_4";
+            case "BASIC_QUARRY" -> "IE_QUARRY";
+            case "ADVANCED_QUARRY" -> "IE_QUARRY_2";
+            case "VOID_QUARRY" -> "IE_QUARRY_3";
+            case "INFINITY_QUARRY" -> "IE_QUARRY_4";
+            case "INFINITE_VOID_HARVESTER" -> "IE_VOID_HARVESTER_3";
+            case "INFINITY_CONSTRUCTOR" -> "IE_SINGULARITY_CONSTRUCTOR_2";
+            case "INFINITY_DUST_EXTRACTOR" -> "IE_DUST_EXTRACTOR_4";
+            case "INFINITY_INGOT_FORMER" -> "IE_INGOT_FORMER_4";
+            case "BASIC_OBSIDIAN_GEN" -> "IE_OBSIDIAN_GENERATOR";
+            case "POWERED_BEDROCK" -> "IE_POWERED_BEDROCK";
+            case "HYDRO_GENERATOR" -> "IE_HYDRO_GENERATOR";
+            case "REINFORCED_HYDRO_GENERATOR" -> "IE_HYDRO_GENERATOR_2";
+            case "GEOTHERMAL_GENERATOR" -> "IE_GEOTHERMAL_GENERATOR";
+            case "REINFORCED_GEOTHERMAL_GENERATOR" -> "IE_GEOTHERMAL_GENERATOR_2";
+            case "BASIC_PANEL" -> "IE_SOLAR_PANEL";
+            case "ADVANCED_PANEL" -> "IE_SOLAR_PANEL_2";
+            case "CELESTIAL_PANEL" -> "IE_SOLAR_PANEL_3";
+            case "VOID_PANEL" -> "IE_VOID_PANEL";
+            case "INFINITE_PANEL" -> "IE_INFINITY_PANEL";
+            case "EMPTY_DATA_CARD" -> "IE_MOB_DATA_CARD_EMPTY";
+            case "DATA_INFUSER" -> "IE_MOB_DATA_INFUSER";
+            case "BASIC_STORAGE" -> "IE_STORAGE_UNIT_2";
+            case "ADVANCED_STORAGE" -> "IE_STORAGE_UNIT_3";
+            case "REINFORCED_STORAGE" -> "IE_STORAGE_UNIT_4";
+            case "VOID_STORAGE" -> "IE_STORAGE_UNIT_5";
+            case "INFINITY_STORAGE" -> "IE_STORAGE_UNIT_6";
+            default -> null;
+        };
+
+        var mapped = toStack(ie2Id == null ? null : SlimefunItem.getById(ie2Id));
+        if (mapped != null) return mapped;
+
+        if (normalizedId.endsWith("_DATA_CARD") && !normalizedId.equals("EMPTY_DATA_CARD")) {
+            String mob = normalizedId.substring(0, normalizedId.length() - "_DATA_CARD".length());
+            mapped = toStack(SlimefunItem.getById("IE_MOB_DATA_CARD_" + mob));
+            if (mapped != null) return mapped;
         }
-        return getPreloadItems().get(normalizedId);
+
+        if (normalizedId.startsWith("QUARRY_OSCILLATOR_")) {
+            String resource = normalizedId.substring("QUARRY_OSCILLATOR_".length());
+            mapped = toStack(SlimefunItem.getById("IE_OSCILLATOR_" + resource));
+            if (mapped != null) return mapped;
+        }
+
+        if (!normalizedId.startsWith("IE_")) {
+            mapped = toStack(SlimefunItem.getById("IE_" + normalizedId));
+            if (mapped != null) return mapped;
+        }
+
+        return null;
+    }
+
+    private @Nullable SlimefunItemStack toStack(@Nullable SlimefunItem sf) {
+        if (sf == null) return null;
+
+        var item = sf.getItem();
+        if (item instanceof SlimefunItemStack sfis) {
+            return sfis;
+        }
+
+        // Slimefun Legacy and some addons can expose a plain ItemStack here.
+        return new SlimefunItemStack(sf.getId(), item);
     }
 }
