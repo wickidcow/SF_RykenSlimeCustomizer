@@ -59,11 +59,9 @@ public class TemplateMachineReader extends YamlReader<AdvancedCustomMachine> {
         List<Integer> input = section.getIntegerList("input");
         List<Integer> output = section.getIntegerList("output");
 
-        if (input.isEmpty()) {
-            Debug.error(file, section, "MissingConfiguration error '' (input)");
-            return null;
-        }
-
+        // Template machines may legitimately have no ordinary input slots.
+        // Their templateSlot supplies the selector/template item and the
+        // template recipe reader already explicitly allows empty inputs.
         if (output.isEmpty()) {
             Debug.error(file, section, "MissingConfiguration error '' (output)");
             return null;
