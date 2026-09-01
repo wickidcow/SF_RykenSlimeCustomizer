@@ -9,14 +9,12 @@ plugins {
 }
 
 group = "com.github.wickidcow"
-version = "3.1.7-Legacy3"
+version = "3.1.7-Legacy4"
 
 val archiveName = "SF_RykenSlimeCustomizer"
-val slimefunLegacyVersion = "4.1.41"
+val slimefunLegacyVersion = "4.1.43"
 
 java {
-    // Paper 26.2 publishes Java 25 API classes. Build with Java 25 while
-    // preserving Java 21 bytecode compatibility for the addon itself.
     toolchain.languageVersion.set(JavaLanguageVersion.of(25))
 }
 
@@ -58,9 +56,6 @@ repositories {
     maven("https://nexus.phoenixdevt.fr/repository/maven-public/")
     maven("https://mvn.lumine.io/repository/maven-public/")
 
-    // Compile against the exact Slimefun Legacy production release instead of
-    // a moving Slimefun/Gugu dependency. The release JAR is intentionally used
-    // as an artifact-only Ivy repository so no transitive metadata is required.
     ivy {
         name = "slimefunLegacyRelease"
         url = uri("https://github.com/wickidcow/Slimefun-Legacy/releases/download/v$slimefunLegacyVersion")
@@ -100,8 +95,6 @@ dependencies {
     compileOnly(libs.placeholderapi)
     compileOnly(libs.byte.buddy)
     compileOnly(libs.paper.api) {
-        // Match Slimefun Legacy's build setup: Paper 26.2 is Java 25 even
-        // though this addon deliberately emits Java 21 class files.
         attributes {
             attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 25)
         }
@@ -132,7 +125,6 @@ tasks.named<ProcessResources>("processResources") {
 }
 
 tasks.named<ShadowJar>("shadowJar") {
-    // Slimefun Legacy addon convention: raw SF_<Addon><Version>.jar release asset.
     archiveFileName.set("${archiveName}${project.version}.jar")
     relocate("io.github.projectunified.uniitem", "org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.uniitem")
     relocate("net.byteflux.libby", "org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.libby")
