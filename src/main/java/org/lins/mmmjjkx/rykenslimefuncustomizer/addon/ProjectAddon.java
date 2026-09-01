@@ -65,7 +65,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Setter(AccessLevel.PACKAGE)
 @NullMarked
 public final class ProjectAddon {
-    // info.yml
     private final String addonId;
     private final String addonName;
     private final String addonVersion;
@@ -74,63 +73,35 @@ public final class ProjectAddon {
     private final String description;
     private final List<String> authors;
     private final File folder;
-    //
     private final Map<String, SlimefunItemStack> preloadItems = new ConcurrentHashMap<>();
-    //
     private @Nullable String gitHubRepo;
     private @Nullable String downloadZipName;
     private @Nullable String idPattern;
-    //
     private @Nullable AddonConfig config;
-    //
     private @Nullable ScriptableEventListener eventListener;
-    //
     private List<JavaScriptEval> scriptEvals = new CopyOnWriteArrayList<>();
-    // groups.yml
     private List<ItemGroup> itemGroups = new ArrayList<>();
-    // menus.yml
     private List<CustomMenu> menus = new ArrayList<>();
-    // geo_resources.yml
     private List<CustomGeoResource> geoResources = new ArrayList<>();
-    // items.yml
     private List<SlimefunItem> items = new ArrayList<>();
-    // machines.yml
     private List<AbstractEmptyMachine<?>> machines = new ArrayList<>();
-    // researches.yml
     private List<Research> researches = new ArrayList<>();
-    // generators.yml
     private List<CustomGenerator> generators = new ArrayList<>();
-    // mat_generators.yml
     private List<AdvancedCustomMachine> materialGenerators = new ArrayList<>();
-    // recipe_machines.yml
     private List<AdvancedCustomMachine> recipeMachines = new ArrayList<>();
-    // mb_machines.yml
     private List<CustomMultiBlockMachine> multiBlockMachines = new ArrayList<>();
-    // solar_generators.yml
     private List<CustomSolarGenerator> solarGenerators = new ArrayList<>();
-    // mob_drops.yml
     private List<CustomMobDrop> mobDrops = new ArrayList<>();
-    // capacitors.yml
     private List<CustomCapacitor> capacitors = new ArrayList<>();
-    // recipe_types.yml
     private List<RecipeType> recipeTypes = new ArrayList<>();
-    // simple_machines.yml
     private List<SlimefunItem> simpleMachines = new ArrayList<>();
-    // foods.yml
     private List<CustomFood> foods = new ArrayList<>();
-    // armors.yml
     private List<List<CustomArmorPiece>> armors = new ArrayList<>();
-    // supers.yml
     private List<SlimefunItem> supers = new ArrayList<>();
-    // template_machines.yml
     private List<AdvancedCustomMachine> templateMachines = new ArrayList<>();
-    // linked_recipe_machines.yml
     private List<AdvancedCustomMachine> linkedRecipeMachines = new ArrayList<>();
-    // workbenches.yml
     private List<CustomWorkbench> workbenches = new ArrayList<>();
-    // super_multi_block_machines.yml
     private List<CustomSuperMultiBlockMachine> superMultiBlockMachines = new ArrayList<>();
-    // generations.yml
     private List<GenerationInfo> generationInfos = new ArrayList<>();
 
     @Getter(AccessLevel.NONE)
@@ -138,35 +109,20 @@ public final class ProjectAddon {
     @Getter(AccessLevel.NONE)
     private final AtomicInteger totalObjects = new AtomicInteger();
 
-    public void addLoadedObject() {
-        loadedObjects.incrementAndGet();
-    }
-
-    public void addTotalObjects(int totalObjects) {
-        this.totalObjects.addAndGet(totalObjects);
-    }
-
-    public int getLoadedObjects() {
-        return loadedObjects.get();
-    }
-
-    public int getTotalObjects() {
-        return totalObjects.get();
-    }
+    public void addLoadedObject() { loadedObjects.incrementAndGet(); }
+    public void addTotalObjects(int totalObjects) { this.totalObjects.addAndGet(totalObjects); }
+    public int getLoadedObjects() { return loadedObjects.get(); }
+    public int getTotalObjects() { return totalObjects.get(); }
 
     public File getScriptsFolder() {
         File scripts = new File(folder, "scripts");
-        if (!scripts.exists()) {
-            scripts.mkdirs();
-        }
+        if (!scripts.exists()) scripts.mkdirs();
         return scripts;
     }
 
     public File getSavedItemsFolder() {
         File savedItems = new File(folder, "saveditems");
-        if (!savedItems.exists()) {
-            savedItems.mkdirs();
-        }
+        if (!savedItems.exists()) savedItems.mkdirs();
         return savedItems;
     }
 
@@ -177,9 +133,7 @@ public final class ProjectAddon {
         mobDrops.forEach(md -> {
             unregisterItem(md);
             var set = Slimefun.getRegistry().getMobDrops().get(md.getEntityType());
-            if (set != null) {
-                set.removeAll(md.getDrops());
-            }
+            if (set != null) set.removeAll(md.getDrops());
         });
         capacitors.forEach(this::unregisterItem);
         foods.forEach(this::unregisterItem);
@@ -197,101 +151,39 @@ public final class ProjectAddon {
         linkedRecipeMachines.forEach(this::unregisterItem);
         workbenches.forEach(this::unregisterItem);
         superMultiBlockMachines.forEach(this::unregisterItem);
-
         recipeTypes.forEach(r -> RecipeTypeMap.removeRecipeTypes(r.getKey().getKey()));
-
-        // scripts.clear();
-        scriptEvals.clear();
-        items.clear();
-        machines.clear();
-        itemGroups.clear();
-        menus.clear();
-        geoResources.clear();
-        generators.clear();
-        materialGenerators.clear();
-        recipeMachines.clear();
-        multiBlockMachines.clear();
-        capacitors.clear();
-        solarGenerators.clear();
-        mobDrops.clear();
-        recipeTypes.clear();
-        simpleMachines.clear();
-        foods.clear();
-        armors.clear();
-        supers.clear();
-        templateMachines.clear();
-        linkedRecipeMachines.clear();
-        workbenches.clear();
-        superMultiBlockMachines.clear();
-        generationInfos.clear();
-
-        preloadItems.clear();
-
-        DropFromBlock.unregisterAddonDrops(this);
-
-        if (config != null) {
-            if (config.onReloadHandler() != null) {
-                config.onReloadHandler().close();
-            }
-        }
-
-        if (eventListener != null) {
-            HandlerList.unregisterAll(eventListener);
-            eventListener = null;
-        }
+        scriptEvals.clear(); items.clear(); machines.clear(); itemGroups.clear(); menus.clear(); geoResources.clear();
+        generators.clear(); materialGenerators.clear(); recipeMachines.clear(); multiBlockMachines.clear(); capacitors.clear();
+        solarGenerators.clear(); mobDrops.clear(); recipeTypes.clear(); simpleMachines.clear(); foods.clear(); armors.clear();
+        supers.clear(); templateMachines.clear(); linkedRecipeMachines.clear(); workbenches.clear(); superMultiBlockMachines.clear();
+        generationInfos.clear(); preloadItems.clear(); DropFromBlock.unregisterAddonDrops(this);
+        if (config != null && config.onReloadHandler() != null) config.onReloadHandler().close();
+        if (eventListener != null) { HandlerList.unregisterAll(eventListener); eventListener = null; }
     }
 
     private void unregisterItem(SlimefunItem item) {
-        if (item instanceof Radioactive) {
-            Slimefun.getRegistry().getRadioactiveItems().remove(item);
-        }
-
-        if (item instanceof GEOResource resource) {
-            Slimefun.getRegistry().getGEOResources().remove(resource.getKey());
-        }
-
+        if (item instanceof Radioactive) Slimefun.getRegistry().getRadioactiveItems().remove(item);
+        if (item instanceof GEOResource resource) Slimefun.getRegistry().getGEOResources().remove(resource.getKey());
         Slimefun.getRegistry().getTickerBlocks().remove(item.getId());
         Slimefun.getRegistry().getEnabledSlimefunItems().remove(item);
-
         Slimefun.getRegistry().getSlimefunItemIds().remove(item.getId());
         Slimefun.getRegistry().getAllSlimefunItems().remove(item);
     }
 
     public String getId(String configuredId, @Nullable String id_alias) {
-        String id = configuredId;
-        if (id_alias != null) {
-            id = id_alias;
-        }
-
-        if (idPattern != null) {
-            // 当前使用的 id 可能是正常引用的 id，也可能是 idPattern 格式化后的 id
-            // 如果找不到已初始化的 item，则尝试用 idPattern 格式化 id
-            SlimefunItem item = SlimefunItem.getById(id.toUpperCase(Locale.ROOT));
-            if (item == null) {
-                id = idPattern.replaceAll("%0", id);
-            }
-        }
-
+        String id = id_alias != null ? id_alias : configuredId;
+        if (idPattern != null && SlimefunItem.getById(id.toUpperCase(Locale.ROOT)) == null) id = idPattern.replaceAll("%0", id);
         return id.toUpperCase(Locale.ROOT);
     }
 
     @Nullable
     public SlimefunItemStack getSfStack(String id) {
         String normalizedId = id.toUpperCase(Locale.ROOT);
-
-        // Exact registered and exact addon-owned IDs always win. This keeps RSC
-        // internal IDs stable and only applies compatibility aliases when the
-        // original item truly does not exist.
         var exact = toStack(SlimefunItem.getById(normalizedId));
         if (exact != null) return exact;
-
         var preload = getPreloadItems().get(normalizedId);
         if (preload != null) return preload;
 
-        // InfinityExpansion2 renamed most IE1 IDs to IE_* and renamed a few
-        // families entirely. Resolve those historical IDs only when the target
-        // is actually registered, so unrelated missing-addon IDs still fail
-        // normally instead of being replaced with the wrong item.
         String ie2Id = switch (normalizedId) {
             case "INFINITE_INGOT" -> "IE_INFINITY_INGOT";
             case "INFINITE_MACHINE_CIRCUIT" -> "IE_INFINITY_MACHINE_CIRCUIT";
@@ -338,8 +230,17 @@ public final class ProjectAddon {
             case "INFINITY_STORAGE" -> "IE_STORAGE_UNIT_6";
             default -> null;
         };
-
         var mapped = toStack(ie2Id == null ? null : SlimefunItem.getById(ie2Id));
+        if (mapped != null) return mapped;
+
+        // Exact IE2 IDs still win. These are only compatibility fallbacks for
+        // installations where an optional/high-tier IE2 component is unavailable.
+        String fallbackId = switch (normalizedId) {
+            case "IE_MACHINE_PLATE" -> "IE_MACHINE_CIRCUIT";
+            case "IE_QUARRY_4" -> "IE_QUARRY_3";
+            default -> null;
+        };
+        mapped = toStack(fallbackId == null ? null : SlimefunItem.getById(fallbackId));
         if (mapped != null) return mapped;
 
         if (normalizedId.endsWith("_DATA_CARD") && !normalizedId.equals("EMPTY_DATA_CARD")) {
@@ -347,30 +248,22 @@ public final class ProjectAddon {
             mapped = toStack(SlimefunItem.getById("IE_MOB_DATA_CARD_" + mob));
             if (mapped != null) return mapped;
         }
-
         if (normalizedId.startsWith("QUARRY_OSCILLATOR_")) {
             String resource = normalizedId.substring("QUARRY_OSCILLATOR_".length());
             mapped = toStack(SlimefunItem.getById("IE_OSCILLATOR_" + resource));
             if (mapped != null) return mapped;
         }
-
         if (!normalizedId.startsWith("IE_")) {
             mapped = toStack(SlimefunItem.getById("IE_" + normalizedId));
             if (mapped != null) return mapped;
         }
-
         return null;
     }
 
     private @Nullable SlimefunItemStack toStack(@Nullable SlimefunItem sf) {
         if (sf == null) return null;
-
         var item = sf.getItem();
-        if (item instanceof SlimefunItemStack sfis) {
-            return sfis;
-        }
-
-        // Slimefun Legacy and some addons can expose a plain ItemStack here.
+        if (item instanceof SlimefunItemStack sfis) return sfis;
         return new SlimefunItemStack(sf.getId(), item);
     }
 }
