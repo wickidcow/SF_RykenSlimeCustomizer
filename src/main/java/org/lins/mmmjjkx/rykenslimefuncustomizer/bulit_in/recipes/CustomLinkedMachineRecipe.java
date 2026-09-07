@@ -32,6 +32,7 @@ import me.mrCookieSlime.Slimefun.api.item_transport.ItemTransportFlow;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.AsyncChanceRecipeTask;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.wrappers.InvIndex;
@@ -55,7 +56,13 @@ public class CustomLinkedMachineRecipe extends AbstractRecipe {
     private final boolean forDisplay; // keep field name for LogiTech reflection
     private final boolean hide;
     private final int saveAmount;
-    private final boolean noConsume; // keep field name for LogiTech reflection
+    private final boolean noConsumeAll;
+
+    // Compatibility field retained for LogiTech reflection.
+    @Deprecated
+    @ApiStatus.Obsolete
+    @ApiStatus.Internal
+    private final IntList noConsume;
 
     public boolean isChooseOne() {
         return chooseOneIfHas;
@@ -66,7 +73,7 @@ public class CustomLinkedMachineRecipe extends AbstractRecipe {
     }
 
     public boolean isNoConsumeAll() {
-        return noConsume;
+        return noConsumeAll;
     }
 
     @Deprecated
@@ -81,12 +88,11 @@ public class CustomLinkedMachineRecipe extends AbstractRecipe {
 
     @Deprecated
     public boolean isNoConsume() {
-        return noConsume;
+        return noConsumeAll;
     }
 
     @Override
     public void formatGUI(Player p, ChestMenu inv, int[] inputSlots, int[] outputSlots) {
-        // input
         for (var e : linkedInput.entrySet()) {
             var slot = e.getKey();
             var stack = e.getValue();
@@ -96,7 +102,6 @@ public class CustomLinkedMachineRecipe extends AbstractRecipe {
             ClickableDisplay.display(p, inv, slot, stack);
         }
 
-        // output - choose one
         if (isChooseOne()) {
             List<ItemStack> allStacks = new ArrayList<>();
             IntList allChances = new IntArrayList();
@@ -110,7 +115,6 @@ public class CustomLinkedMachineRecipe extends AbstractRecipe {
                 allChances.add(linkedOutput.freeChance().getInt(i));
             }
 
-            // normalize
             DoubleList weightedChance = new DoubleArrayList();
             int allChance = allChances.intStream().sum();
             for (int i = 0; i < allStacks.size(); i++) {
@@ -129,7 +133,6 @@ public class CustomLinkedMachineRecipe extends AbstractRecipe {
             return;
         }
 
-        // output - normal
         IntList emptyOutputSlots = new IntArrayList();
         for (int slot : outputSlots) {
             emptyOutputSlots.add(slot);
@@ -140,7 +143,7 @@ public class CustomLinkedMachineRecipe extends AbstractRecipe {
             var stack = e.getValue();
             int chance = linkedOutput.linkedChances().get(slot);
             ClickableDisplay.display(p, inv, slot, Recipe.tagOutputChance(stack, chance));
-            emptyOutputSlots.remove(slot); // remove value
+            emptyOutputSlots.remove(slot);
         }
 
         boolean overflowed = false;
@@ -155,7 +158,6 @@ public class CustomLinkedMachineRecipe extends AbstractRecipe {
             ClickableDisplay.display(p, inv, emptyOutputSlots.getInt(i), Recipe.tagOutputChance(stack, chance));
         }
         if (overflowed) {
-            // generate info stack at the last slot
             inv.addItem(emptyOutputSlots.getLast(), Recipe.asOutputInfoStack(linkedOutput.freeOutput(), linkedOutput.freeChance()), ChestMenuUtils.getEmptyClickHandler());
         }
     }
@@ -211,7 +213,7 @@ public class CustomLinkedMachineRecipe extends AbstractRecipe {
             int seconds,
             Map<Integer, ItemStack> input,
             LinkedOutput linkedOutput,
-            IntSet noConsume,
+            IntSet noConsumeIndexes,
             boolean chooseOne,
             boolean forDisplayOnly,
             boolean hide,
@@ -220,12 +222,13 @@ public class CustomLinkedMachineRecipe extends AbstractRecipe {
         super(seconds, input.values().toArray(new ItemStack[0]), linkedOutput.toArray());
         this.linkedInput = input;
         this.linkedOutput = linkedOutput;
-        this.noConsumeIndexes = noConsume;
+        this.noConsumeIndexes = noConsumeIndexes;
         this.chooseOneIfHas = chooseOne;
         this.forDisplay = forDisplayOnly;
         this.hide = hide;
         this.saveAmount = saveAmount;
-        this.noConsume = noConsumeAll;
+        this.noConsumeAll = noConsumeAll;
+        this.noConsume = new IntArrayList(noConsumeIndexes);
     }
 
     @Override
