@@ -9,10 +9,10 @@ plugins {
 }
 
 group = "com.github.wickidcow"
-version = "3.1.7-Legacy4"
+version = "3.1.7-Legacy5"
 
 val archiveName = "SF_RykenSlimeCustomizer"
-val slimefunLegacyVersion = "4.1.43"
+val slimefunLegacyVersion = "4.1.46"
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(25))
