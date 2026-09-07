@@ -44,6 +44,24 @@ tasks.withType<JavaExec>().configureEach {
 }
 
 repositories {
+    exclusiveContent {
+        forRepository {
+            ivy {
+                name = "slimefunLegacyRelease"
+                url = uri("https://github.com/wickidcow/Slimefun-Legacy/releases/download/v$slimefunLegacyVersion")
+                patternLayout {
+                    artifact("[artifact][revision].[ext]")
+                }
+                metadataSources {
+                    artifact()
+                }
+            }
+        }
+        filter {
+            includeModule("com.github.wickidcow", "Slimefun-Legacy")
+        }
+    }
+
     mavenCentral()
     maven("https://oss.sonatype.org/content/groups/public/")
     maven("https://oss.sonatype.org/content/repositories/snapshots")
@@ -55,20 +73,6 @@ repositories {
     maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://nexus.phoenixdevt.fr/repository/maven-public/")
     maven("https://mvn.lumine.io/repository/maven-public/")
-
-    ivy {
-        name = "slimefunLegacyRelease"
-        url = uri("https://github.com/wickidcow/Slimefun-Legacy/releases/download/v$slimefunLegacyVersion")
-        patternLayout {
-            artifact("[artifact][revision].[ext]")
-        }
-        metadataSources {
-            artifact()
-        }
-        content {
-            includeModule("com.github.wickidcow", "Slimefun-Legacy")
-        }
-    }
 }
 
 dependencies {
