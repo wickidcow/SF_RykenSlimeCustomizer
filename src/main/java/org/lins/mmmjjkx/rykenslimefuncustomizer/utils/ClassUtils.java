@@ -32,11 +32,13 @@ public class ClassUtils {
     public static <T> Class<? extends T> generateClass(
             Class<T> extendClass,
             String centerName,
-            String nameReplacement,
             Class<?>[] interfaces,
             @Nullable Function<DynamicType.Builder<?>, DynamicType.Builder<?>> delegation) {
 
-        String finalClassName = extendClass.getSimpleName().replace(nameReplacement, "") + centerName + nameReplacement;
+        // Preserve the full current generated class name when chaining attributes.
+        // Removing/replacing a common suffix caused distinct attribute combinations
+        // to collapse onto the same cached ByteBuddy class name.
+        String finalClassName = extendClass.getSimpleName() + centerName;
         if (cache.containsKey(finalClassName)) {
             return (Class<? extends T>) cache.get(finalClassName);
         }
