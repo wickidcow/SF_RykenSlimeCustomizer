@@ -1,6 +1,6 @@
 /*
  * RykenSlimefunCustomizer
- * Copyright (C) 2026 lijinhong11(mmmjjkx) and balugaq
+ * Copyright (C) 2026 lijinhong11(mmmjjjkx) and balugaq
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -99,7 +99,13 @@ public class JavaScriptEval extends ScriptEval {
 
             JavaScriptEval cached = SCRIPT_CACHE.get(canonicalScript);
             if (cached != null) {
-                return cached;
+                // ProjectAddon.unregister() clears its live scriptEvals list. Treat any
+                // cached context no longer owned by the current addon lifecycle as stale.
+                if (addon.getScriptEvals().contains(cached)) {
+                    return cached;
+                }
+                SCRIPT_CACHE.remove(canonicalScript, cached);
+                cached.closeEngine();
             }
 
             JavaScriptEval created = new JavaScriptEval(canonicalScript, addon);
@@ -107,7 +113,12 @@ public class JavaScriptEval extends ScriptEval {
             if (existing != null) {
                 addon.getScriptEvals().remove(created);
                 created.closeEngine();
-                return existing;
+                if (addon.getScriptEvals().contains(existing)) {
+                    return existing;
+                }
+                SCRIPT_CACHE.remove(canonicalScript, existing);
+                existing.closeEngine();
+                return create(canonicalScript, addon);
             }
             return created;
         } catch (Throwable e) {
@@ -218,7 +229,8 @@ public class JavaScriptEval extends ScriptEval {
     @Override
     public void close() {
         // Cached contexts remain active during normal addon operation and are closed when
-        // the addon is unloaded/reloaded through clearAddonCache(ProjectAddon).
+        // the addon is unloaded/reloaded through clearAddonCache(ProjectAddon), or lazily
+        // invalidated on the next create call after ProjectAddon.unregister().
     }
 
     private void closeEngine() {
