@@ -1,6 +1,6 @@
 /*
  * RykenSlimefunCustomizer
- * Copyright (C) 2026 lijinhong11(mmmjjjkx) and balugaq
+ * Copyright (C) 2026 lijinhong11(mmmjjkx) and balugaq
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,11 +43,14 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.Debug;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class JavaScriptEval extends ScriptEval {
+    private static final Map<File, JavaScriptEval> SCRIPT_CACHE = new ConcurrentHashMap<>();
+
     private final Context jsEngine = Context.newBuilder("js")
             .hostClassLoader(RykenSlimefunCustomizer.class.getClassLoader())
             .allowAllAccess(true)
@@ -70,21 +73,65 @@ public class JavaScriptEval extends ScriptEval {
         super(js, addon);
 
         advancedSetup();
-
         setup();
-
         contextInit();
-
         addon.getScriptEvals().add(this);
     }
 
     @Nullable
     public static JavaScriptEval create(@NonNull File js, ProjectAddon addon) {
         try {
-            return new JavaScriptEval(js, addon);
+            File scriptsRoot = addon.getScriptsFolder().getCanonicalFile();
+            File canonicalScript = js.getCanonicalFile();
+            Path rootPath = scriptsRoot.toPath();
+            Path scriptPath = canonicalScript.toPath();
+
+            // Script names can originate in addon configuration. Resolve symlinks/.. and
+            // reject anything that escapes this addon's scripts directory.
+            if (!scriptPath.startsWith(rootPath)) {
+                Debug.warn("Rejected script path outside addon scripts directory: " + js.getPath());
+                return null;
+            }
+
+            if (!canonicalScript.isFile()) {
+                return null;
+            }
+
+            JavaScriptEval cached = SCRIPT_CACHE.get(canonicalScript);
+            if (cached != null) {
+                return cached;
+            }
+
+            JavaScriptEval created = new JavaScriptEval(canonicalScript, addon);
+            JavaScriptEval existing = SCRIPT_CACHE.putIfAbsent(canonicalScript, created);
+            if (existing != null) {
+                addon.getScriptEvals().remove(created);
+                created.closeEngine();
+                return existing;
+            }
+            return created;
         } catch (Throwable e) {
-            Debug.error("Unable toscript " + js.getAbsolutePath(), e);
+            Debug.error("Unable to load script " + js.getAbsolutePath(), e);
             return null;
+        }
+    }
+
+    public static void clearAddonCache(ProjectAddon addon) {
+        try {
+            Path root = addon.getScriptsFolder().getCanonicalFile().toPath();
+            SCRIPT_CACHE.entrySet().removeIf(entry -> {
+                try {
+                    if (!entry.getKey().getCanonicalFile().toPath().startsWith(root)) {
+                        return false;
+                    }
+                    entry.getValue().clearScriptCache();
+                    entry.getValue().closeEngine();
+                    return true;
+                } catch (IOException ignored) {
+                    return false;
+                }
+            });
+        } catch (IOException ignored) {
         }
     }
 
@@ -114,7 +161,8 @@ public class JavaScriptEval extends ScriptEval {
     private final Map<String, Value> functionCache = new ConcurrentHashMap<>();
     private final Set<String> failedFunctions = ConcurrentHashMap.newKeySet();
 
-    @Nullable @CanIgnoreReturnValue
+    @Nullable
+    @CanIgnoreReturnValue
     @Override
     public synchronized Value evalFunction(String funName, Object... args) {
         if (failedFunctions.contains(funName)) {
@@ -123,8 +171,8 @@ public class JavaScriptEval extends ScriptEval {
 
         if (RykenSlimefunCustomizer.addonManager.isLockingMainThread()) {
             Debug.warn("=================================================");
-            Debug.warn("addonLoading, addon, script!");
-            Debug.warn(", Unable to, addon!");
+            Debug.warn("Addon loading is locking the main thread while a script is executing.");
+            Debug.warn("Review this addon's scripts if loading stalls.");
             Debug.warn("=================================================");
         }
 
@@ -134,14 +182,16 @@ public class JavaScriptEval extends ScriptEval {
             Value bindings = jsEngine.getBindings("js");
 
             if (!bindings.hasMember(funName)) {
-                Debug.debug(() -> "addon" + addon.getAddonId() + "script" + getFile().getName() + "RSC: " + "RSC: " + funName);
+                Debug.debug(() -> "Addon " + addon.getAddonId() + " script " + getFile().getName()
+                    + " does not define function " + funName);
                 failedFunctions.add(funName);
                 return null;
             }
 
             Value member = bindings.getMember(funName);
             if (!member.canExecute()) {
-                Debug.debug(() -> "addon" + addon.getAddonId() + "script" + getFile().getName() + "RSC: " + "RSC: " + funName + "RSC: ");
+                Debug.debug(() -> "Addon " + addon.getAddonId() + " script " + getFile().getName()
+                    + " member " + funName + " is not executable");
                 failedFunctions.add(funName);
                 return null;
             }
@@ -152,11 +202,11 @@ public class JavaScriptEval extends ScriptEval {
 
         try {
             Value result = function.execute(args);
-            Debug.debug(
-                    "RSC: " + getAddon().getAddonName() + "script" + getFile().getName() + "RSC: " + funName);
+            Debug.debug("Executed " + getAddon().getAddonName() + " script " + getFile().getName()
+                + " function " + funName);
             return result;
         } catch (IllegalStateException e) {
-            if (!e.getMessage().contains("Multi threaded access")) {
+            if (e.getMessage() == null || !e.getMessage().contains("Multi threaded access")) {
                 handleExecutionError(e, funName);
             }
         } catch (Throwable e) {
@@ -167,19 +217,27 @@ public class JavaScriptEval extends ScriptEval {
 
     @Override
     public void close() {
-        // don't close jsEngine, since we just reload the plugin, not the js engine.
+        // Cached contexts remain active during normal addon operation and are closed when
+        // the addon is unloaded/reloaded through clearAddonCache(ProjectAddon).
+    }
+
+    private void closeEngine() {
+        try {
+            jsEngine.close(true);
+        } catch (Throwable ignored) {
+        }
     }
 
     private void handleExecutionError(Throwable e, String funName) {
         functionCache.remove(funName);
 
-        Debug.debug(" debug , scriptfailed");
+        Debug.debug("Script execution failed for " + funName);
         if (!RykenSlimefunCustomizer.INSTANCE.getConfig().getBoolean("debug")) {
             failedFunctions.add(funName);
         }
 
-        Debug.error(
-                "RSC: " + getAddon().getAddonName() + "script" + getFile().getName() + "RSC: ", e);
+        Debug.error("RSC: " + getAddon().getAddonName() + " script " + getFile().getName()
+            + " failed while executing " + funName, e);
     }
 
     protected final synchronized void contextInit() {
@@ -187,12 +245,10 @@ public class JavaScriptEval extends ScriptEval {
         if (jsEngine != null) {
             try {
                 clearScriptCache();
-
-                jsEngine.eval(
-                        Source.newBuilder("js", getFileContext(), "JavaScript").build());
+                jsEngine.eval(Source.newBuilder("js", getFileContext(), "JavaScript").build());
             } catch (IOException e) {
-                Debug.error(
-                        "RSC: " + getAddon().getAddonName() + "script" + getFile().getName() + "RSC: ", e);
+                Debug.error("RSC: " + getAddon().getAddonName() + " script " + getFile().getName()
+                    + " could not be initialized", e);
             }
         }
     }
