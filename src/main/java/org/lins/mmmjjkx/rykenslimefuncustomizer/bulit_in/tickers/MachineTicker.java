@@ -11,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.addon.ProjectAddon;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.recipes.AbstractRecipe;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.recipes.CacheAccess;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.recipes.CustomMenuHolder;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.recipes.DataCache;
@@ -44,20 +43,32 @@ public interface MachineTicker extends DataCache, RecipesHolder, CustomMenuHolde
     void tick(Location location);
 
     default void init() {
+        boolean workbench = getType() == Type.WORKBENCH;
         var menu = getCustomMenu();
         if (menu == null) {
-            Debug.warn("Not foundmenu " + this.getMachine().getId() + " menu");
+            Debug.warn("No custom menu found for " + this.getMachine().getId() + "; using the default menu");
             this.createPreset(
                 this.getMachine(),
                 this.getMachine().getItemName(),
-                preset -> CustomMenuHolder.constructMenu(preset, getProgressSlot(), getProgressBar()),
+                preset -> {
+                    if (workbench) {
+                        CustomMenuHolder.constructMenu(preset);
+                    } else {
+                        CustomMenuHolder.constructMenu(preset, getProgressSlot(), getProgressBar());
+                    }
+                },
                 this::onNewInstance
             );
             return;
         }
 
-        createPreset(this.getMachine(), menu.getTitle() == null || menu.getTitle().isBlank() ? getMachine().getItemName() : menu.getTitle(), menu::apply, this::onNewInstance);
-        if (menu.getProgressBar() != null) {
+        createPreset(
+            this.getMachine(),
+            menu.getTitle() == null || menu.getTitle().isBlank() ? getMachine().getItemName() : menu.getTitle(),
+            menu::apply,
+            this::onNewInstance
+        );
+        if (!workbench && menu.getProgressBar() != null) {
             getAdvancedMachineProcessor().setProgressBar(menu.getProgressBar());
         }
     }
@@ -93,7 +104,7 @@ public interface MachineTicker extends DataCache, RecipesHolder, CustomMenuHolde
             } else {
                 var typeOptional = CommonUtils.getEnum(Type.class, tpc);
                 if (typeOptional.isEmpty()) {
-                    Debug.warn(file, section, " machine (ticker_type) : " + tpc + ", RECIPE");
+                    Debug.warn(file, section, "Unknown machine ticker_type '" + tpc + "'; using RECIPE");
                     type = Type.RECIPE;
                 } else {
                     type = typeOptional.get();
@@ -112,18 +123,17 @@ public interface MachineTicker extends DataCache, RecipesHolder, CustomMenuHolde
     @NullMarked
     @Getter
     enum Type {
-        RECIPE(new RecipeMachineTickerCreator()), // 配方机器
-        LINKED_RECIPE(new LinkedRecipeMachineTickerCreator()), // 强配方机器
-        TEMPLATE_RECIPE(new TemplateRecipeMachineTickerCreator()), // 模板配方
-        MATERIAL_GENERATOR(new MaterialGeneratorMachineTickerCreator()), // 材料生成器
-        WORKBENCH(new WorkbenchMachineTickerCreator()); // 工作台
+        RECIPE(new RecipeMachineTickerCreator()),
+        LINKED_RECIPE(new LinkedRecipeMachineTickerCreator()),
+        TEMPLATE_RECIPE(new TemplateRecipeMachineTickerCreator()),
+        MATERIAL_GENERATOR(new MaterialGeneratorMachineTickerCreator()),
+        WORKBENCH(new WorkbenchMachineTickerCreator());
 
         private final TickerCreator tickerCreator;
 
         public @Nullable MachineTicker createTicker(File file, AdvancedCustomMachine sf, ConfigurationSection section, @Nullable CustomMenu menu, ProjectAddon addon) {
             return tickerCreator.create(file, sf, section, menu, addon);
         }
-
 
         Type(TickerCreator tickerCreator) {
             this.tickerCreator = tickerCreator;

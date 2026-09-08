@@ -23,6 +23,8 @@ import org.jspecify.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.recipes.CustomMenuHolder;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.recipes.Recipe;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.tickers.MachineTicker;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.customs.AdvancedCustomMachine;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.customs.menu.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.Keys;
@@ -60,27 +62,28 @@ public class MachineMenuPreviewGroup extends FlexItemGroup {
     public void open(Player p, PlayerProfile profile, SlimefunGuideMode mode) {
         profile.getGuideHistory().add(this, 0);
 
-        ChestMenu inv = presetMenu(p, profile, mode, menu);
+        boolean workbench = isWorkbench();
+        ChestMenu inv = presetMenu(p, mode, menu, workbench);
 
-        // add templates;
-        // add inputs;
-        // add outputs;
         if (recipe instanceof Recipe rp) {
             rp.formatGUI(p, inv, inputSlots, outputSlots);
         }
 
-        // add progress bar;
-        int progressSlot;
-        ItemStack progressBar;
-        if (getMenu() == null || getMenu().getProgressSlot() == -1) {
-            progressSlot = CustomMenuHolder.DEFAULT_PROGRESS_SLOT;
-            progressBar = CustomMenuHolder.DEFAULT_PROGRESS_BAR;
-        } else {
-            progressSlot = getMenu().getProgressSlot();
-            progressBar = getMenu().getProgressBar();
-        }
+        if (!workbench) {
+            int progressSlot;
+            ItemStack progressBar;
+            if (getMenu() == null || getMenu().getProgressSlot() == -1) {
+                progressSlot = CustomMenuHolder.DEFAULT_PROGRESS_SLOT;
+                progressBar = CustomMenuHolder.DEFAULT_PROGRESS_BAR;
+            } else {
+                progressSlot = getMenu().getProgressSlot();
+                progressBar = getMenu().getProgressBar();
+            }
 
-        inv.addItem(progressSlot, new CustomItemStack(progressBar, CommonUtils.richFormatSeconds(recipe.getTicks() / 2)));
+            if (progressBar != null) {
+                inv.addItem(progressSlot, new CustomItemStack(progressBar, CommonUtils.richFormatSeconds(recipe.getTicks() / 2)));
+            }
+        }
         tryAddBackButton(inv, profile, mode);
 
         for (int i = 0; i < inv.getSize(); i++) {
@@ -93,13 +96,19 @@ public class MachineMenuPreviewGroup extends FlexItemGroup {
         inv.open(p);
     }
 
-    private static ChestMenu presetMenu(Player p, PlayerProfile profile, SlimefunGuideMode mode, @Nullable CustomMenu menu) {
+    private boolean isWorkbench() {
+        return sf instanceof AdvancedCustomMachine machine && machine.getType() == MachineTicker.Type.WORKBENCH;
+    }
+
+    private static ChestMenu presetMenu(Player p, SlimefunGuideMode mode, @Nullable CustomMenu menu, boolean workbench) {
         var inv = new ChestMenu(RykenSlimefunCustomizer.jeg
             ? GuideUtil.getGuideTitle(mode)
             : Slimefun.getLocalization().getMessage(p, "guide.title.main"));
 
         if (menu != null) {
             menu.apply(inv);
+        } else if (workbench) {
+            CustomMenuHolder.constructMenu(inv);
         } else {
             CustomMenuHolder.constructMenu(inv, CustomMenuHolder.DEFAULT_PROGRESS_SLOT, CustomMenuHolder.DEFAULT_PROGRESS_BAR);
         }
@@ -108,10 +117,7 @@ public class MachineMenuPreviewGroup extends FlexItemGroup {
     }
 
     private void tryAddBackButton(ChestMenu inv, PlayerProfile profile, SlimefunGuideMode mode) {
-        // add back button
         if (inv.getSize() != 54) {
-            // automatically insert a line at the top
-            // bBBBMBBBB
             int newSize = inv.getSize() + 9;
             for (int i = newSize - 1; i >= 9; i--) {
                 inv.addItem(i, inv.getItemInSlot(i - 9), ChestMenuUtils.getEmptyClickHandler());
@@ -123,11 +129,9 @@ public class MachineMenuPreviewGroup extends FlexItemGroup {
 
             addMachineButton(inv, 4, profile, mode);
             addBackButton(inv, 0, profile, mode);
-
             return;
         }
 
-        // find a background item and replace it.
         for (int i = 0; i < 54; i++) {
             if (isBackground(inv.getItemInSlot(i))) {
                 addBackButton(inv, i, profile, mode);
@@ -135,7 +139,6 @@ public class MachineMenuPreviewGroup extends FlexItemGroup {
             }
         }
 
-        // find a empty slot and replace it
         for (int i = 0; i < 54; i++) {
             ItemStack stack = inv.getItemInSlot(i);
             if (stack == null || stack.getType().isAir()) {
@@ -161,7 +164,6 @@ public class MachineMenuPreviewGroup extends FlexItemGroup {
 
     private boolean isBackground(@Nullable ItemStack itemStack) {
         if (itemStack == null || !itemStack.getType().name().endsWith("_STAINED_GLASS_PANE")) return false;
-
         if (!itemStack.hasItemMeta()) return false;
         ItemMeta meta = itemStack.getItemMeta();
         if (meta == null) return false;
@@ -174,7 +176,6 @@ public class MachineMenuPreviewGroup extends FlexItemGroup {
         for (String s : lore) {
             if (!ChatColor.stripColor(s).isBlank()) return false;
         }
-
         return true;
     }
 

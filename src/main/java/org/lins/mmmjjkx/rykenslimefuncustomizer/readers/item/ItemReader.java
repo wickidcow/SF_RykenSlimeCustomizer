@@ -80,7 +80,6 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         Class<? extends CustomItem> clazz = ClassUtils.generateClass(
             instance.getClass(),
             "Radiation",
-            "Item",
             new Class[] {Radioactive.class},
             builder -> builder.method(ElementMatchers.isDeclaredBy(Radioactive.class))
                 .intercept(FixedValue.value(radioactivity.get())));
@@ -149,7 +148,6 @@ public class ItemReader extends YamlReader<SlimefunItem> {
             Class<? extends CustomItem> clazz = ClassUtils.generateClass(
                 instance.getClass(),
                 "NotPlaceable",
-                "Item",
                 new Class[] {NotPlaceable.class},
                 null
             );
@@ -164,7 +162,6 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                 Class<? extends CustomItem> clazz = ClassUtils.generateClass(
                     instance.getClass(),
                     "WitherProof",
-                    "Item",
                     new Class[]{WitherProofBlockImpl.class},
                     null
                 );
@@ -177,7 +174,6 @@ public class ItemReader extends YamlReader<SlimefunItem> {
             Class<? extends CustomItem> clazz = ClassUtils.generateClass(
                 instance.getClass(),
                 "Soulbound",
-                "Item",
                 new Class[] {Soulbound.class},
                 null
             );
@@ -191,7 +187,6 @@ public class ItemReader extends YamlReader<SlimefunItem> {
             Class<? extends CustomItem> clazz = ClassUtils.generateClass(
                 instance.getClass(),
                 "PiglinBarterDrop",
-                "Item",
                 new Class[] {PiglinBarterDrop.class},
                 builder -> builder.method(ElementMatchers.isDeclaredBy(PiglinBarterDrop.class))
                         .intercept(FixedValue.value(chance)));
@@ -251,13 +246,11 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         Class<? extends CustomItem> clazz = ClassUtils.generateClass(
             instance.getClass(),
             "Rechargeable",
-            "Item",
             new Class[] {Rechargeable.class},
             builder -> builder.method(ElementMatchers.isDeclaredBy(Rechargeable.class).and(ElementMatchers.named("getMaxItemCharge")))
                 .intercept(FixedValue.value((float) energyCapacity)));
 
-        instance = (CustomItem) clazz.getDeclaredConstructors()[0].newInstance(constructorArgs);
-        return instance;
+        return (CustomItem) clazz.getDeclaredConstructors()[0].newInstance(constructorArgs);
     }
 
     @Override
