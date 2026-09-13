@@ -146,11 +146,11 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
     public void onEnable() {
         INSTANCE = this;
 
-        if (!Boolean.TRUE.equals(AdventureProperties.TEXT_WARN_WHEN_LEGACY_FORMATTING_DETECTED.value())) {
+        if (Boolean.TRUE.equals(AdventureProperties.TEXT_WARN_WHEN_LEGACY_FORMATTING_DETECTED.value())) {
             Debug.warn("=======================================================================");
-            Debug.warn("Detected net.kyori.adventure.text.warnWhenLegacyFormattingDetected = false");
+            Debug.warn("Detected net.kyori.adventure.text.warnWhenLegacyFormattingDetected = true");
             Debug.warn("To avoid excessive legacy-format warnings, add the following JVM argument:               ");
-            Debug.warn("-Dnet.kyori.adventure.text.warn_when_legacy_formatting_detected=false  ");
+            Debug.warn("-Dnet.kyori.adventure.text.warnWhenLegacyFormattingDetected=false");
             Debug.warn("See https://docs.papermc.io/paper/reference/system-properties/#netkyoriadventuretextwarnwhenlegacyformattingdetected");
             Debug.warn("=======================================================================");
         }
