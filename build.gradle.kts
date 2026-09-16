@@ -9,23 +9,27 @@ plugins {
 }
 
 group = "com.github.wickidcow"
-version = "3.1.7-Legacy5"
+version = "3.1.8"
 
 val archiveName = "SF_RykenSlimeCustomizer"
 val slimefunLegacyVersion = "4.1.46"
+val paperApiVersion = providers.gradleProperty("paperVersion").orElse("1.21.11-R0.1-SNAPSHOT")
+val targetJvm = providers.gradleProperty("targetJvm").orElse("21").get().toInt()
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(25))
+    sourceCompatibility = JavaVersion.toVersion(targetJvm)
+    targetCompatibility = JavaVersion.toVersion(targetJvm)
 }
 
 tasks.compileJava {
     options.encoding = "UTF-8"
-    options.release.set(21)
+    options.release.set(targetJvm)
 }
 
 tasks.compileTestJava {
     options.encoding = "UTF-8"
-    options.release.set(21)
+    options.release.set(targetJvm)
 }
 
 tasks.withType<Javadoc>().configureEach {
@@ -98,9 +102,9 @@ dependencies {
     compileOnly(libs.graalvm.regex)
     compileOnly(libs.placeholderapi)
     compileOnly(libs.byte.buddy)
-    compileOnly(libs.paper.api) {
+    compileOnly("io.papermc.paper:paper-api:${paperApiVersion.get()}") {
         attributes {
-            attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 25)
+            attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, targetJvm)
         }
     }
     compileOnly(libs.slimefun.legacy)
@@ -161,5 +165,5 @@ tasks.runServer {
         "-Dnet.kyori.adventure.text.warn_when_legacy_formatting_detected=false"
     )
     maxHeapSize = "4G"
-    minecraftVersion("1.21.11")
+    minecraftVersion("26.2")
 }
