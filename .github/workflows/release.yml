@@ -1,18 +1,14 @@
-name: Release RSC Legacy
+name: Manual Release RykenSlimeCustomizer
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'src/**'
-      - 'build.gradle.kts'
-      - 'gradle/libs.versions.toml'
-      - '.github/workflows/release.yml'
   workflow_dispatch:
 
 permissions:
   contents: write
+
+env:
+  VERSION: "3.1.8"
+  OUTPUT_NAME: "SF_RykenSlimeCustomizer3.1.8.jar"
 
 jobs:
   release:
@@ -20,63 +16,59 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
 
       - name: Set up JDK 25
         uses: actions/setup-java@v5
         with:
           java-version: '25'
-          distribution: 'temurin'
+          distribution: temurin
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Extract version
-        id: version
-        shell: bash
-        run: |
-          VERSION=$(grep '^version = ' build.gradle.kts | head -1 | sed -E 's/version = "([^"]+)"/\1/')
-          if [ -z "$VERSION" ]; then
-            echo 'Unable to determine version from build.gradle.kts' >&2
-            exit 1
-          fi
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-
-      - name: Check if release tag exists
-        id: tag_check
-        shell: bash
-        run: |
-          if git rev-parse "v${{ steps.version.outputs.version }}" >/dev/null 2>&1; then
-            echo "exists=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "exists=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Build release JAR
+      - name: Build universal Java 21 release JAR
         run: |
           chmod +x gradlew
-          ./gradlew clean build --stacktrace
+          ./gradlew clean build --stacktrace --no-daemon -PpaperVersion=1.21.11-R0.1-SNAPSHOT -PtargetJvm=21
 
-      - name: Refresh existing GitHub release asset
-        if: steps.tag_check.outputs.exists == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          TAG: v${{ steps.version.outputs.version }}
-          JAR: build/libs/SF_RykenSlimeCustomizer${{ steps.version.outputs.version }}.jar
+      - name: Verify Paper 26.2 compilation
+        run: ./gradlew clean compileJava test --stacktrace --no-daemon -PpaperVersion=26.2.build.+ -PtargetJvm=25
+
+      - name: Verify Paper 26.3 alpha compilation
+        run: ./gradlew clean compileJava test --stacktrace --no-daemon -PpaperVersion=26.3-rc-3.build.1-alpha -PtargetJvm=25
+
+      - name: Rebuild and verify release JAR
         shell: bash
         run: |
           set -euo pipefail
-          gh release upload "$TAG" "$JAR" --clobber
-          echo "Refreshed $TAG with the current Legacy hotfix build."
+          ./gradlew clean build --stacktrace --no-daemon -PpaperVersion=1.21.11-R0.1-SNAPSHOT -PtargetJvm=21
+          JAR="build/libs/${OUTPUT_NAME}"
+          test -s "$JAR"
+          python3 - <<'PY'
+          import struct, zipfile
+          jar='build/libs/SF_RykenSlimeCustomizer3.1.8.jar'
+          majors=[]
+          with zipfile.ZipFile(jar) as zf:
+              for name in zf.namelist():
+                  if name.endswith('.class'):
+                      data=zf.read(name)[:8]
+                      if data[:4] == b'\xca\xfe\xba\xbe':
+                          majors.append(struct.unpack('>H', data[6:8])[0])
+          if not majors or max(majors) > 65:
+              raise SystemExit(f'Expected Java 21-compatible classes; max={max(majors) if majors else None}')
+          PY
 
-      - name: Create GitHub release with raw JAR
-        if: steps.tag_check.outputs.exists == 'false'
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v${{ steps.version.outputs.version }}
-          target_commitish: ${{ github.sha }}
-          name: SF RykenSlimeCustomizer ${{ steps.version.outputs.version }}
-          generate_release_notes: true
-          files: build/libs/SF_RykenSlimeCustomizer${{ steps.version.outputs.version }}.jar
-          fail_on_unmatched_files: true
+      - name: Create or update GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG="v${VERSION}"
+          JAR="build/libs/${OUTPUT_NAME}"
+          NOTES="RykenSlimeCustomizer ${VERSION} compatibility release for Paper 26.3 alpha. Paper 26.2 remains primary and the shipped artifact remains Java 21 compatible."
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "$JAR" --clobber
+          else
+            gh release create "$TAG" "$JAR" --target "$GITHUB_SHA" --title "SF_RykenSlimeCustomizer $TAG" --notes "$NOTES"
+          fi
