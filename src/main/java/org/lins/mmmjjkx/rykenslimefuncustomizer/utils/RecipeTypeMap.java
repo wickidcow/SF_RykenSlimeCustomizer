@@ -21,6 +21,7 @@ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Field;
+import org.bukkit.Bukkit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -58,14 +59,26 @@ public class RecipeTypeMap {
     }
 
     public enum RecipeTypeExpandIntegration {
-        INFINITY_EXPANSION("io.github.mooy1.infinityexpansion.items.blocks.InfinityWorkbench", "TYPE", true),
-        SLIME_TINKER("io.github.sefiraat.slimetinker.items.workstations.workbench.Workbench", "TYPE", true);
+        INFINITY_EXPANSION(
+            "InfinityExpansion",
+            "io.github.mooy1.infinityexpansion.items.blocks.InfinityWorkbench",
+            "TYPE",
+            true
+        ),
+        SLIME_TINKER(
+            "SlimeTinker",
+            "io.github.sefiraat.slimetinker.items.workstations.workbench.Workbench",
+            "TYPE",
+            true
+        );
 
+        private final String pluginName;
         private final String clazz;
         private final String fieldName;
         private final boolean isStatic;
 
-        RecipeTypeExpandIntegration(String clazz, String fieldName, boolean isStatic) {
+        RecipeTypeExpandIntegration(String pluginName, String clazz, String fieldName, boolean isStatic) {
+            this.pluginName = pluginName;
             this.clazz = clazz;
             this.fieldName = fieldName;
             this.isStatic = isStatic;
@@ -83,6 +96,10 @@ public class RecipeTypeMap {
 
         static void registerRecipeTypes() {
             for (RecipeTypeExpandIntegration integration : values()) {
+                if (Bukkit.getPluginManager().getPlugin(integration.pluginName) == null) {
+                    continue;
+                }
+
                 String className = integration.clazz;
                 String fieldName = integration.fieldName;
                 try {
@@ -93,7 +110,9 @@ public class RecipeTypeMap {
                         RecipeTypeMap.pushRecipeType((RecipeType) field.get(null));
                     }
                 } catch (ClassNotFoundException e) {
-                    Debug.warn("Class not found: " + className);
+                    Debug.warn(
+                        "Plugin " + integration.pluginName + " is installed but its recipe type class is missing: " + className
+                    );
                 } catch (NoSuchFieldException | IllegalAccessException e) {
                     Debug.warn("Failed to get external recipe type from " + className + "#" + fieldName + ": " + e.getMessage());
                 }
