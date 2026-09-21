@@ -107,7 +107,11 @@ public class RecipeMachineTickerCreator implements TickerCreator {
         var recipes = read(file, section, addon);
         if (recipes == null) return null;
         if (recipes.isEmpty()) {
-            Debug.warn("machine " + sf.getId() + " recipe!");
+            if (section.getBoolean("allow_empty_recipes", false)) {
+                Debug.debug("Machine " + sf.getId() + " intentionally has no processing recipes.");
+            } else {
+                Debug.warn("Machine " + sf.getId() + " has no processing recipes.");
+            }
         }
         return new RecipeMachineTicker() {
             @Override
