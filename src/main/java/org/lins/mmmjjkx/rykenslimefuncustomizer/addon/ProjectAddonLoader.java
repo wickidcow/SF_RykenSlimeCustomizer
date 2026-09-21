@@ -129,6 +129,13 @@ public class ProjectAddonLoader {
     }
 
     private static void tryAutoUpdate(ProjectAddon addon, String desc) {
+        File externalManagedMarker = new File(addon.getFolder(), ".magiclegacy-managed");
+        if (externalManagedMarker.isFile()) {
+            Debug.info("Skipping RSC auto-update for " + addon.getAddonId()
+                + " because its runtime is managed by MagicLegacy.");
+            return;
+        }
+
         if (!RykenSlimefunCustomizer.allowUpdate(addon.getAddonId())) return;
         String[] split = addon.getGitHubRepo().split("/");
         if (split.length < 2) {
