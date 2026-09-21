@@ -12,8 +12,8 @@ permissions:
   contents: write
 
 env:
-  VERSION: "3.1.9"
-  OUTPUT_NAME: "SF_RykenSlimeCustomizer3.1.9.jar"
+  VERSION: "3.1.10"
+  OUTPUT_NAME: "SF_RykenSlimeCustomizer3.1.10.jar"
 
 jobs:
   build:
@@ -51,7 +51,7 @@ jobs:
         run: |
           python3 - <<'PY'
           import struct, zipfile
-          jar = 'dist/SF_RykenSlimeCustomizer3.1.9.jar'
+          jar = 'dist/SF_RykenSlimeCustomizer3.1.10.jar'
           max_major = 0
           with zipfile.ZipFile(jar) as zf:
               for name in zf.namelist():
@@ -89,7 +89,7 @@ jobs:
           set -euo pipefail
           if [[ "$GITHUB_REF" == refs/tags/v* ]]; then TAG="$GITHUB_REF_NAME"; else TAG="v${VERSION}"; fi
           JAR="dist/${OUTPUT_NAME}"
-          NOTES="RykenSlimeCustomizer 3.1.9 adds Paper 26.3 compatibility validation while preserving the Java 21 universal release baseline and Paper 26.2 as the primary production target. The Legacy suffix version scheme is replaced by the standard ${OUTPUT_NAME} public artifact."
+          NOTES="RykenSlimeCustomizer 3.1.10 gates legacy external recipe-type probes behind the matching installed plugin, removing false InfinityExpansion class warnings on IE2-only servers while preserving Paper 26.3 validation and the Java 21 universal baseline. The Legacy suffix version scheme is replaced by the standard ${OUTPUT_NAME} public artifact."
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" "$JAR" --clobber
           else
