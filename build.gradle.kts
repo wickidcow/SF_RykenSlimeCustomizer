@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "com.github.wickidcow"
-version = "3.1.8"
+version = "3.1.9"
 
 val archiveName = "SF_RykenSlimeCustomizer"
 val slimefunLegacyVersion = "4.1.46"
