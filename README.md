@@ -23,3 +23,11 @@ Original project and ongoing upstream development:
 - balugaq/RykenSlimeCustomizer
 
 This fork preserves the upstream GPL-3.0-or-later licensing and credits while maintaining compatibility with Slimefun Legacy.
+## Externally managed addon runtimes
+
+RykenSlimeCustomizer normally checks configured RSC addons for GitHub updates after they finish loading. Magic Legacy 2.x owns its embedded `addons/Magic` runtime itself and writes a `.magiclegacy-managed` marker before RSC starts.
+
+Starting with **3.1.9**, RSC detects that marker and skips its own post-load updater for the managed Magic folder. This prevents RSC from replacing Magic after it has already parsed an older runtime and preserves the intended startup order: `Networks -> MagicLegacy -> RykenSlimefunCustomizer`.
+
+Do not remove `.magiclegacy-managed` from a plugin-managed Magic folder. The MagicLegacy plugin replaces that managed runtime during normal startup and preserves an unmanaged pre-existing Magic folder as a backup on first adoption.
+
