@@ -9,10 +9,10 @@ plugins {
 }
 
 group = "com.github.wickidcow"
-version = "3.1.9"
+version = "3.1.10"
 
 val archiveName = "SF_RykenSlimeCustomizer"
-val slimefunLegacyVersion = "4.1.46"
+val slimefunLegacyVersion = "4.1.58"
 val paperApiVersion = providers.gradleProperty("paperVersion").orElse("1.21.11-R0.1-SNAPSHOT")
 val targetJvm = providers.gradleProperty("targetJvm").orElse("21").get().toInt()
 
