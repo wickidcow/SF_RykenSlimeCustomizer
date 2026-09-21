@@ -7,8 +7,8 @@ permissions:
   contents: write
 
 env:
-  VERSION: "3.1.9"
-  OUTPUT_NAME: "SF_RykenSlimeCustomizer3.1.9.jar"
+  VERSION: "3.1.10"
+  OUTPUT_NAME: "SF_RykenSlimeCustomizer3.1.10.jar"
 
 jobs:
   release:
@@ -46,7 +46,7 @@ jobs:
           test -s "$JAR"
           python3 - <<'PY'
           import struct, zipfile
-          jar='build/libs/SF_RykenSlimeCustomizer3.1.9.jar'
+          jar='build/libs/SF_RykenSlimeCustomizer3.1.10.jar'
           majors=[]
           with zipfile.ZipFile(jar) as zf:
               for name in zf.namelist():
@@ -66,7 +66,7 @@ jobs:
           set -euo pipefail
           TAG="v${VERSION}"
           JAR="build/libs/${OUTPUT_NAME}"
-          NOTES="RykenSlimeCustomizer ${VERSION} compatibility release for Paper 26.3. Paper 26.2 remains primary and the shipped artifact remains Java 21 compatible."
+          NOTES="RykenSlimeCustomizer ${VERSION} removes false legacy InfinityExpansion recipe-type warnings on IE2-only servers, keeps MagicLegacy-managed runtime ownership, validates Paper 26.3, and ships Java 21-compatible bytecode."
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" "$JAR" --clobber
           else
