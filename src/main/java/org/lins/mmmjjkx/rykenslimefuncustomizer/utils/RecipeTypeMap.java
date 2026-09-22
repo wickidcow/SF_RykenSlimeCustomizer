@@ -22,6 +22,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -96,7 +97,8 @@ public class RecipeTypeMap {
 
         static void registerRecipeTypes() {
             for (RecipeTypeExpandIntegration integration : values()) {
-                if (Bukkit.getPluginManager().getPlugin(integration.pluginName) == null) {
+                Plugin detected = Bukkit.getPluginManager().getPlugin(integration.pluginName);
+                if (detected == null) {
                     continue;
                 }
 
@@ -110,6 +112,10 @@ public class RecipeTypeMap {
                         RecipeTypeMap.pushRecipeType((RecipeType) field.get(null));
                     }
                 } catch (ClassNotFoundException e) {
+                    if (integration == INFINITY_EXPANSION && isModernInfinityExpansion2(detected)) {
+                        Debug.debug("Skipping legacy InfinityWorkbench recipe-type bridge for InfinityExpansion2.");
+                        continue;
+                    }
                     Debug.warn(
                         "Plugin " + integration.pluginName + " is installed but its recipe type class is missing: " + className
                     );
@@ -117,6 +123,15 @@ public class RecipeTypeMap {
                     Debug.warn("Failed to get external recipe type from " + className + "#" + fieldName + ": " + e.getMessage());
                 }
             }
+        }
+
+        private static boolean isModernInfinityExpansion2(Plugin detected) {
+            if (detected.getClass().getName().startsWith("net.guizhanss.infinityexpansion2.")) {
+                return true;
+            }
+
+            Plugin ie2 = Bukkit.getPluginManager().getPlugin("InfinityExpansion2");
+            return ie2 != null && ie2.isEnabled();
         }
     }
 }
