@@ -599,8 +599,17 @@ public class ProjectAddonLoader {
         }
         ScriptEval.getInitTasks().clear();
 
-        Debug.info("addon " + addon.getAddonId() + " successfully!");
-        Debug.info("RSC: " + addon.getTotalObjects() + " , successfully " + addon.getLoadedObjects() + "RSC: ");
+        int totalObjects = addon.getTotalObjects();
+        int loadedObjects = addon.getLoadedObjects();
+        int skippedObjects = addon.getSkippedObjects();
+        int failedObjects = Math.max(0, totalObjects - loadedObjects - skippedObjects);
+
+        Debug.info(
+                "Addon " + addon.getAddonId() + " registration summary: "
+                        + loadedObjects + " registered, "
+                        + skippedObjects + " conditionally skipped, "
+                        + failedObjects + " failed ("
+                        + totalObjects + " total).");
 
         return addon;
     }
