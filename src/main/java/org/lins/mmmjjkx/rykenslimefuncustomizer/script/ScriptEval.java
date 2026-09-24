@@ -262,7 +262,7 @@ public abstract class ScriptEval {
                 a -> StorageCacheUtils.getBlock(a));
         addThing("isSlimefunBlock", (Function<Location, Boolean>) StorageCacheUtils::hasBlock);
         addThing("isBlock", (BiFunction<Location, String, Boolean>) StorageCacheUtils::isBlock);
-        addThing("getSfItemByBlock", (Function<Location, SlimefunItem>) StorageCacheUtils::getSfItem);
+        addThing("getSfItemByBlock", (Function<Location, SlimefunItem>) StorageCacheUtils::getSlimefunItem);
 
         // task
         addThing("runLater", (BiFunction<Function<Object[], ?>, Integer, BukkitTask>) (r, l) -> {
