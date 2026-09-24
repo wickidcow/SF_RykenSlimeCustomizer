@@ -38,7 +38,7 @@ public class SlimefunMultiBlockPart implements MultiBlockPart {
 
     @Override
     public boolean isOfPart(@NonNull SuperMultiBlock superMultiBlockInstance, @NonNull Location partLocation) {
-        SlimefunItem sfItem = StorageCacheUtils.getSfItem(partLocation);
+        SlimefunItem sfItem = StorageCacheUtils.getSlimefunItem(partLocation);
         return sfItem != null && sfItem.getId().equals(target.getItemId());
     }
 
