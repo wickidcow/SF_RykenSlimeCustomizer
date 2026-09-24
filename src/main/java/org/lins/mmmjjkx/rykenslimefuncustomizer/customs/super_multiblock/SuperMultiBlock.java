@@ -190,7 +190,7 @@ public class SuperMultiBlock extends SuperMultiBlockManager implements Asynchron
                     continue;
                 }
 
-                if (StorageCacheUtils.getSfItem(l) != null) {
+                if (StorageCacheUtils.getSlimefunItem(l) != null) {
                     Slimefun.getDatabaseManager().getBlockDataController().removeBlock(l);
                 }
 
