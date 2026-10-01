@@ -13,6 +13,7 @@ version = "3.1.10"
 
 val archiveName = "SF_RykenSlimeCustomizer"
 val slimefunLegacyVersion = "4.1.58"
+val maintainedGuideVersion = "2.1.67"
 val paperApiVersion = providers.gradleProperty("paperVersion").orElse("1.21.11-R0.1-SNAPSHOT")
 val targetJvm = providers.gradleProperty("targetJvm").orElse("21").get().toInt()
 
@@ -66,6 +67,26 @@ repositories {
         }
     }
 
+    // The old upstream JitPack guide commit is unavailable. Resolve only the
+    // maintained, published API; it remains compile-only and is never shaded.
+    exclusiveContent {
+        forRepository {
+            ivy {
+                name = "maintainedGuideRelease"
+                url = uri("https://github.com/wickidcow/SF_JustEnoughGuide/releases/download/v$maintainedGuideVersion")
+                patternLayout {
+                    artifact("[artifact][revision].[ext]")
+                }
+                metadataSources {
+                    artifact()
+                }
+            }
+        }
+        filter {
+            includeModule("com.github.wickidcow", "SF_JustEnoughGuide")
+        }
+    }
+
     mavenCentral()
     maven("https://oss.sonatype.org/content/groups/public/")
     maven("https://oss.sonatype.org/content/repositories/snapshots")
@@ -111,7 +132,7 @@ dependencies {
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)
     compileOnly(libs.item.nbt.api.plugin)
-    compileOnly(libs.justenoughguide)
+    compileOnly("com.github.wickidcow:SF_JustEnoughGuide:$maintainedGuideVersion")
     compileOnly(libs.logitech)
 
     testImplementation(libs.junit.jupiter)
