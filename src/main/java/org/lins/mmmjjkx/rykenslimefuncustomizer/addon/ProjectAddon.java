@@ -107,11 +107,15 @@ public final class ProjectAddon {
     @Getter(AccessLevel.NONE)
     private final AtomicInteger loadedObjects = new AtomicInteger();
     @Getter(AccessLevel.NONE)
+    private final AtomicInteger skippedObjects = new AtomicInteger();
+    @Getter(AccessLevel.NONE)
     private final AtomicInteger totalObjects = new AtomicInteger();
 
     public void addLoadedObject() { loadedObjects.incrementAndGet(); }
+    public void addSkippedObject() { skippedObjects.incrementAndGet(); }
     public void addTotalObjects(int totalObjects) { this.totalObjects.addAndGet(totalObjects); }
     public int getLoadedObjects() { return loadedObjects.get(); }
+    public int getSkippedObjects() { return skippedObjects.get(); }
     public int getTotalObjects() { return totalObjects.get(); }
 
     public File getScriptsFolder() {
