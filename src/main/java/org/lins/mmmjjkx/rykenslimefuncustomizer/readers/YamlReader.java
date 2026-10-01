@@ -126,7 +126,10 @@ public abstract class YamlReader<T> {
 
             ConfigurationSection register = section.getConfigurationSection("register");
             String id = addon.getId(key, section.getString("id_alias"));
-            if (!checkForRegistration(key, register, id)) continue;
+            if (!checkForRegistration(key, register, id)) {
+                addon.addSkippedObject();
+                continue;
+            }
 
             if (section.getBoolean("lateInit", false)) {
                 putLateInit(key);
@@ -156,7 +159,11 @@ public abstract class YamlReader<T> {
     }
 
     public List<T> loadLateInits() {
-        Debug.info("Loading " + addon.getAddonId() + "/"
+        if (lateInits.isEmpty()) {
+            return List.of();
+        }
+
+        Debug.info("Loading late-init " + addon.getAddonId() + "/"
                 + this.getClass()
                         .getSimpleName()
                         .substring(0, this.getClass().getSimpleName().length() - 6));
