@@ -7,9 +7,20 @@ on:
   pull_request:
     branches: [ "main" ]
   workflow_dispatch:
+    inputs:
+      publish:
+        description: 'Publish a new, immutable release'
+        required: true
+        type: boolean
+        default: false
+      confirm_version:
+        description: 'Type the exact version when publishing'
+        required: false
+        type: string
+        default: ''
 
 permissions:
-  contents: write
+  contents: read
 
 env:
   VERSION: "3.1.11"
@@ -70,7 +81,7 @@ jobs:
         run: ./gradlew clean compileJava test --stacktrace --no-daemon -PpaperVersion=26.2.build.+ -PtargetJvm=25
 
       - name: Verify Paper 26.3 compilation
-        run: ./gradlew clean compileJava test --stacktrace --no-daemon -PpaperVersion=26.3-rc-3.build.1-alpha -PtargetJvm=25
+        run: ./gradlew clean compileJava test --stacktrace --no-daemon -PpaperVersion=26.3.build.205-stable -PtargetJvm=25
 
       - name: Upload raw JAR artifact
         uses: actions/upload-artifact@v7
@@ -80,18 +91,89 @@ jobs:
           archive: false
           if-no-files-found: error
 
-      - name: Publish raw JAR release asset
-        if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/') || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+      - name: Verify future releases cannot clobber previous assets
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          text=Path('.github/workflows/build.yml').read_text()
+          assert ('--'+'clobber') not in text
+          assert '26.3.build.205-stable' in text
+          assert "github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.publish == true" in text
+          print('Immutable-release and stable-Paper checks passed')
+          PY
+
+
+  publish:
+    name: Publish immutable RykenSlimeCustomizer release
+    needs: build
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.publish == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v8
+        with:
+          name: ${{ env.OUTPUT_NAME }}
+          path: dist
+          skip-decompress: true
+      - name: Refuse stale, wrong-version or existing releases
+        id: release
         env:
           GH_TOKEN: ${{ github.token }}
-        shell: bash
+          CONFIRM_VERSION: ${{ inputs.confirm_version }}
         run: |
           set -euo pipefail
-          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then TAG="$GITHUB_REF_NAME"; else TAG="v${VERSION}"; fi
-          JAR="dist/${OUTPUT_NAME}"
-          NOTES="RykenSlimeCustomizer 3.1.11 separates conditionally skipped addon definitions from real registration failures, removes empty late-init log duplication, and preserves Paper 26.3 validation with the Java 21 universal baseline. The Legacy suffix version scheme is replaced by the standard ${OUTPUT_NAME} public artifact."
-          if gh release view "$TAG" >/dev/null 2>&1; then
-            gh release upload "$TAG" "$JAR" --clobber
-          else
-            gh release create "$TAG" "$JAR" --target "$GITHUB_SHA" --title "SF_RykenSlimeCustomizer $TAG" --notes "$NOTES"
+          test "$GITHUB_REF" = refs/heads/main
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          CURRENT_MAIN="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/main" --jq .object.sha)"
+          test "$CURRENT_MAIN" = "$GITHUB_SHA"
+          test "$CONFIRM_VERSION" = "$VERSION"
+          grep -Fq 'version = "3.1.11"' build.gradle.kts
+          test -s "dist/$OUTPUT_NAME"
+          unzip -tqq "dist/$OUTPUT_NAME"
+          TAG="v$VERSION"
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Refusing to replace existing immutable release $TAG" >&2
+            exit 1
           fi
+          if git ls-remote --exit-code --tags "https://github.com/$GITHUB_REPOSITORY.git" "refs/tags/$TAG" >/dev/null 2>&1; then
+            echo "Refusing to replace existing immutable Git tag $TAG" >&2
+            exit 1
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+      - name: Publish a new immutable release exactly once
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          TAG="${{ steps.release.outputs.tag }}"
+          test -n "$TAG"
+          gh release create "$TAG" "dist/$OUTPUT_NAME" --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" --title "SF_RykenSlimeCustomizer $TAG" \
+            --notes "Validated Java 21 Slimefun Legacy build with Paper 1.21.11/26.2/26.3 source compatibility. All previous tags and release assets remain unchanged."
+      - name: Compare release digest and redownloaded JAR bytes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api "repos/$GITHUB_REPOSITORY/releases/tags/v$VERSION" > "$RUNNER_TEMP/release.json"
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          release=json.loads((Path(os.environ['RUNNER_TEMP'])/'release.json').read_text())
+          jar=Path('dist')/os.environ['OUTPUT_NAME']
+          assert release['tag_name']=='v'+os.environ['VERSION']
+          assert release['target_commitish']==os.environ['GITHUB_SHA']
+          assert len(release['assets'])==1
+          asset=release['assets'][0]
+          assert asset['name']==jar.name and asset['state']=='uploaded'
+          assert asset['size']==jar.stat().st_size
+          assert asset['digest']=='sha256:'+hashlib.sha256(jar.read_bytes()).hexdigest()
+          PY
+          mkdir -p verified
+          gh release download "v$VERSION" --repo "$GITHUB_REPOSITORY" \
+            --pattern "$OUTPUT_NAME" --dir verified
+          cmp "dist/$OUTPUT_NAME" "verified/$OUTPUT_NAME"
