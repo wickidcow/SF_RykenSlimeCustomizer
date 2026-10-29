@@ -150,9 +150,12 @@ tasks.jar {
     enabled = false
 }
 
+// Capture the immutable value while configuring, not from the task action.
+val resourceVersion = project.version.toString()
 tasks.named<ProcessResources>("processResources") {
+    inputs.property("resourceVersion", resourceVersion)
     filesMatching("**/*.yml") {
-        expand(mapOf("version" to project.version))
+        expand(mapOf("version" to resourceVersion))
     }
 }
 

@@ -64,6 +64,14 @@ jobs:
           unzip -tqq "dist/${OUTPUT_NAME}"
           sha256sum "dist/${OUTPUT_NAME}"
 
+      - name: Verify resource expansion without deprecated project access
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s scripts -p 'test_resource_expansion.py' -v
+          ./gradlew processResources --rerun-tasks --no-daemon --no-configuration-cache --warning-mode fail -PpaperVersion=1.21.11-R0.1-SNAPSHOT -PtargetJvm=21 2>&1 | tee ci-evidence/resource-expansion.log
+          python3 scripts/verify_resource_expansion.py --version "$VERSION" --jar "dist/${OUTPUT_NAME}" | tee -a ci-evidence/resource-expansion.log
+
       - name: Verify Java 21 bytecode
         run: |
           python3 - <<'PY'
