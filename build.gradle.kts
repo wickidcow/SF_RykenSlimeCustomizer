@@ -26,6 +26,9 @@ java {
 tasks.compileJava {
     options.encoding = "UTF-8"
     options.release.set(targetJvm)
+    // Retain actual javac locations for reviewed API modernization. Do not
+    // infer compiler diagnostics from lexical source matches.
+    options.compilerArgs.addAll(listOf("-Xlint:deprecation", "-Xlint:removal"))
 }
 
 tasks.compileTestJava {
