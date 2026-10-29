@@ -1,0 +1,30 @@
+name: Immutable Release Policy Regression
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/build.yml'
+      - '.github/workflows/release.yml'
+      - '.github/workflows/release-policy.yml'
+      - 'scripts/test_release_workflow_policy.py'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/build.yml'
+      - '.github/workflows/release.yml'
+      - '.github/workflows/release-policy.yml'
+      - 'scripts/test_release_workflow_policy.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  release-policy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Reject legacy overwrites and weakened publication gates
+        run: python3 -m unittest discover -s scripts -p 'test_release_workflow_policy.py' -v

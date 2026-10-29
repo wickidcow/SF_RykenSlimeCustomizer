@@ -1,74 +1,19 @@
-name: Manual Release RykenSlimeCustomizer
+name: Legacy manual release disabled - use protected build
 
 on:
   workflow_dispatch:
 
 permissions:
-  contents: write
-
-env:
-  VERSION: "3.1.11"
-  OUTPUT_NAME: "SF_RykenSlimeCustomizer3.1.11.jar"
+  contents: read
 
 jobs:
-  release:
+  retired-entrypoint:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v6
-
-      - name: Set up JDK 25
-        uses: actions/setup-java@v5
-        with:
-          java-version: '25'
-          distribution: temurin
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-
-      - name: Build universal Java 21 release JAR
-        run: |
-          chmod +x gradlew
-          ./gradlew clean build --stacktrace --no-daemon -PpaperVersion=1.21.11-R0.1-SNAPSHOT -PtargetJvm=21
-
-      - name: Verify Paper 26.2 compilation
-        run: ./gradlew clean compileJava test --stacktrace --no-daemon -PpaperVersion=26.2.build.+ -PtargetJvm=25
-
-      - name: Verify Paper 26.3 compilation
-        run: ./gradlew clean compileJava test --stacktrace --no-daemon -PpaperVersion=26.3-rc-3.build.1-alpha -PtargetJvm=25
-
-      - name: Rebuild and verify release JAR
+      - name: Refuse the obsolete release path
         shell: bash
         run: |
-          set -euo pipefail
-          ./gradlew clean build --stacktrace --no-daemon -PpaperVersion=1.21.11-R0.1-SNAPSHOT -PtargetJvm=21
-          JAR="build/libs/${OUTPUT_NAME}"
-          test -s "$JAR"
-          python3 - <<'PY'
-          import struct, zipfile
-          jar='build/libs/SF_RykenSlimeCustomizer3.1.11.jar'
-          majors=[]
-          with zipfile.ZipFile(jar) as zf:
-              for name in zf.namelist():
-                  if name.endswith('.class'):
-                      data=zf.read(name)[:8]
-                      if data[:4] == b'\xca\xfe\xba\xbe':
-                          majors.append(struct.unpack('>H', data[6:8])[0])
-          if not majors or max(majors) > 65:
-              raise SystemExit(f'Expected Java 21-compatible classes; max={max(majors) if majors else None}')
-          PY
-
-      - name: Create or update GitHub release
-        env:
-          GH_TOKEN: ${{ github.token }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          TAG="v${VERSION}"
-          JAR="build/libs/${OUTPUT_NAME}"
-          NOTES="RykenSlimeCustomizer ${VERSION} separates conditionally skipped addon definitions from real failures, removes empty late-init log duplication, keeps MagicLegacy-managed runtime ownership, validates Paper 26.3, and ships Java 21-compatible bytecode."
-          if gh release view "$TAG" >/dev/null 2>&1; then
-            gh release upload "$TAG" "$JAR" --clobber
-          else
-            gh release create "$TAG" "$JAR" --target "$GITHUB_SHA" --title "SF_RykenSlimeCustomizer $TAG" --notes "$NOTES"
-          fi
+          echo '::error::This obsolete release workflow cannot publish or replace assets.'
+          echo 'Use Build RykenSlimeCustomizer (.github/workflows/build.yml) on main.'
+          echo 'Publish only a new version after its checks pass, with publish=true and the exact confirm_version.'
+          exit 1
