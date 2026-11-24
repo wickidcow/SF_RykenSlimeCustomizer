@@ -98,7 +98,16 @@ repositories {
     maven("https://repo.minebench.de/")
     maven("https://repo.codemc.org/repository/maven-public/")
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
-    maven("https://repo.papermc.io/repository/maven-public/")
+    // Resolve Paper API metadata and artifacts from the same authoritative repository.
+    // A third-party mirror may expose the POM without hosting the matching API JAR.
+    exclusiveContent {
+        forRepository {
+            maven("https://repo.papermc.io/repository/maven-public/")
+        }
+        filter {
+            includeModule("io.papermc.paper", "paper-api")
+        }
+    }
     maven("https://nexus.phoenixdevt.fr/repository/maven-public/")
     maven("https://mvn.lumine.io/repository/maven-public/")
 }
